@@ -9,11 +9,29 @@ public class CameraController : MonoBehaviour
     public float panBorderThickness = 10f;
     public Vector2 panLimit;
     public float scrollSpeed = 20f;
-    public float minZ = 10f;
-    public float maxZ = 100f;
+    public float minZ = -10f;
+    public float maxZ = -100f;
 
+    public GameObject player; 
+    private Vector3 offset;
+     void Start () 
+    {
+        //Calculate and store the offset value by getting the distance between the player's position and camera's position.
+        offset = transform.position - player.transform.position;
+    }
     void Update()
     {
+        
+        Vector3 pos = transform.position;
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        pos.z += scroll * scrollSpeed * 100f * Time.deltaTime;
+        pos.x = player.transform.position.x + offset.x;
+        pos.y = player.transform.position.y + offset.y;
+        pos.z = Mathf.Clamp(pos.z, - maxZ, - minZ);
+        transform.position = pos;
+    }
+
+    public void SetStaticCamera(){
         Vector3 pos = transform.position;
 
         if(Input.GetKey("w") || Input.mousePosition.y >= Screen.height - panBorderThickness)
@@ -33,5 +51,6 @@ public class CameraController : MonoBehaviour
         pos.z = Mathf.Clamp(pos.z, - maxZ, - minZ);
 
         transform.position = pos;
+
     }
 }
