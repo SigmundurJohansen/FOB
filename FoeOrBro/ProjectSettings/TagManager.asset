@@ -38,9 +38,15 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 2228993831
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
   - name: Collision
     uniqueID: 1067289625
+    locked: 0
+  - name: GameObjects
+    uniqueID: 3778043855
     locked: 0
