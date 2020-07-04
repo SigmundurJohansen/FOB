@@ -9,11 +9,13 @@ public class CameraController : MonoBehaviour
     public float panBorderThickness = 10f;
     public Vector2 panLimit;
     public float scrollSpeed = 20f;
-    public float minZ = -10f;
-    public float maxZ = -100f;
+    public float minZ = -1f;
+    public float maxZ = -10f;
 
     public GameObject player; 
     private Vector3 offset;
+
+
      void Start () 
     {
         //Calculate and store the offset value by getting the distance between the player's position and camera's position.
@@ -29,8 +31,8 @@ public class CameraController : MonoBehaviour
         pos.y = player.transform.position.y + offset.y;
         pos.z = Mathf.Clamp(pos.z, - maxZ, - minZ);
         transform.position = pos;
-    }
 
+    }
     public void SetStaticCamera(){
         Vector3 pos = transform.position;
 
