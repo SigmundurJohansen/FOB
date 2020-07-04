@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 8369920888912103591}
   - component: {fileID: 8369920888912103587}
   - component: {fileID: 8369920888912103586}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Unit
-  m_TagString: Untagged
+  m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -59,7 +59,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.33, y: 0.33}
   m_EdgeRadius: 0
 --- !u!50 &8369920888912103590
 Rigidbody2D:
@@ -101,6 +101,14 @@ MonoBehaviour:
   idle: 0
   spriteRenderer: {fileID: 8369920888912103586}
   sprite: {fileID: 870508375451567012, guid: 7e1696dd211b6cc4a845b816ffe21bd5, type: 3}
+  Health: 100
+  Mana: 100
+  Strength: 10
+  Dexterity: 10
+  Constitution: 10
+  Intelligence: 10
+  Wisdom: 10
+  Charisma: 10
 --- !u!210 &8369920888912103587
 SortingGroup:
   m_ObjectHideFlags: 0

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class unit : MonoBehaviour
+public class Unit : MonoBehaviour, ISelectable
 {
     public Vector3 startingPosition;
     public Vector3 currentPosition;
@@ -11,6 +11,21 @@ public class unit : MonoBehaviour
     public bool idle = false;
     public SpriteRenderer spriteRenderer;
     public Sprite sprite;
+    public string unitName = "unit";
+
+    
+    public float currentHealth { get;set;}
+    public float Health = 100;
+    public int Mana = 100;
+    public int currentMana;
+    public int Strength = 10, Dexterity = 10, Constitution = 10, Intelligence = 10, Wisdom = 10, Charisma = 10;
+
+    public void TakeDamage(float damage){
+        Health -= damage;
+        Debug.Log(Health);
+        if(Health <= 0)
+            Destroy(gameObject);
+    }
 
     void ChangeSprite()
     {
@@ -19,6 +34,8 @@ public class unit : MonoBehaviour
     
     void Start()
     {
+        currentHealth = Health;
+        currentMana = Mana;
         startingPosition = transform.position;
         
         destination = RandomPosition();
@@ -37,7 +54,7 @@ public class unit : MonoBehaviour
     }
 
     void MoveToPosition(Vector3 targetDestination){
-        float x = 0,y = 0,z = -0.1f;
+        float z = -0.1f;
         Vector3 newPos = new Vector3(transform.position.x,transform.position.y,z);
         float minDistance = 1;
         bool first = false, second = false;
@@ -69,5 +86,13 @@ public class unit : MonoBehaviour
 
         if(first && second)
             destination = RandomPosition();
+    }
+    public void Damage(float damageAmount){
+        currentHealth -= damageAmount;
+        if(currentHealth <= 0)
+            Destroy(gameObject);
+    }
+    public string Name(){
+        return name;
     }
 }
