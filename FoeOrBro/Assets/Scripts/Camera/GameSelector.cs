@@ -6,6 +6,7 @@ public class GameSelector : MonoBehaviour
     public Camera fpsCam;
 
     public ISelectable selectedObject;
+    public ISelectable[] selectedObjectList;
 
     public string currentlySelectedObject = "";
     [SerializeField] private LayerMask layerMask;
@@ -43,6 +44,9 @@ public class GameSelector : MonoBehaviour
             }
         }
 
+
+
+
     }
 
 
@@ -53,7 +57,6 @@ public class GameSelector : MonoBehaviour
             if(obj != null){
                 if(selectedObject!=null)
                     selectedObject.isSelected = false;
-                Debug.Log("selecting: " + obj.Name());
                 selectedObject = obj;
                 currentlySelectedObject = obj.Name();
                 selectedObject.isSelected = true;
@@ -62,12 +65,11 @@ public class GameSelector : MonoBehaviour
                     selectedObject.isSelected = false;
                 selectedObject = null;
                 currentlySelectedObject = "";
-                Debug.Log("nonSelectable");
+                Debug.Log("not Selectable");
             }
         }else{
             selectedObject = null;
             currentlySelectedObject = "";
-            Debug.Log("nothing selected");
         }
     }
 
