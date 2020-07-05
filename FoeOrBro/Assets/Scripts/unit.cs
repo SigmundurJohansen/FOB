@@ -12,6 +12,7 @@ public class Unit : MonoBehaviour, ISelectable
     public SpriteRenderer spriteRenderer;
     public Sprite sprite;
     public string unitName = "unit";
+    public bool isSelected { get;set;}
 
     
     public float currentHealth { get;set;}
@@ -45,6 +46,10 @@ public class Unit : MonoBehaviour, ISelectable
     // Update is called once per frame
     void Update()
     {
+        if(isSelected)
+            spriteRenderer.color = Color.green;
+        else
+            spriteRenderer.color = Color.white;
         currentPosition = transform.position;
         MoveToPosition(destination);
     }

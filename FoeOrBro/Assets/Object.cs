@@ -6,6 +6,7 @@ public class Object : MonoBehaviour, ISelectable
 {
     public float currentHealth { get;set;}
     public string name = "book";
+    public bool isSelected { get;set;}
 
     public void Damage(float damageAmount){
         currentHealth -= 10;

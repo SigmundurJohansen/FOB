@@ -789,6 +789,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6f3e04bfec2a8c46a76530ebbf8cfd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  name: book
 --- !u!1 &1143710380
 GameObject:
   m_ObjectHideFlags: 0
@@ -2386,6 +2387,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8369920888912103586, guid: 77640e4882541f14a8278c6500c2fbb2,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8369920888912103586, guid: 77640e4882541f14a8278c6500c2fbb2,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 0.32006836
+      objectReference: {fileID: 0}
+    - target: {fileID: 8369920888912103586, guid: 77640e4882541f14a8278c6500c2fbb2,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 8369920888912103586, guid: 77640e4882541f14a8278c6500c2fbb2,
+        type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8369920888912103588, guid: 77640e4882541f14a8278c6500c2fbb2,
         type: 3}
       propertyPath: m_LocalPosition.x

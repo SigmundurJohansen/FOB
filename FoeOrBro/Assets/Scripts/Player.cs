@@ -10,6 +10,7 @@ public class Player : MonoBehaviour, ISelectable
     public UIBar playerHealthBar;
     public UIBar playerManaBar;
     public string playerName = "Player";
+    public bool isSelected { get;set;}
 
     // player stats
     public float maxHealth = 100;

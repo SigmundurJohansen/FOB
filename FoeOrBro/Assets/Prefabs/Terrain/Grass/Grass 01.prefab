@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 7709876327838112983}
   - component: {fileID: -1133913693555802152}
   - component: {fileID: -7033462256716672873}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Grass 01
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -118,6 +118,6 @@ SortingGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6421788223584973584}
   m_Enabled: 1
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -2065973465
+  m_SortingLayer: -1
   m_SortingOrder: 0

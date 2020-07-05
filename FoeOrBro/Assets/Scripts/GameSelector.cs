@@ -2,20 +2,24 @@
 
 public class GameSelector : MonoBehaviour
 {
-    public float damage = 10f;
     public float range = 100f;
     public Camera fpsCam;
+
+    public ISelectable selectedObject;
+
+    public string currentlySelectedObject = "";
     [SerializeField] private LayerMask layerMask;
 
     public delegate void ActionClick();
     public static event ActionClick onClick;
     
-    public void ButtonClick(){
-        if(onClick != null){
-            onClick();
-        }
-    }
+    bool dragSelect;
+    Vector3 pointOne;
+    Vector3 pointTwo;
 
+    void Start(){
+        dragSelect = false;
+    }
 
     // Update is called once per frame
     void Update()
@@ -23,58 +27,53 @@ public class GameSelector : MonoBehaviour
         
         if(Input.GetMouseButtonDown(0))
         {
-            Selector3();
+            pointOne = Input.mousePosition;
         }
         
-    }
-
-    void SelectTarget()
-    {
-        RaycastHit hit;
-
-        if(Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, range,layerMask)){
-            Debug.Log("Select :" + hit.transform.name);
-            Unit unit = hit.transform.GetComponent<Unit>();
-            if(unit != null){
-                unit.TakeDamage(50f);
+        if(Input.GetMouseButton(0)){
+            if((pointOne - Input.mousePosition).magnitude > 40)
+            {
+                dragSelect = true;
             }
         }
-        else
-        {
-            Debug.Log("Did not Hit");
-        }
-    }
 
-    void anotherSelector(){
-        if(Input.GetMouseButtonDown(0)){
-            Ray rayOrigin = fpsCam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hitInfo;
-            
-            if(Physics.Raycast(rayOrigin, out hitInfo)){
-                ISelectable obj = hitInfo.collider.GetComponent<ISelectable>();
-                if(obj != null){
-                    Debug.Log("selecting: " + obj.Name());
-                    obj.Damage(10);
-                }else{
-                    Debug.Log("selected nothing");
-                }
+        if(Input.GetMouseButtonUp(0)){
+            if(dragSelect == false){                
+                Select();
             }
         }
+
     }
 
-    void Selector3(){
-        
+
+    void Select(){        
         RaycastHit2D rayHit = Physics2D.GetRayIntersection(fpsCam.ScreenPointToRay(Input.mousePosition));
         if(rayHit.collider!=null){
             ISelectable obj = rayHit.collider.GetComponent<ISelectable>();
             if(obj != null){
+                if(selectedObject!=null)
+                    selectedObject.isSelected = false;
                 Debug.Log("selecting: " + obj.Name());
-                obj.Damage(10);
+                selectedObject = obj;
+                currentlySelectedObject = obj.Name();
+                selectedObject.isSelected = true;
             }else{
+                if(selectedObject!=null)
+                    selectedObject.isSelected = false;
+                selectedObject = null;
+                currentlySelectedObject = "";
                 Debug.Log("nonSelectable");
             }
         }else{
+            selectedObject = null;
+            currentlySelectedObject = "";
             Debug.Log("nothing selected");
+        }
+    }
+
+    public void ButtonClick(){
+        if(onClick != null){
+            onClick();
         }
     }
 }
