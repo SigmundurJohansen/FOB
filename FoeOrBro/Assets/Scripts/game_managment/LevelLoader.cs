@@ -41,7 +41,7 @@ public class LevelLoader : MonoBehaviour {
 		EmptyMap();
 
 		// Read the image data from the file in StreamingAssets
-		string filePath = Application.dataPath + "/Maps/" + levelFileName;
+		string filePath = Application.dataPath + "/Art/Maps/" + levelFileName;
 		byte[] bytes = System.IO.File.ReadAllBytes(filePath);
 		Texture2D levelMap = new Texture2D(1, 1);
 		levelMap.LoadImage(bytes);
