@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Unit : MonoBehaviour, ISelectable
+public class Unit : MonoBehaviour
 {
     public Vector3 startingPosition;
     public Vector3 currentPosition;

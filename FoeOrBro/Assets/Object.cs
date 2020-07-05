@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Object : MonoBehaviour, ISelectable
+public class Object : MonoBehaviour
 {
     public float currentHealth { get;set;}
-    public string name = "book";
+    private string name = "book";
     public bool isSelected { get;set;}
 
     public void Damage(float damageAmount){

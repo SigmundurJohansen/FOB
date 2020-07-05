@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour, ISelectable
+public class Player : MonoBehaviour
 {
     public SpriteRenderer spriteRenderer;
     public Sprite sprite;
@@ -40,7 +40,7 @@ public class Player : MonoBehaviour, ISelectable
     }
     void Update()
     {
-        if(Input.GetMouseButtonDown(1))
+        if(Input.GetKeyDown("r"))
         {
             if(TakeMana(currentSpell.manaCost))
                 CastSpell();

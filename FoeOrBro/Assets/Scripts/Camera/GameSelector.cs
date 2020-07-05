@@ -5,8 +5,8 @@ public class GameSelector : MonoBehaviour
     public float range = 100f;
     public Camera fpsCam;
 
-    public ISelectable selectedObject;
-    public ISelectable[] selectedObjectList;
+    //public ISelectable selectedObject;
+    //public ISelectable[] selectedObjectList;
 
     public string currentlySelectedObject = "";
     [SerializeField] private LayerMask layerMask;
@@ -51,14 +51,15 @@ public class GameSelector : MonoBehaviour
 
 
     void Select(){        
+        /*
         RaycastHit2D rayHit = Physics2D.GetRayIntersection(fpsCam.ScreenPointToRay(Input.mousePosition));
         if(rayHit.collider!=null){
-            ISelectable obj = rayHit.collider.GetComponent<ISelectable>();
+            GameObject obj = rayHit.collider.GetComponent<GameObject>();
             if(obj != null){
                 if(selectedObject!=null)
                     selectedObject.isSelected = false;
                 selectedObject = obj;
-                currentlySelectedObject = obj.Name();
+                currentlySelectedObject = obj.name;
                 selectedObject.isSelected = true;
             }else{
                 if(selectedObject!=null)
@@ -70,7 +71,8 @@ public class GameSelector : MonoBehaviour
         }else{
             selectedObject = null;
             currentlySelectedObject = "";
-        }
+        } 
+        */
     }
 
     public void ButtonClick(){

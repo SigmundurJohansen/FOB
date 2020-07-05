@@ -24,10 +24,10 @@ public class Fireball : MonoBehaviour, ISpell
     }
 
     void OnTriggerEnter2D(Collider2D hitInfo){
-        ISelectable enemy = hitInfo.GetComponent<ISelectable>();
+        GameObject enemy = hitInfo.GetComponent<GameObject>();
         if(enemy != null){
-            Debug.Log("hit : " + enemy.Name());
-            enemy.Damage(damage);
+            Debug.Log("hit : " + enemy.name);
+           // enemy.Damage(damage);
         }
         Destroy(gameObject);
     }
