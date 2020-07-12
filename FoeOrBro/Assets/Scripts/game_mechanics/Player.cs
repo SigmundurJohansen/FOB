@@ -6,7 +6,6 @@ public class Player : MonoBehaviour
 {
     public SpriteRenderer spriteRenderer;
     public Sprite sprite;
-    public Camera mainCam;
     public UIBar playerHealthBar;
     public UIBar playerManaBar;
     public string playerName = "Player";

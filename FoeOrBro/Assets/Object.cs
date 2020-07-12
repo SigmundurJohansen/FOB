@@ -5,7 +5,7 @@ using UnityEngine;
 public class Object : MonoBehaviour
 {
     public float currentHealth { get;set;}
-    private string name = "book";
+    private string myName = "book";
     public bool isSelected { get;set;}
 
     public void Damage(float damageAmount){
@@ -26,6 +26,6 @@ public class Object : MonoBehaviour
         
     }
     public string Name(){
-        return name;
+        return myName;
     }
 }

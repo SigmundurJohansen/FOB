@@ -26,10 +26,10 @@ public class CameraController : MonoBehaviour
         
         Vector3 pos = transform.position;
         float scroll = Input.GetAxis("Mouse ScrollWheel");
-        pos.z += scroll * scrollSpeed * 100f * Time.deltaTime;
+        Camera.main.orthographicSize  -= scroll * scrollSpeed * 100f * Time.deltaTime;
         pos.x = player.transform.position.x + offset.x;
         pos.y = player.transform.position.y + offset.y;
-        pos.z = Mathf.Clamp(pos.z, - maxZ, - minZ);
+        Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, minZ,  maxZ);
         transform.position = pos;
 
     }

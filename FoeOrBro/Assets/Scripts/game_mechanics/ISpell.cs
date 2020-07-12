@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface ISpell
 {
-    GameObject gameObject { get; }
+    //GameObject gameObject { get; }
     int manaCost {get; set;}
     void Cast();
 }

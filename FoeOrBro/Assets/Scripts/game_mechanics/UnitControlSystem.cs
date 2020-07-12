@@ -11,25 +11,29 @@ public struct UnitSelected : IComponentData {
 
 public class UnitControlSystem :ComponentSystem{
 
+    protected override void OnUpdate() {}
+/*
     private float3 startPosition;
     
     #region OnUpdate
     protected override void OnUpdate() {
         if (Input.GetMouseButtonDown(0)) {
             // Mouse Pressed
-            Debug.Log("unit control system active");
+            Debug.Log("click down");
             ECSController.instance.selectionAreaTransform.gameObject.SetActive(true);
             startPosition = GetMouseWorldPosition();
             ECSController.instance.selectionAreaTransform.position = startPosition;
         }
 
         if (Input.GetMouseButton(0)) {
+            Debug.Log("dragging");
             // Mouse Held Down
             float3 selectionAreaSize = (float3)GetMouseWorldPosition() - startPosition;
             ECSController.instance.selectionAreaTransform.localScale = selectionAreaSize;
         }
 
         if (Input.GetMouseButtonUp(0)) {
+            Debug.Log("click up");
             // Mouse Released
             ECSController.instance.selectionAreaTransform.gameObject.SetActive(false);
             float3 endPosition = GetMouseWorldPosition();
@@ -74,6 +78,7 @@ public class UnitControlSystem :ComponentSystem{
             float3 targetPosition = GetMouseWorldPosition();
             List<float3> movePositionList = GetPositionListAround(targetPosition, new float[] { 10f, 20f, 30f }, new int[] { 5, 10, 20 });
             int positionIndex = 0;
+
             Entities.WithAll<UnitSelected>().ForEach((Entity entity, ref MoveTo moveTo) => {
                 moveTo.position = movePositionList[positionIndex];
                 positionIndex = (positionIndex + 1) % movePositionList.Count;
@@ -81,7 +86,6 @@ public class UnitControlSystem :ComponentSystem{
             });
         }
     }
-
     #endregion
     private List<float3> GetPositionListAround(float3 startPosition, float[] ringDistance, int[] ringPositionCount) {
         List<float3> positionList = new List<float3>();
@@ -110,7 +114,7 @@ public class UnitControlSystem :ComponentSystem{
 
     // Get Mouse Position in World with Z = 0f
     public static Vector3 GetMouseWorldPosition() {
-        Vector3 vec = GetMouseWorldPositionWithZ(Input.mousePosition, Camera.main);
+        Vector3 vec = GetMouseWorldPositionWithZ(Input.mousePosition, Camera.main); //    Camera.main
         vec.z = 0f;
         return vec;
     }
@@ -124,6 +128,7 @@ public class UnitControlSystem :ComponentSystem{
         Vector3 worldPosition = worldCamera.ScreenToWorldPoint(screenPosition);
         return worldPosition;
     }
+     */
 }
 
 public class UnitSelectedRenderer : ComponentSystem {

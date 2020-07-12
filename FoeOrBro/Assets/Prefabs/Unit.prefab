@@ -11,10 +11,11 @@ GameObject:
   - component: {fileID: 8369920888912103588}
   - component: {fileID: 8369920888912103589}
   - component: {fileID: 8369920888912103590}
-  - component: {fileID: 8369920888912103591}
   - component: {fileID: 8369920888912103587}
   - component: {fileID: 8369920888912103586}
-  m_Layer: 13
+  - component: {fileID: 8369920888912103591}
+  - component: {fileID: 4171396241504412952}
+  m_Layer: 11
   m_Name: Unit
   m_TagString: Unit
   m_Icon: {fileID: 0}
@@ -82,33 +83,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &8369920888912103591
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8369920888912103592}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7473e1e2b62bec4fbe3d38287003d55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startingPosition: {x: -1, y: 1, z: -0.1}
-  currentPosition: {x: 0, y: 0, z: 0}
-  destination: {x: 0, y: 0, z: 0}
-  unitSpeed: 1
-  idle: 0
-  spriteRenderer: {fileID: 8369920888912103586}
-  sprite: {fileID: 870508375451567012, guid: 7e1696dd211b6cc4a845b816ffe21bd5, type: 3}
-  Health: 100
-  Mana: 100
-  Strength: 10
-  Dexterity: 10
-  Constitution: 10
-  Intelligence: 10
-  Wisdom: 10
-  Charisma: 10
 --- !u!210 &8369920888912103587
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -170,3 +144,44 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8369920888912103591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8369920888912103592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7473e1e2b62bec4fbe3d38287003d55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startingPosition: {x: -1, y: 1, z: -0.1}
+  currentPosition: {x: 0, y: 0, z: 0}
+  destination: {x: 0, y: 0, z: 0}
+  unitSpeed: 1
+  idle: 0
+  spriteRenderer: {fileID: 8369920888912103586}
+  sprite: {fileID: 870508375451567012, guid: 7e1696dd211b6cc4a845b816ffe21bd5, type: 3}
+  unitName: unit
+  Health: 100
+  Mana: 100
+  currentMana: 0
+  Strength: 10
+  Dexterity: 10
+  Constitution: 10
+  Intelligence: 10
+  Wisdom: 10
+  Charisma: 10
+--- !u!114 &4171396241504412952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8369920888912103592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bf10cdea1344482e91a4f2b58506b77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

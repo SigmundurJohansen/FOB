@@ -46,10 +46,6 @@ public class Unit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(isSelected)
-            spriteRenderer.color = Color.green;
-        else
-            spriteRenderer.color = Color.white;
         currentPosition = transform.position;
         MoveToPosition(destination);
     }

@@ -28,6 +28,10 @@ public class ECSController : MonoBehaviour {
 
     
     private void Start() {
+        //entityManager = World.Active.EntityManager;
+        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
+        //unitSelectedCircleMesh = ECS_Animation.CreateMesh(8f, 5f);
     }
 
 
