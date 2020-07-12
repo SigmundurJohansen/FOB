@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Object : MonoBehaviour, ISelectable
+public class Object : MonoBehaviour
 {
     public float currentHealth { get;set;}
-    public string name = "book";
+    private string myName = "book";
+    public bool isSelected { get;set;}
 
     public void Damage(float damageAmount){
         currentHealth -= 10;
@@ -25,6 +26,6 @@ public class Object : MonoBehaviour, ISelectable
         
     }
     public string Name(){
-        return name;
+        return myName;
     }
 }
