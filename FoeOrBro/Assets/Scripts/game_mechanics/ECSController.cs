@@ -39,7 +39,7 @@ public class ECSController : MonoBehaviour {
 
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         //SpawnUnits(10);
-        SpawnHumans(2);
+        SpawnHumans(2000);
     }
 
     public void SpawnPrefabs(int _count){
@@ -53,6 +53,21 @@ public class ECSController : MonoBehaviour {
             entityManager.SetComponentData(instance, new Translation {Value = position});        
         }
     }
+    private void SpawnPlayer(){
+        Entity entities = new Entity();
+        EntityArchetype entityArchetype = entityManager.CreateArchetype(
+            typeof(Player),
+            typeof(RenderMesh),
+            typeof(Translation),
+            typeof(MovementComponent),
+            typeof(Scale),
+            typeof(LocalToWorld),
+            typeof(RenderBounds),
+            typeof(Collider),
+            typeof(NonUniformScale)
+        );
+
+    }
 
 
     private void SpawnHumans(int count) {
@@ -65,7 +80,7 @@ public class ECSController : MonoBehaviour {
             typeof(Scale),
             typeof(LocalToWorld),
             typeof(RenderBounds),
-            typeof(BoxCollider2D),
+            typeof(Collider),
             typeof(NonUniformScale)
         );
 
@@ -74,18 +89,19 @@ public class ECSController : MonoBehaviour {
         for (int i = 0; i < count; i++)
         {            
             Entity entity = entities[i];
-            float3 myPosition = new float3(UnityEngine.Random.Range(-2f, 2f), UnityEngine.Random.Range(-2f, 2f), -0.1f);
-            float3 myDestination = new float3(UnityEngine.Random.Range(-40f, 40f), UnityEngine.Random.Range(-40f, 40f), -0.1f);
+            float3 myPosition = new float3(UnityEngine.Random.Range(-20f, 20f), UnityEngine.Random.Range(-20f, 20f), -0.1f);
+            float3 myDestination = new float3(UnityEngine.Random.Range(-20f, 20f), UnityEngine.Random.Range(-20f, 20f), -0.1f);
             entityManager.SetComponentData(entities[i], new Translation {Value = myPosition});
             entityManager.SetComponentData(entities[i], new MovementComponent { isMoving = true, speed = 51.0f, destination = myDestination});
             entityManager.SetSharedComponentData(entities[i], new RenderMesh { mesh = spriteMesh, material = spriteMaterial });
-            //entityManager.SetSharedComponentData(entities[i], new BoxCollider2D { size = new Vector2(0.16f,0.16f) });
+            //entityManager.SetSharedComponentData(entities[i], new Collider { size = new Vector2(0.16f,0.16f) });
             entityManager.SetComponentData(entities[i], new NonUniformScale { Value = 0.32f });
         }
         entities.Dispose();
     }
 
     public struct Human : IComponentData { } 
+    public struct Player : IComponentData { } 
 }
  
 public struct Collider : IComponentData

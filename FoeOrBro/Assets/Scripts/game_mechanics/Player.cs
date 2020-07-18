@@ -20,12 +20,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     public ISpell currentSpell;
     public GameObject projectile;
-
     public int Strength = 10, Dexterity = 10, Constitution = 10, Intelligence = 10, Wisdom = 10, Charisma = 10;
     public int experiencePoints = 0;
-
     private GameObject selectedTarget;
-
 
     void Start()
     {
@@ -56,7 +53,6 @@ public class Player : MonoBehaviour
         playerHealthBar.SetValue(currentHealth);
         Debug.Log(currentHealth);
         if(currentHealth <= 0){
-
             Destroy(gameObject);
         }
     }
@@ -74,9 +70,6 @@ public class Player : MonoBehaviour
         Debug.Log("Spell cost: " + damage + "mana remaining : " + currentMana);
         return true;
     }
-
-
-
 
     void ChangeSprite()
     {
