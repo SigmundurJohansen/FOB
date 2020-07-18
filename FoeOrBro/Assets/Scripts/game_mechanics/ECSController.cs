@@ -10,19 +10,23 @@ using Unity.Mathematics;
 using Unity.Jobs;
 using Unity.Burst;
 using System.Threading;
+using UnityEngine.Rendering;
+
 
 public class ECSController : MonoBehaviour {
 
     public static ECSController instance;
-
     public Transform selectionAreaTransform;
     public Material unitSelectedCircleMaterial;
     public Mesh unitSelectedCircleMesh;
-
     private EntityManager entityManager;
     public Sprite mainSprite;
-    public SpriteRenderer mainRenderer;
 
+    public GameObject Prefab;
+    [SerializeField]
+    public Mesh spriteMesh;
+    [SerializeField]
+    public Material spriteMaterial;
     
     private void Awake() {
         instance = this;
@@ -31,34 +35,60 @@ public class ECSController : MonoBehaviour {
     void Update(){
     }
 
-    private void Start() {
-        //entityManager = World.Active.EntityManager;
+    private void Start() { 
+
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        SpawnGoblin();
-        //unitSelectedCircleMesh = ECS_Animation.CreateMesh(8f, 5f);
+        //SpawnUnits(10);
+        SpawnHumans(2);
     }
 
-    private void SpawnGoblin(){
-        SpawnGoblin(new float3(UnityEngine.Random.Range(-70f, 70f), UnityEngine.Random.Range(-60f, 60f), 0f));
+    public void SpawnPrefabs(int _count){
+        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);        
+        var prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(Prefab, settings);
+
+        for (var x = 0; x < _count; x++)
+        {
+            var instance = entityManager.Instantiate(prefab);
+            var position = transform.TransformPoint(new float3(1.3F, 2F, -0.3F));
+            entityManager.SetComponentData(instance, new Translation {Value = position});        
+        }
     }
 
 
-    private void SpawnGoblin(float3 spawnPosition) {
+    private void SpawnHumans(int count) {
+        NativeArray<Entity> entities = new NativeArray<Entity>(count, Allocator.Temp);
         EntityArchetype entityArchetype = entityManager.CreateArchetype(
-            typeof(Goblin),
+            typeof(Human),
+            typeof(RenderMesh),
             typeof(Translation),
-            typeof(MovementComponent)
+            typeof(MovementComponent),
+            typeof(Scale),
+            typeof(LocalToWorld),
+            typeof(RenderBounds),
+            typeof(BoxCollider2D),
+            typeof(NonUniformScale)
         );
 
-        Entity entity = entityManager.CreateEntity(entityArchetype);
-        float3 hvaere = new float3(UnityEngine.Random.Range(-70f, 70f), UnityEngine.Random.Range(-60f, 60f), 0f);
-        entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
-        entityManager.SetComponentData(entity, new MovementComponent { speed = 3.0f, position = spawnPosition , destination = hvaere} );
-        //entityManager.SetComponentData(entity, new RendererComponent {  sprite =  mainSprite});
-            
+        entityManager.CreateEntity(entityArchetype, entities);
+
+        for (int i = 0; i < count; i++)
+        {            
+            Entity entity = entities[i];
+            float3 myPosition = new float3(UnityEngine.Random.Range(-2f, 2f), UnityEngine.Random.Range(-2f, 2f), -0.1f);
+            float3 myDestination = new float3(UnityEngine.Random.Range(-40f, 40f), UnityEngine.Random.Range(-40f, 40f), -0.1f);
+            entityManager.SetComponentData(entities[i], new Translation {Value = myPosition});
+            entityManager.SetComponentData(entities[i], new MovementComponent { isMoving = true, speed = 51.0f, destination = myDestination});
+            entityManager.SetSharedComponentData(entities[i], new RenderMesh { mesh = spriteMesh, material = spriteMaterial });
+            //entityManager.SetSharedComponentData(entities[i], new BoxCollider2D { size = new Vector2(0.16f,0.16f) });
+            entityManager.SetComponentData(entities[i], new NonUniformScale { Value = 0.32f });
+        }
+        entities.Dispose();
     }
 
-    public struct Goblin : IComponentData { } 
+    public struct Human : IComponentData { } 
 }
-
-
+ 
+public struct Collider : IComponentData
+{
+    public float Size;
+}

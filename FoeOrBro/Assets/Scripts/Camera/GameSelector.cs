@@ -19,13 +19,12 @@ public class GameSelector : MonoBehaviour
     public string currentlySelectedObject = "";
 
     [SerializeField]
-    private LayerMask layerMask;
-    bool dragSelect = false;
-
+    public LayerMask layerMask;
 
     [SerializeField]
-    private RectTransform selectSquareImage;
+    public RectTransform selectSquareImage;
 
+    bool dragSelect = false;
     Vector3 startPos;
     Vector3 endPos;
 
@@ -52,11 +51,9 @@ public class GameSelector : MonoBehaviour
             if((pointOne - pointNow).magnitude > 1)
             {
                 MakeSelectionBox();
-                Debug.Log("dragging");
                 dragSelect = true;
             }else{
                 dragSelect = false;
-                Debug.Log("Not dragging");
             }
 
         }
@@ -65,7 +62,6 @@ public class GameSelector : MonoBehaviour
             if(dragSelect == false){                
                 Select();
             }else{
-                Debug.Log("selecting area");
             }
         }
     }
