@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 8369920888912103587}
   - component: {fileID: 8369920888912103586}
   - component: {fileID: 8369920888912103591}
-  - component: {fileID: 4171396241504412952}
   m_Layer: 11
   m_Name: Unit
   m_TagString: Unit
@@ -173,15 +172,3 @@ MonoBehaviour:
   Intelligence: 10
   Wisdom: 10
   Charisma: 10
---- !u!114 &4171396241504412952
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8369920888912103592}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5bf10cdea1344482e91a4f2b58506b77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

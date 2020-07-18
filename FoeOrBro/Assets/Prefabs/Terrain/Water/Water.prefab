@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: -874446718577397304}
   - component: {fileID: -6836549587945384168}
   - component: {fileID: 2895129697567482151}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Water
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -185,7 +185,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.1, y: 0.1}
+  m_Size: {x: 0.32, y: 0.32}
   m_EdgeRadius: 0
 --- !u!66 &2895129697567482151
 CompositeCollider2D:
@@ -207,19 +207,19 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: -6836549587945384168}
     m_ColliderPaths:
-    - - X: 1649707
-        Y: -1650000
-      - X: 1649707
-        Y: 1650000
-      - X: -1650000
-        Y: 1649707
-      - X: -1649707
-        Y: -1650000
+    - - X: 5279707
+        Y: -5280000
+      - X: 5279707
+        Y: 5280000
+      - X: -5280000
+        Y: 5279707
+      - X: -5279707
+        Y: -5280000
   m_CompositePaths:
     m_Paths:
-    - - {x: 0.1649414, y: -0.165}
-      - {x: 0.1649414, y: 0.165}
-      - {x: -0.165, y: 0.1649414}
-      - {x: -0.1649414, y: -0.165}
+    - - {x: 0.5279414, y: -0.528}
+      - {x: 0.5279414, y: 0.528}
+      - {x: -0.528, y: 0.5279414}
+      - {x: -0.5279414, y: -0.528}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
