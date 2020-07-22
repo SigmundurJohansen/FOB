@@ -21,32 +21,17 @@ public class CameraController : MonoBehaviour
     }
     void Update()
     {
+        #region camera borders
         if ( Input.mousePosition.x >= Screen.width - mDelta )
-        {
-            // Move the camera
             transform.position += transform.right * Time.deltaTime * mSpeed;
-        }
- 
- 
         if ( Input.mousePosition.x <= 0 + mDelta )
-        {
-            // Move the camera
             transform.position -= transform.right * Time.deltaTime * mSpeed;
-        }
- 
- 
         if ( Input.mousePosition.y >= Screen.height - mDelta )
-        {
-            // Move the camera
             transform.position += transform.up * Time.deltaTime * mSpeed;
-        }
-        
         if ( Input.mousePosition.y <= 0 + mDelta )
-        {
-            // Move the camera
             transform.position -= transform.up * Time.deltaTime * mSpeed;
-        } 
-
+        #endregion
+        
         Vector3 pos = transform.position;
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         Camera.main.orthographicSize  -= scroll * scrollSpeed * 100f * Time.deltaTime;
