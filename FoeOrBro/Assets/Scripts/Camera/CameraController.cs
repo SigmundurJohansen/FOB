@@ -11,28 +11,50 @@ public class CameraController : MonoBehaviour
     public float scrollSpeed = 20f;
     public float minZ = -1f;
     public float maxZ = -10f;
-
     public GameObject player; 
-    private Vector3 offset;
+    public Camera whoAmI;
+    float mDelta = 10f; // Pixels. The width border at the edge in which the movement work
+    float mSpeed = 3.0f; // Scale. Speed of the movement
 
-
-     void Start () 
+    void Start () 
     {
-        //Calculate and store the offset value by getting the distance between the player's position and camera's position.
-        offset = transform.position - player.transform.position;
     }
     void Update()
     {
+        if ( Input.mousePosition.x >= Screen.width - mDelta )
+        {
+            // Move the camera
+            transform.position += transform.right * Time.deltaTime * mSpeed;
+        }
+ 
+ 
+        if ( Input.mousePosition.x <= 0 + mDelta )
+        {
+            // Move the camera
+            transform.position -= transform.right * Time.deltaTime * mSpeed;
+        }
+ 
+ 
+        if ( Input.mousePosition.y >= Screen.height - mDelta )
+        {
+            // Move the camera
+            transform.position += transform.up * Time.deltaTime * mSpeed;
+        }
         
+        if ( Input.mousePosition.y <= 0 + mDelta )
+        {
+            // Move the camera
+            transform.position -= transform.up * Time.deltaTime * mSpeed;
+        } 
+
         Vector3 pos = transform.position;
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         Camera.main.orthographicSize  -= scroll * scrollSpeed * 100f * Time.deltaTime;
-        pos.x = player.transform.position.x + offset.x;
-        pos.y = player.transform.position.y + offset.y;
+
         Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, minZ,  maxZ);
         transform.position = pos;
-
     }
+
     public void SetStaticCamera(){
         Vector3 pos = transform.position;
 
@@ -53,6 +75,29 @@ public class CameraController : MonoBehaviour
         pos.z = Mathf.Clamp(pos.z, - maxZ, - minZ);
 
         transform.position = pos;
+    }
 
+    public void SetCameraFollow(GameObject _target, Transform _pos){
+        //Calculate and store the offset value by getting the distance between the player's position and camera's position.
+        Vector3 offset = transform.position - player.transform.position;
+
+        Vector3 pos = _pos.position;
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        Camera.main.orthographicSize  -= scroll * scrollSpeed * 100f * Time.deltaTime;
+        pos.x = _target.transform.position.x + offset.x;
+        pos.y = _target.transform.position.y + offset.y;
+        Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, minZ,  maxZ);
+        transform.position = pos;
+    }
+
+    public void SetCameraPosition(Vector3 _pos){
+        Vector3 tempPos = WorldPosition();
+        transform.position = tempPos;
+    }
+
+    public Vector3 WorldPosition(){        
+        Vector3 mousePos = whoAmI.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
+        mousePos.z = transform.position.z;
+        return mousePos;
     }
 }
