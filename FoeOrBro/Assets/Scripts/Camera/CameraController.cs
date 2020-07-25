@@ -21,6 +21,7 @@ public class CameraController : MonoBehaviour
     }
     void Update()
     {
+        /*
         #region camera borders
         if ( Input.mousePosition.x >= Screen.width - mDelta )
             transform.position += transform.right * Time.deltaTime * mSpeed;
@@ -31,7 +32,7 @@ public class CameraController : MonoBehaviour
         if ( Input.mousePosition.y <= 0 + mDelta )
             transform.position -= transform.up * Time.deltaTime * mSpeed;
         #endregion
-        
+         */
         Vector3 pos = transform.position;
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         Camera.main.orthographicSize  -= scroll * scrollSpeed * 100f * Time.deltaTime;
