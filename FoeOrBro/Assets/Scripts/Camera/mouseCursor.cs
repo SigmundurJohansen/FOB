@@ -13,9 +13,9 @@ public class mouseCursor : MonoBehaviour {
         myRend = GetComponent<SpriteRenderer>();
     }
     void Update(){
-        float oi = myCamera.orthographicSize/2.5f;
+        float oi = myCamera.orthographicSize/6.5f;
         transform.localScale = new Vector3(oi,oi,0);
-        Vector3 cursorPos = myCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 20f));
+        Vector3 cursorPos = myCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 9f));
         transform.position = cursorPos;
 
         if(Input.GetMouseButtonDown(0)){

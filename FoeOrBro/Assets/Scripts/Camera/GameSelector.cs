@@ -5,6 +5,7 @@ using UnityEngine;
 using Unity.Entities;
 using Unity.Transforms;
 using Unity.Mathematics;
+using UnityEngine.UI;
 
 public class GameSelector : MonoBehaviour
 {
@@ -15,7 +16,8 @@ public class GameSelector : MonoBehaviour
     public GameObject selectedObject;
     public Transform selectionAreaTransform;
 
-
+    
+    public static GameSelector myGameSelector;
     public string currentlySelectedObject = "";
 
     [SerializeField]
@@ -24,9 +26,12 @@ public class GameSelector : MonoBehaviour
     [SerializeField]
     public RectTransform selectSquareImage;
 
-    bool dragSelect = false;
-    Vector3 startPos;
-    Vector3 endPos;
+    bool dragSelect = false;    
+    private bool Drag = false;
+    private Vector3 startPos;
+    private Vector3 endPos;
+    private Vector3 Origin;
+    private Vector3 Diference;
 
 
     Vector2 pointOne;
@@ -34,12 +39,12 @@ public class GameSelector : MonoBehaviour
 
     void Start(){        
         selectSquareImage.gameObject.SetActive(false);
+        myGameSelector = this;
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-
         if(Input.GetMouseButtonDown(0))
         {          
             pointOne = WorldPosition();
@@ -55,7 +60,6 @@ public class GameSelector : MonoBehaviour
             }else{
                 dragSelect = false;
             }
-
         }
         if(Input.GetMouseButtonUp(0)){
             selectSquareImage.gameObject.SetActive(false);
@@ -63,6 +67,20 @@ public class GameSelector : MonoBehaviour
                 Select();
             }else{
             }
+        }
+
+        if (Input.GetMouseButton (2)) 
+        {
+            Diference=(fpsCam.ScreenToWorldPoint (Input.mousePosition))- fpsCam.transform.position;
+            if (Drag==false){
+                Drag=true;
+            Origin=fpsCam.ScreenToWorldPoint (Input.mousePosition);
+            }
+        } else {
+            Drag=false;
+        }
+        if (Drag==true){
+            fpsCam.transform.position = Origin-Diference;
         }
     }
 
@@ -81,7 +99,6 @@ public class GameSelector : MonoBehaviour
                 float sizeY = Mathf.Abs(startPos.y - endPos.y);
 
                 selectSquareImage.sizeDelta = new Vector2(sizeX,sizeY);
-
     }
 
     void Deselect(){
@@ -118,8 +135,7 @@ public class GameSelector : MonoBehaviour
     }
     
 
-    public Vector3 WorldPosition(){
-        
+    public Vector3 WorldPosition(){        
         Vector3 mousePos = fpsCam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 20f));
         return mousePos;
     }
