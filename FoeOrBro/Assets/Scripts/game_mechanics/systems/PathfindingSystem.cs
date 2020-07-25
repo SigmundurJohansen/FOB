@@ -83,15 +83,11 @@ public class PathfindingSystem : ComponentSystem {
 	
 
     [BurstCompile]
-    private struct SetBufferPathJob : IJob {
-        
+    private struct SetBufferPathJob : IJob {        
         public int2 gridSize;
-
         [DeallocateOnJobCompletion]
         public NativeArray<PathNode> pathNodeArray;
-
         public Entity entity;
-
         public ComponentDataFromEntity<DestinationComponent> destinationComponentDataFromEntity;
         public ComponentDataFromEntity<PathFollow> pathFollowComponentDataFromEntity;
         public BufferFromEntity<PathPosition> pathPositionBufferFromEntity;
@@ -99,18 +95,15 @@ public class PathfindingSystem : ComponentSystem {
         public void Execute() {
             DynamicBuffer<PathPosition> pathPositionBuffer = pathPositionBufferFromEntity[entity];
             pathPositionBuffer.Clear();
-
             DestinationComponent destination = destinationComponentDataFromEntity[entity];
             int endNodeIndex = CalculateIndex(destination.endPosition.x, destination.endPosition.y, gridSize.x);
             PathNode endNode = pathNodeArray[endNodeIndex];
             if (endNode.cameFromNodeIndex == -1) {
-                // Didn't find a path!
-                Debug.Log("Didn't find a path!");
+                //Debug.Log("Didn't find a path!");
                 pathFollowComponentDataFromEntity[entity] = new PathFollow { pathIndex = -1 };
             } else {
                 // Found a path
-                CalculatePath(pathNodeArray, endNode, pathPositionBuffer);
-                
+                CalculatePath(pathNodeArray, endNode, pathPositionBuffer);                
                 pathFollowComponentDataFromEntity[entity] = new PathFollow { pathIndex = pathPositionBuffer.Length - 1 };
             }
 
@@ -120,15 +113,11 @@ public class PathfindingSystem : ComponentSystem {
 
     [BurstCompile]
     private struct FindPathJob : IJob {
-
         public int2 gridSize;
         public NativeArray<PathNode> pathNodeArray;
-
         public int2 startPosition;
         public int2 endPosition;
-
-        public Entity entity;
-        
+        public Entity entity;        
         //public BufferFromEntity<PathPosition> pathPositionBuffer;
 
         public void Execute() {
@@ -136,7 +125,6 @@ public class PathfindingSystem : ComponentSystem {
                 PathNode pathNode = pathNodeArray[i];
                 pathNode.hCost = CalculateDistanceCost(new int2(pathNode.x, pathNode.y), endPosition);
                 pathNode.cameFromNodeIndex = -1;
-
                 pathNodeArray[i] = pathNode;
             }
             NativeArray<int2> neighbourOffsetArray = new NativeArray<int2>(8, Allocator.Temp);
@@ -232,7 +220,6 @@ public class PathfindingSystem : ComponentSystem {
         } else {
             // Found a path
             pathPositionBuffer.Add(new PathPosition { position = new int2(endNode.x, endNode.y) });
-
             PathNode currentNode = endNode;
             while (currentNode.cameFromNodeIndex != -1) {
                 PathNode cameFromNode = pathNodeArray[currentNode.cameFromNodeIndex];
@@ -296,21 +283,15 @@ public class PathfindingSystem : ComponentSystem {
     private struct PathNode {
         public int x;
         public int y;
-
         public int index;
-
         public int gCost;
         public int hCost;
         public int fCost;
-
         public bool isWalkable;
-
         public int cameFromNodeIndex;
-
         public void CalculateFCost() {
             fCost = gCost + hCost;
         }
-
         public void SetIsWalkable(bool isWalkable) {
             this.isWalkable = isWalkable;
         }
@@ -318,7 +299,5 @@ public class PathfindingSystem : ComponentSystem {
 }
 
 public struct PathFollow : IComponentData {
-
     public int pathIndex;
-
 }

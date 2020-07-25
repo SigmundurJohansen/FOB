@@ -13,8 +13,8 @@ public class CameraController : MonoBehaviour
     public float maxZ = -10f;
     public GameObject player; 
     public Camera whoAmI;
-    float mDelta = 10f; // Pixels. The width border at the edge in which the movement work
-    float mSpeed = 3.0f; // Scale. Speed of the movement
+    //float mDelta = 10f; // Pixels. The width border at the edge in which the movement work
+    //float mSpeed = 3.0f; // Scale. Speed of the movement
 
     void Start () 
     {

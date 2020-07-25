@@ -20,7 +20,6 @@ public class ClickEvent : MonoBehaviour
     {
         _MouseSingleClickTimer.Stop();
  
-        Debug.Log("Single Click");
         //Do your stuff for single click here....
     }
  
@@ -42,7 +41,6 @@ public class ClickEvent : MonoBehaviour
                 //Do your stuff here for double click...
                 
                 myCameraController.SetCameraPosition(Input.mousePosition);
-                Debug.Log("Double Click");
             }
         }
     }

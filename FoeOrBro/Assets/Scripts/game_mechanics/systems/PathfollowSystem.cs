@@ -21,7 +21,7 @@ public class PathFollowSystem : JobComponentSystem {
                 // Has path to follow
                 PathPosition pathPosition = pathPositionBuffer[pathFollow.pathIndex];
 
-                float3 targetPosition = new float3(pathPosition.position.x, pathPosition.position.y, 0);
+                float3 targetPosition = new float3(pathPosition.position.x+.5f, pathPosition.position.y+.5f, 0);
                 float3 moveDir = math.normalizesafe(targetPosition - translation.Value);
                 float moveSpeed = 3f;
 
@@ -68,7 +68,7 @@ public class PathFollowGetNewPathSystem : JobComponentSystem {
         JobHandle jobHandle = Entities.WithNone<DestinationComponent>().ForEach((Entity entity, int entityInQueryIndex, in PathFollow pathFollow, in Translation translation) => { 
             if (pathFollow.pathIndex == -1) {
                 
-                GetXY(translation.Value + new float3(1, 1, 0) * cellSize * +.5f, originPosition, cellSize, out int startX, out int startY);
+                GetXY(translation.Value + new float3(1, 1, 0) * cellSize, cellSize, out int startX, out int startY);
 
                 ValidateGridPosition(ref startX, ref startY, mapWidth, mapHeight);
 
@@ -91,9 +91,9 @@ public class PathFollowGetNewPathSystem : JobComponentSystem {
         y = math.clamp(y, 0, height - 1);
     }
 
-    private static void GetXY(float3 worldPosition, float3 originPosition, float cellSize, out int x, out int y) {
-        x = (int)math.floor((worldPosition - originPosition).x / cellSize);
-        y = (int)math.floor((worldPosition - originPosition).y / cellSize);
+    private static void GetXY(float3 worldPosition, float cellSize, out int x, out int y) {
+        x = (int)math.floor(worldPosition.x / cellSize);
+        y = (int)math.floor(worldPosition.y / cellSize);
     }
 
 }

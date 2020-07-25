@@ -17,7 +17,7 @@ public class MovementSystem : JobComponentSystem
     {
         m_EntityCommandBufferSystem = World.GetOrCreateSystem<EntityCommandBufferSystem>();
     }
-
+// IJobForEachWithEntity
     [BurstCompile]
     struct MovementSystemJob : IJobForEachWithEntity<Translation, MovementComponent>
     {

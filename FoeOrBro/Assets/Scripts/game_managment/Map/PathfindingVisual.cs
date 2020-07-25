@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PathfindingVisual : MonoBehaviour {
 
@@ -33,7 +34,6 @@ public class PathfindingVisual : MonoBehaviour {
 
     private void UpdateVisual() {
         MeshUtils.CreateEmptyMeshArrays(grid.GetWidth() * grid.GetHeight(), out Vector3[] vertices, out Vector2[] uv, out int[] triangles);
-
         for (int x = 0; x < grid.GetWidth(); x++) {
             for (int y = 0; y < grid.GetHeight(); y++) {
                 int index = x * grid.GetHeight() + y;
@@ -42,16 +42,15 @@ public class PathfindingVisual : MonoBehaviour {
                 GridNode gridNode = grid.GetGridObject(x, y);
                 
                 Vector2 uv00 = new Vector2(0, 0);
-                Vector2 uv11 = new Vector2(.5f, .5f);
-                //Vector2 uv11 = new Vector2(5f, 5f);
+                //Vector2 uv11 = new Vector2(grid.GetCellSize(), grid.GetCellSize());
+                Vector2 uv11 = new Vector2(1f, 1f);
 
                 if (!gridNode.IsWalkable()) {
-                    //quadSize = Vector3.zero;
-                    uv00 = new Vector2(.5f, .5f);
-                    uv11 = new Vector2(1f, 1f);
+                    uv00 = new Vector2(1f, 1f);
+                    uv11 = new Vector2(0f, 0f);
                 }
 
-                MeshUtils.AddToMeshArrays(vertices, uv, triangles, index, grid.GetWorldPosition(x, y) + quadSize * .5f, 0f, quadSize, uv00, uv11);
+                MeshUtils.AddToMeshArrays(vertices, uv, triangles, index, new Vector3(x, y), 0f, quadSize, uv00, uv11);
             }
         }
 
