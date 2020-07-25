@@ -16,16 +16,15 @@ public class PathFollowSystem : JobComponentSystem {
     protected override JobHandle OnUpdate(JobHandle inputDeps) {
         float deltaTime = Time.DeltaTime;
 
-        return Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> pathPositionBuffer, ref Translation translation, ref PathFollow pathFollow) => {
+        return Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> pathPositionBuffer, ref Translation translation, ref PathFollow pathFollow, ref MovementComponent _move) => {
             if (pathFollow.pathIndex >= 0) {
                 // Has path to follow
                 PathPosition pathPosition = pathPositionBuffer[pathFollow.pathIndex];
 
                 float3 targetPosition = new float3(pathPosition.position.x+.5f, pathPosition.position.y+.5f, 0);
                 float3 moveDir = math.normalizesafe(targetPosition - translation.Value);
-                float moveSpeed = 3f;
 
-                translation.Value += moveDir * moveSpeed * deltaTime;
+                translation.Value += moveDir * _move.speed * deltaTime;
                 
                 if (math.distance(translation.Value, targetPosition) < .1f) {
                     // Next waypoint

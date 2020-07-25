@@ -8,7 +8,7 @@ using Unity.Mathematics;
 using Unity.Collections;
 using System.Threading;
 using Unity.Burst;
-
+/*
 public class MovementSystem : JobComponentSystem
 {
     EntityCommandBufferSystem m_EntityCommandBufferSystem;
@@ -49,7 +49,7 @@ public class MovementSystem : JobComponentSystem
                         CommandBuffer.AddComponent(entity, new DestinationComponent());
                         _movement.isMoving = true;
                     }
-                    */
+                    *//*
                 }
             }
        }
@@ -67,3 +67,4 @@ protected override JobHandle OnUpdate(JobHandle inputDependencies)
    }
 }
 
+ */

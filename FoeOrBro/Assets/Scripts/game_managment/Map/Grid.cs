@@ -107,7 +107,7 @@ public class Grid<TGridObject> {
     public TGridObject GetGridObject(Vector3 worldPosition) {
         int x, y;
         GetXY(worldPosition, out x, out y);
-        Debug.Log("after GetXY(Vector3)" + x +"," +y);
+        //Debug.Log("after GetXY(Vector3)" + x +"," +y);
         return GetGridObject(x, y);
     }
     

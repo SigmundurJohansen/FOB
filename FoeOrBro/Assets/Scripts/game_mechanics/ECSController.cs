@@ -38,8 +38,8 @@ public class ECSController : MonoBehaviour {
     private void Start() { 
 
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        //SpawnPlayer();
-        SpawnHumans(10);
+        SpawnPlayer();
+        SpawnHumans(100);
     }
 
     public void SpawnPrefabs(int _count){
@@ -67,6 +67,7 @@ public class ECSController : MonoBehaviour {
             typeof(PlayerInputComponent),
             typeof(PathPosition),
             typeof(PathFollow),
+            typeof(DestinationComponent),
             typeof(NonUniformScale)
         );
         entityManager.CreateEntity(entityArchetype, entities);
@@ -75,11 +76,9 @@ public class ECSController : MonoBehaviour {
         float3 myPosition = new float3(0, 0, -0.1f);
         float3 myDestination = new float3(0, 0, -0.1f);
         entityManager.SetComponentData(entities[0], new Translation {Value = myPosition});
-        entityManager.SetComponentData(entities[0], new MovementComponent { isMoving = false, speed = 51.0f});
+        entityManager.SetComponentData(entities[0], new MovementComponent { isMoving = false, speed = 1.2f});
         entityManager.SetSharedComponentData(entities[0], new RenderMesh { mesh = spriteMesh, material = spriteMaterial });
-        entityManager.SetComponentData(entities[0], new PlayerInputComponent { speed = 10, myDeltaTime = Time.deltaTime });
-        
-        //entityManager.SetSharedComponentData(entities[i], new Collider { size = new Vector2(0.16f,0.16f) });
+        entityManager.SetComponentData(entities[0], new PlayerInputComponent { speed = 1, myDeltaTime = Time.deltaTime });
         entityManager.SetComponentData(entities[0], new NonUniformScale { Value = 0.32f });
         
         entities.Dispose();
@@ -112,7 +111,7 @@ public class ECSController : MonoBehaviour {
             float3 myDestination = new float3(UnityEngine.Random.Range(0f, 20f), UnityEngine.Random.Range(0f, 20f), -0.1f);
             entityManager.SetComponentData(entities[i], new Translation {Value = myPosition});
             entityManager.SetComponentData(entities[i], new DestinationComponent {startPosition = new int2(8,8), endPosition = new int2(4,4)});
-            entityManager.SetComponentData(entities[i], new MovementComponent { isMoving = true, speed = 1.0f, direction = myDestination});
+            entityManager.SetComponentData(entities[i], new MovementComponent { isMoving = true, speed = 1.0f});
             entityManager.SetSharedComponentData(entities[i], new RenderMesh { mesh = spriteMesh, material = spriteMaterial });
             entityManager.SetComponentData(entities[0], new PathFollow { pathIndex = 1});
             //entityManager.SetSharedComponentData(entities[i], new Collider { size = new Vector2(0.16f,0.16f) });

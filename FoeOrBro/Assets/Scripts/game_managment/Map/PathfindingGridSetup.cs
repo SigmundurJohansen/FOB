@@ -40,7 +40,7 @@ public class PathfindingGridSetup : MonoBehaviour {
 
     public Vector3 WorldPosition(){        
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
-        Debug.Log("WorldPosition: " + mousePos);
+        //Debug.Log("WorldPosition: " + mousePos);
         //mousePos.z = transform.position.z;
         return mousePos;
     }
