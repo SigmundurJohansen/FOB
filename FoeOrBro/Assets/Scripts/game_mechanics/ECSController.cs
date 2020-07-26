@@ -1,4 +1,3 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +10,6 @@ using Unity.Jobs;
 using Unity.Burst;
 using System.Threading;
 using UnityEngine.Rendering;
-
 
 public class ECSController : MonoBehaviour {
 
@@ -41,7 +39,7 @@ public class ECSController : MonoBehaviour {
         SpawnPlayer();
         SpawnHumans(100);
     }
-
+    /*
     public void SpawnPrefabs(int _count){
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);        
         var prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(Prefab, settings);
@@ -53,6 +51,7 @@ public class ECSController : MonoBehaviour {
             entityManager.SetComponentData(instance, new Translation {Value = position});        
         }
     }
+    */
     private void SpawnPlayer(){
         NativeArray<Entity> entities = new NativeArray<Entity>(1, Allocator.Temp);
         EntityArchetype entityArchetype = entityManager.CreateArchetype(
@@ -84,7 +83,6 @@ public class ECSController : MonoBehaviour {
         entities.Dispose();
     }
 
-
     private void SpawnHumans(int count) {
         NativeArray<Entity> entities = new NativeArray<Entity>(count, Allocator.Temp);
         EntityArchetype entityArchetype = entityManager.CreateArchetype(
@@ -101,9 +99,7 @@ public class ECSController : MonoBehaviour {
             typeof(PathFollow),
             typeof(NonUniformScale)
         );
-
         entityManager.CreateEntity(entityArchetype, entities);
-
         for (int i = 0; i < count; i++)
         {            
             Entity entity = entities[i];
