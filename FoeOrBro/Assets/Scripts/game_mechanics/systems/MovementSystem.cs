@@ -8,27 +8,34 @@ using Unity.Mathematics;
 using Unity.Collections;
 using System.Threading;
 using Unity.Burst;
-/*
+
 public class MovementSystem : JobComponentSystem
 {
-    EntityCommandBufferSystem m_EntityCommandBufferSystem;
-
-    protected override void OnCreate()
-    {
-        m_EntityCommandBufferSystem = World.GetOrCreateSystem<EntityCommandBufferSystem>();
-    }
-// IJobForEachWithEntity
+    // IJobForEachWithEntity
     [BurstCompile]
-    struct MovementSystemJob : IJobForEachWithEntity<Translation, MovementComponent>
+    struct MovementSystemJob : IJobForEachWithEntity<RigidBody, MovementComponent>
     {
-        [ReadOnly] public EntityCommandBuffer CommandBuffer;
-        [ReadOnly] public ComponentDataFromEntity<DestinationComponent> Destination;
         public float DeltaTime;
-
        
-       public void Execute(Entity entity, int index, ref Translation _translation, ref MovementComponent _movement)
-       {
-           float3 dontMove = new float3(0,0,0);
+        public void Execute(Entity entity, int index, ref RigidBody _rigidbody , ref MovementComponent _movement)
+        {
+            _rigidbody.velocity = _movement.speed * DeltaTime;            
+        }
+   }
+
+    protected override JobHandle OnUpdate(JobHandle inputDependencies)
+    {
+        var job = new MovementSystemJob()
+        {
+            DeltaTime = UnityEngine.Time.deltaTime
+        };
+        return job.Schedule(this, inputDependencies);
+    }   
+}
+
+ /*
+ 
+ float3 dontMove = new float3(0,0,0);
 
             if(Destination.Exists(entity)){
                 if(_movement.isMoving){
@@ -42,29 +49,13 @@ public class MovementSystem : JobComponentSystem
                     var distance = heading.x * heading.x + heading.y * heading.y;
                     var direction = heading / distance;
                     _translation.Value += direction * _movement.speed * DeltaTime; 
-                }else{
-                    /*                   
+                }else{                
                     if(Mathf.Abs(_destination.destination.x - _translation.Value.x) > 2 || Mathf.Abs(_destination.destination.y - _translation.Value.y) > 2)
                     {
                         CommandBuffer.AddComponent(entity, new DestinationComponent());
                         _movement.isMoving = true;
                     }
-                    *//*
                 }
             }
-       }
-   }
-
-protected override JobHandle OnUpdate(JobHandle inputDependencies)
-   {
-       var job = new MovementSystemJob()
-       {
-            CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
-            Destination = GetComponentDataFromEntity<DestinationComponent>(),
-            DeltaTime = UnityEngine.Time.deltaTime
-       };
-       return job.Schedule(this, inputDependencies);
-   }
-}
-
- */
+ 
+  */

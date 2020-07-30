@@ -42,15 +42,14 @@ public class PathfindingVisual : MonoBehaviour {
                 GridNode gridNode = grid.GetGridObject(x, y);
                 
                 Vector2 uv00 = new Vector2(0, 0);
-                //Vector2 uv11 = new Vector2(grid.GetCellSize(), grid.GetCellSize());
-                Vector2 uv11 = new Vector2(1f, 1f);
+                Vector2 uv11 = new Vector2(grid.GetCellSize(), grid.GetCellSize());
+                //Vector2 uv11 = new Vector2(1f, 1f);
 
                 if (!gridNode.IsWalkable()) {
                     uv00 = new Vector2(1f, 1f);
                     uv11 = new Vector2(0f, 0f);
                 }
-
-                MeshUtils.AddToMeshArrays(vertices, uv, triangles, index, new Vector3(x, y), 0f, quadSize, uv00, uv11);
+                MeshUtils.AddToMeshArrays(vertices, uv, triangles, index, new Vector3(x, y) * grid.GetCellSize(), 0f, quadSize, uv00, uv11);
             }
         }
 

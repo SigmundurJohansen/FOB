@@ -3,7 +3,14 @@ guid: 29518be49e2ae14498767e4fe8825891
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - selectionAreaTransform: {instanceID: 0}
+  - unitSelectedCircleMaterial: {instanceID: 0}
+  - unitSelectedCircleMesh: {instanceID: 0}
+  - mainSprite: {instanceID: 0}
+  - Prefab: {instanceID: 0}
+  - spriteMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  - spriteMaterial: {fileID: 2100000, guid: b2ceb421de9781541a98fa6087d239fd, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
