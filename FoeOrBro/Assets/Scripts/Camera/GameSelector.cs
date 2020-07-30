@@ -51,9 +51,9 @@ public class GameSelector : MonoBehaviour
             startPos = Input.mousePosition;
         }    
         if(Input.GetMouseButton(0)){
-            Vector2 pointNow = WorldPosition();    
+            pointTwo = WorldPosition(); 
             endPos = Input.mousePosition; 
-            if((pointOne - pointNow).magnitude > 1)
+            if((pointOne - pointTwo).magnitude > 0.2f)
             {
                 MakeSelectionBox();
                 dragSelect = true;
@@ -89,16 +89,14 @@ public class GameSelector : MonoBehaviour
                 {
                     selectSquareImage.gameObject.SetActive(true);
                 }
-                //startPos = new Vector3(pointOne.x ,pointOne.y, 0);
-                //endPos = new Vector3(pointNow.x ,pointNow.y, 0);
                 Vector3 centre = (startPos + endPos) / 2f;
                 selectSquareImage.position = centre;
 
                 //Change the size of the square
                 float sizeX = Mathf.Abs(startPos.x - endPos.x);
                 float sizeY = Mathf.Abs(startPos.y - endPos.y);
-
                 selectSquareImage.sizeDelta = new Vector2(sizeX,sizeY);
+                
     }
 
     void Deselect(){

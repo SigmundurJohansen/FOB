@@ -6,6 +6,5 @@ using Unity.Mathematics;
 public struct PlayerInputComponent : IComponentData
 {
     public int speed;
-    public float myDeltaTime;
 }
 

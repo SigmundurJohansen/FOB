@@ -67,6 +67,7 @@ public class ECSController : MonoBehaviour {
             typeof(PlayerInputComponent),
             typeof(PathPosition),
             typeof(PathFollow),
+            typeof(Selected),
             typeof(DestinationComponent),
             typeof(NonUniformScale)
         );
@@ -78,8 +79,9 @@ public class ECSController : MonoBehaviour {
         entityManager.SetComponentData(entities[0], new Translation {Value = myPosition});
         entityManager.SetComponentData(entities[0], new MovementComponent { isMoving = false, speed = 1.2f});
         entityManager.SetSharedComponentData(entities[0], new RenderMesh { mesh = spriteMesh, material = spriteMaterial });
-        entityManager.SetComponentData(entities[0], new PlayerInputComponent { speed = 1, myDeltaTime = Time.deltaTime });
+        entityManager.SetComponentData(entities[0], new PlayerInputComponent { speed = 1});
         entityManager.SetComponentData(entities[0], new NonUniformScale { Value = 0.32f });
+        entityManager.SetComponentData(entities[0], new Selected {isSelected = true});
         
         entities.Dispose();
     }
@@ -97,6 +99,7 @@ public class ECSController : MonoBehaviour {
             typeof(RenderBounds),
             typeof(DestinationComponent),
             typeof(Collider),
+            typeof(Selected),
             typeof(PathPosition),
             typeof(PathFollow),
             typeof(NonUniformScale)
@@ -113,18 +116,14 @@ public class ECSController : MonoBehaviour {
             entityManager.SetComponentData(entities[i], new DestinationComponent {startPosition = new int2(8,8), endPosition = new int2(4,4)});
             entityManager.SetComponentData(entities[i], new MovementComponent { isMoving = true, speed = 1.0f});
             entityManager.SetSharedComponentData(entities[i], new RenderMesh { mesh = spriteMesh, material = spriteMaterial });
-            entityManager.SetComponentData(entities[0], new PathFollow { pathIndex = 1});
-            //entityManager.SetSharedComponentData(entities[i], new Collider { size = new Vector2(0.16f,0.16f) });
+            entityManager.SetComponentData(entities[i], new PathFollow { pathIndex = 1});
+            entityManager.SetComponentData(entities[i], new Collider { size = 0.16f });
             entityManager.SetComponentData(entities[i], new NonUniformScale { Value = 0.32f });
+            entityManager.SetComponentData(entities[i], new Selected {isSelected = false});
         }
         entities.Dispose();
     }
 
     public struct Human : IComponentData { } 
     public struct Player : IComponentData { } 
-}
- 
-public struct Collider : IComponentData
-{
-    public float Size;
 }

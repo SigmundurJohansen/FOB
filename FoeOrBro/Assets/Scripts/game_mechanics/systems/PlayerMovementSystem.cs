@@ -15,11 +15,13 @@ public class PlayerMovementSystem : ComponentSystem
 
     protected override void OnUpdate()
     {
+        /*
         Entities.ForEach((ref Translation _translation, ref PlayerInputComponent _player) => {
             var vert = Input.GetAxis("Horizontal") * _player.speed * _player.myDeltaTime;
             var horz = Input.GetAxis("Vertical") * _player.speed * _player.myDeltaTime;
             _translation.Value += new float3(vert, horz, 0);
         });
+         */
     }
 }
 
