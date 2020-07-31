@@ -43,8 +43,26 @@ ExportedObj/
 *.opendb
 *.VC.db
 
-
-FoeOrBro/Assets/Art/
+# Texture assets
+FoeOrBro/Assets/Art/2parter/
+FoeOrBro/Assets/Art/Animations/
+FoeOrBro/Assets/Art/Doors/
+FoeOrBro/Assets/Art/Equipment/
+FoeOrBro/Assets/Art/Ground Texture/
+FoeOrBro/Assets/Art/GUI/
+FoeOrBro/Assets/Art/Inside Ground/
+FoeOrBro/Assets/Art/Interior/
+FoeOrBro/Assets/Art/Inventory/
+FoeOrBro/Assets/Art/Maps/
+FoeOrBro/Assets/Art/material/
+FoeOrBro/Assets/Art/Mini/
+FoeOrBro/Assets/Art/Monster/
+FoeOrBro/Assets/Art/Other Ground/
+FoeOrBro/Assets/Art/Outside Ground/
+FoeOrBro/Assets/Art/Potions/
+FoeOrBro/Assets/Art/Random/
+FoeOrBro/Assets/Art/Spell Effects/
+FoeOrBro/Assets/Art/Statues/
 # Unity3D generated meta files
 *.pidb.meta
 *.pdb.meta
