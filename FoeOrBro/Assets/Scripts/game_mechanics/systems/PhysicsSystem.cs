@@ -10,6 +10,8 @@ using UnityEngine;
 
 class PhysicsSystem : JobComponentSystem
 {
+    #pragma warning disable 0618
+    #pragma warning disable 0219
     BeginInitializationEntityCommandBufferSystem m_EntityCommandBufferSystem;
     private EntityQuery moving_group;
     private EntityQuery collider_group;

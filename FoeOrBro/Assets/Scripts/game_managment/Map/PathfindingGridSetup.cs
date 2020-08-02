@@ -19,7 +19,7 @@ public class PathfindingGridSetup : MonoBehaviour {
     }
 
     private void Start() {
-        pathfindingGrid = new Grid<GridNode>(50, 50, 1f, originVector, (Grid<GridNode> grid, int x, int y) => new GridNode(grid, x, y));
+        pathfindingGrid = new Grid<GridNode>(32, 32, 1f, originVector, (Grid<GridNode> grid, int x, int y) => new GridNode(grid, x, y));
 
         //pathfindingGrid.GetGridObject(2, 0).SetIsWalkable(false);
 

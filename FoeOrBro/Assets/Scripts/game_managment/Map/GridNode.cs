@@ -7,9 +7,11 @@ public class GridNode {
     private Grid<GridNode> grid;
     private int x;
     private int y;
+    private Mesh mesh;
+    private Texture2D texture;
 
     private bool isWalkable;
-
+    
     public GridNode(Grid<GridNode> grid, int x, int y) {
         this.grid = grid;
         this.x = x;
@@ -26,4 +28,20 @@ public class GridNode {
         grid.TriggerGridObjectChanged(x, y);
     }
 
+    public void SetNodeMesh(Mesh _mesh)
+    {
+        mesh = _mesh;
+    }
+    public Mesh GetNodeMesh()
+    {
+        return mesh;
+    }
+    public void SetNodeTexture(Texture2D _texture)
+    {
+        texture = _texture;
+    }
+    public Texture2D GetNodeTexture()
+    {
+        return texture;
+    }
 }

@@ -27,6 +27,8 @@ public class ECSController : MonoBehaviour {
     public Mesh spriteMesh;
     [SerializeField]
     public Material spriteMaterial;
+    [SerializeField]
+    public Material terrainMaterial;
     
     private void Awake() {
         instance = this;
@@ -38,8 +40,53 @@ public class ECSController : MonoBehaviour {
     private void Start() { 
 
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        SpawnGridMesh();
         SpawnPlayer();
         SpawnHumans(100);
+    }
+
+    public void SpawnGridMesh()
+    {
+        int width = PathfindingGridSetup.Instance.pathfindingGrid.GetWidth();
+        int height = PathfindingGridSetup.Instance.pathfindingGrid.GetHeight();
+        int count =  width* height;
+        NativeArray<Entity> entities = new NativeArray<Entity>(count, Allocator.Temp);
+        EntityArchetype entityArchetype = entityManager.CreateArchetype(
+            typeof(NodeComponent),
+            typeof(RenderMesh),
+            typeof(Translation),
+            typeof(Scale),
+            typeof(LocalToWorld),
+            typeof(RenderBounds),
+            typeof(Collider),
+            typeof(NonUniformScale)
+        );
+
+        entityManager.CreateEntity(entityArchetype, entities);
+
+        float offset = 3.2f;
+        int entityCounter = 0;
+        float cellSize = 0.32f;
+        for (int y = 0; y < width; y++)
+        {
+            for(int x = 0; x < height; x++)
+            {
+                GridNode gridNode = (GridNode)PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(x, y);
+                Entity entity = entities[entityCounter];
+                float3 myPosition = new float3(x*cellSize,y*cellSize, 0.5f);
+                entityManager.SetComponentData(entities[entityCounter], new Translation {Value = myPosition});
+                entityManager.SetSharedComponentData(entities[entityCounter], new RenderMesh { mesh = gridNode.GetNodeMesh(), material = terrainMaterial });
+                if(!gridNode.IsWalkable()){
+                    entityManager.SetComponentData(entities[entityCounter], new Collider { size = 0.32f });
+                    entityManager.SetComponentData(entities[entityCounter], new NodeComponent { nodePosition = new int2(x,y), isWalkable = false});
+                }else{                    
+                    entityManager.SetComponentData(entities[entityCounter], new NodeComponent { nodePosition = new int2(x,y), isWalkable = true});
+                }
+                entityManager.SetComponentData(entities[entityCounter], new NonUniformScale { Value = 0.32f });
+                entityCounter++;
+            }
+        }
+        entities.Dispose();
     }
 
     public void SpawnPrefabs(int _count){

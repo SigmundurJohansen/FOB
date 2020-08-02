@@ -1355,7 +1355,6 @@ GameObject:
   - component: {fileID: 1517338341}
   - component: {fileID: 1517338340}
   - component: {fileID: 1517338339}
-  - component: {fileID: 1517338342}
   m_Layer: 0
   m_Name: PathfindingVisual
   m_TagString: Untagged
@@ -1383,6 +1382,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6adac36dab14e048ad0ba3b843c1e65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scale: 0
 --- !u!4 &1517338341
 Transform:
   m_ObjectHideFlags: 0
@@ -1397,45 +1397,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &1517338342
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1517338338}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 0
-  m_MotionVectors: 2
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_RayTracingMode: 2
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: b47c714ff076af846b67179d2b644cb7, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
 --- !u!1 &1535432319
 GameObject:
   m_ObjectHideFlags: 0
@@ -1824,8 +1785,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.01
-  far clip plane: 100
+  near clip plane: 0.00001
+  far clip plane: 10000
   field of view: 26.991467
   orthographic: 1
   orthographic size: 5.000001
@@ -1873,9 +1834,9 @@ MonoBehaviour:
   panSpeed: 20
   panBorderThickness: 10
   panLimit: {x: 3, y: 3}
-  scrollSpeed: 5
+  scrollSpeed: 2
   minZ: 1
-  maxZ: 5
+  maxZ: 7
   player: {fileID: 0}
   whoAmI: {fileID: 1698830188}
 --- !u!114 &1698830191
@@ -2021,6 +1982,7 @@ MonoBehaviour:
   Prefab: {fileID: 0}
   spriteMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   spriteMaterial: {fileID: 2100000, guid: b2ceb421de9781541a98fa6087d239fd, type: 2}
+  terrainMaterial: {fileID: 2100000, guid: b47c714ff076af846b67179d2b644cb7, type: 2}
 --- !u!212 &1815219169
 SpriteRenderer:
   m_ObjectHideFlags: 0
