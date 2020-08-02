@@ -9,6 +9,7 @@ public class GridNode {
     private int y;
     private Mesh mesh;
     private Texture2D texture;
+    private Material material;
 
     private bool isWalkable;
     
@@ -39,9 +40,23 @@ public class GridNode {
     public void SetNodeTexture(Texture2D _texture)
     {
         texture = _texture;
+        if(material!=null){
+            string name = "x " + this.x.ToString() + " , y " + this.y.ToString();
+            material.SetTexture(name, _texture);
+        }
     }
     public Texture2D GetNodeTexture()
     {
         return texture;
+    }
+    public Material GetNodeMaterial()
+    {
+        if(material!=null){
+            return material;
+        }
+        string name = "x " + this.x.ToString() + " , y " + this.y.ToString();
+        material = new Material(Shader.Find("Unlit/Texture"));
+        material.SetTexture(name, texture);
+        return material;
     }
 }

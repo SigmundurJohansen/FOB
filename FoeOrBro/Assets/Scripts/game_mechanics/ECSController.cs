@@ -73,9 +73,9 @@ public class ECSController : MonoBehaviour {
             {
                 GridNode gridNode = (GridNode)PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(x, y);
                 Entity entity = entities[entityCounter];
-                float3 myPosition = new float3(x*cellSize,y*cellSize, 0.5f);
+                float3 myPosition = new float3(x*cellSize,y*cellSize, 10.5f);
                 entityManager.SetComponentData(entities[entityCounter], new Translation {Value = myPosition});
-                entityManager.SetSharedComponentData(entities[entityCounter], new RenderMesh { mesh = gridNode.GetNodeMesh(), material = terrainMaterial });
+                entityManager.SetSharedComponentData(entities[entityCounter], new RenderMesh { mesh = gridNode.GetNodeMesh(), material = gridNode.GetNodeMaterial() });
                 if(!gridNode.IsWalkable()){
                     entityManager.SetComponentData(entities[entityCounter], new Collider { size = 0.32f });
                     entityManager.SetComponentData(entities[entityCounter], new NodeComponent { nodePosition = new int2(x,y), isWalkable = false});

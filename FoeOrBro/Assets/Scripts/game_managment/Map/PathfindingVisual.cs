@@ -75,13 +75,14 @@ public class PathfindingVisual : MonoBehaviour {
                 //Vector2 uv11 = new Vector2(1f, 1f);
 
                 if (!gridNode.IsWalkable()) {
-                    uv00 = new Vector2(1f, 1f);
-                    uv11 = new Vector2(0f, 0f);
+                    //uv00 = new Vector2(1f, 1f);
+                    //uv11 = new Vector2(0f, 0f);
+                    //gridNode.SetIsWalkable(false);
                 }
 
                 nodeMesh = MeshUtils.CreateMesh(meshPos, 0f, quadSize, uv00, uv11);
-                gridNode.SetNodeTexture(GenerateTexture());
                 gridNode.SetNodeMesh(nodeMesh);
+                gridNode.SetNodeTexture(GenerateTexture());
             }
         }
     }
