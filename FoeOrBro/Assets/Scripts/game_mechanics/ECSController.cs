@@ -1,6 +1,3 @@
-
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
 using Unity.Collections;
@@ -11,34 +8,26 @@ using Unity.Jobs;
 using Unity.Burst;
 using System.Threading;
 using UnityEngine.Rendering;
+using SF = UnityEngine.SerializeField;
 
 
 public class ECSController : MonoBehaviour {
-
     public static ECSController instance;
     public Transform selectionAreaTransform;
     public Material unitSelectedCircleMaterial;
     public Mesh unitSelectedCircleMesh;
     private EntityManager entityManager;
     public Sprite mainSprite;
-
     public GameObject Prefab;
-    [SerializeField]
-    public Mesh spriteMesh;
-    [SerializeField]
-    public Material spriteMaterial;
-    [SerializeField]
-    public Material terrainMaterial;
+    [SF] public Mesh spriteMesh;
+    [SF] public Material spriteMaterial;
+    [SF] public Material terrainMaterial;
     
     private void Awake() {
         instance = this;
     }
 
-    void Update(){
-    }
-
-    private void Start() { 
-
+    private void Start() {
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         SpawnGridMesh();
         SpawnPlayer();
@@ -61,10 +50,8 @@ public class ECSController : MonoBehaviour {
             typeof(Collider),
             typeof(NonUniformScale)
         );
-
         entityManager.CreateEntity(entityArchetype, entities);
-
-        float offset = 3.2f;
+        //float offset = 3.2f;
         int entityCounter = 0;
         float cellSize = 0.32f;
         for (int y = 0; y < width; y++)
@@ -73,13 +60,13 @@ public class ECSController : MonoBehaviour {
             {
                 GridNode gridNode = (GridNode)PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(x, y);
                 Entity entity = entities[entityCounter];
-                float3 myPosition = new float3(x*cellSize,y*cellSize, 10.5f);
+                float3 myPosition = new float3(x*cellSize,y*cellSize, 1.5f);
                 entityManager.SetComponentData(entities[entityCounter], new Translation {Value = myPosition});
                 entityManager.SetSharedComponentData(entities[entityCounter], new RenderMesh { mesh = gridNode.GetNodeMesh(), material = gridNode.GetNodeMaterial() });
                 if(!gridNode.IsWalkable()){
                     entityManager.SetComponentData(entities[entityCounter], new Collider { size = 0.32f });
                     entityManager.SetComponentData(entities[entityCounter], new NodeComponent { nodePosition = new int2(x,y), isWalkable = false});
-                }else{                    
+                }else{
                     entityManager.SetComponentData(entities[entityCounter], new NodeComponent { nodePosition = new int2(x,y), isWalkable = true});
                 }
                 entityManager.SetComponentData(entities[entityCounter], new NonUniformScale { Value = 0.32f });
@@ -100,6 +87,7 @@ public class ECSController : MonoBehaviour {
             entityManager.SetComponentData(instance, new Translation {Value = position});        
         }
     }
+    
     private void SpawnPlayer(){
         NativeArray<Entity> entities = new NativeArray<Entity>(1, Allocator.Temp);
         EntityArchetype entityArchetype = entityManager.CreateArchetype(

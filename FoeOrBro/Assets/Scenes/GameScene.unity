@@ -1383,6 +1383,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scale: 0
+  RotationX: 0
+  RotationY: 0
+  RotationZ: 90
 --- !u!4 &1517338341
 Transform:
   m_ObjectHideFlags: 0
@@ -1789,12 +1792,12 @@ Camera:
   far clip plane: 10000
   field of view: 26.991467
   orthographic: 1
-  orthographic size: 5.000001
+  orthographic size: 5.06
   m_Depth: 100
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingPath: -1
+  m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
