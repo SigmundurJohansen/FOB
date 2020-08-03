@@ -33,7 +33,7 @@ public class Grid<TGridObject> {
                 gridArray[x, y] = createGridObject(this, x, y);
             }
         }
-        bool showDebug = false;
+        bool showDebug = true;
         if (showDebug) {
             TextMeshPro[,] debugTextArray = new TextMeshPro[width, height];
 
@@ -119,7 +119,7 @@ public class Grid<TGridObject> {
         TextMeshPro textMesh = go.AddComponent<TextMeshPro>();
         textMesh.transform.localPosition = localPosition + offset;
         textMesh.autoSizeTextContainer = true;
-        textMesh.fontSize = 2;
+        textMesh.fontSize = 1;
         textMesh.alignment = TextAlignmentOptions.Center;
         textMesh.enableWordWrapping = false; 
         textMesh.SetText(x +"," + y);

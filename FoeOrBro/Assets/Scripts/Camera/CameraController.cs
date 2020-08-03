@@ -21,15 +21,15 @@ public class CameraController : MonoBehaviour
     }
     void Update()
     {
-        SetStaticCamera();
-        /*
+        //SetStaticCamera();
+        
         Vector3 pos = transform.position;
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         Camera.main.orthographicSize  -= scroll * scrollSpeed * 100f * Time.deltaTime;
 
         Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, minZ,  maxZ);
         transform.position = pos;
-         */
+         
     }
 
     public void SetStaticCamera(){

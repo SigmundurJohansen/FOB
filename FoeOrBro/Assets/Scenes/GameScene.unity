@@ -1383,9 +1383,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scale: 0
-  RotationX: 0
-  RotationY: 0
-  RotationZ: 90
 --- !u!4 &1517338341
 Transform:
   m_ObjectHideFlags: 0
@@ -1792,7 +1789,7 @@ Camera:
   far clip plane: 10000
   field of view: 26.991467
   orthographic: 1
-  orthographic size: 5.06
+  orthographic size: 5
   m_Depth: 100
   m_CullingMask:
     serializedVersion: 2
@@ -1805,7 +1802,7 @@ Camera:
   m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
-  m_OcclusionCulling: 0
+  m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!4 &1698830189
@@ -1982,7 +1979,7 @@ MonoBehaviour:
   unitSelectedCircleMesh: {fileID: 0}
   mainSprite: {fileID: -1146757327129612889, guid: 7e1696dd211b6cc4a845b816ffe21bd5,
     type: 3}
-  Prefab: {fileID: 0}
+  Prefab: {fileID: 7179282712081632637, guid: 751b9a467dfa9644eb5d21df61550f6f, type: 3}
   spriteMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   spriteMaterial: {fileID: 2100000, guid: b2ceb421de9781541a98fa6087d239fd, type: 2}
   terrainMaterial: {fileID: 2100000, guid: b47c714ff076af846b67179d2b644cb7, type: 2}

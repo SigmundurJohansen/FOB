@@ -10,7 +10,6 @@ using System.Threading;
 using UnityEngine.Rendering;
 using SF = UnityEngine.SerializeField;
 
-
 public class ECSController : MonoBehaviour {
     public static ECSController instance;
     public Transform selectionAreaTransform;
@@ -29,7 +28,8 @@ public class ECSController : MonoBehaviour {
 
     private void Start() {
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        SpawnGridMesh();
+        //SpawnGridMesh();
+        SpawnPrefabs();
         SpawnPlayer();
         SpawnHumans(100);
     }
@@ -46,14 +46,17 @@ public class ECSController : MonoBehaviour {
             typeof(Translation),
             typeof(Scale),
             typeof(LocalToWorld),
-            typeof(RenderBounds),
             typeof(Collider),
-            typeof(NonUniformScale)
+            typeof(NonUniformScale),
+            ComponentType.ReadWrite<WorldRenderBounds>(),
+            ComponentType.ChunkComponent<ChunkWorldRenderBounds>()
         );
         entityManager.CreateEntity(entityArchetype, entities);
         //float offset = 3.2f;
         int entityCounter = 0;
         float cellSize = 0.32f;
+        float3 MinBound = new float3 (0, 0, 0);
+        float3 MaxBound = new float3 (50, 50, 50);
         for (int y = 0; y < width; y++)
         {
             for(int x = 0; x < height; x++)
@@ -70,21 +73,29 @@ public class ECSController : MonoBehaviour {
                     entityManager.SetComponentData(entities[entityCounter], new NodeComponent { nodePosition = new int2(x,y), isWalkable = true});
                 }
                 entityManager.SetComponentData(entities[entityCounter], new NonUniformScale { Value = 0.32f });
+                //entityManager.SetComponentData(entities[entityCounter], new WorldRenderBounds { Value = MaxBound });
                 entityCounter++;
             }
         }
         entities.Dispose();
     }
 
-    public void SpawnPrefabs(int _count){
+    public void SpawnPrefabs(){
+        int width = PathfindingGridSetup.Instance.pathfindingGrid.GetWidth();
+        int height = PathfindingGridSetup.Instance.pathfindingGrid.GetHeight();
+        float cellSize =  PathfindingGridSetup.Instance.pathfindingGrid.GetCellSize();
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);        
         var prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(Prefab, settings);
 
-        for (var x = 0; x < _count; x++)
+        for (var y = 0; y < height; y++)
         {
-            var instance = entityManager.Instantiate(prefab);
-            var position = transform.TransformPoint(new float3(1.3F, 2F, -0.3F));
-            entityManager.SetComponentData(instance, new Translation {Value = position});        
+            for (var x = 0; x < width; x++)
+            {
+                var instance = entityManager.Instantiate(prefab);
+                var position = transform.TransformPoint(new float3((x+0.5f) * cellSize,(y+0.5f)* cellSize, 0.5f));
+                entityManager.SetComponentData(instance, new Translation {Value = position});
+                //entityManager.SetSharedComponentData(instance, new RenderMesh { mesh = spriteMesh, material = spriteMaterial });
+            }
         }
     }
     

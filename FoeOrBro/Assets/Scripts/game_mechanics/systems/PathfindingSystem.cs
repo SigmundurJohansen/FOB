@@ -210,8 +210,6 @@ public class PathfindingSystem : ComponentSystem {
             openList.Dispose();
             closedList.Dispose();
         }
-        
-
     }
     
     private static void CalculatePath(NativeArray<PathNode> pathNodeArray, PathNode endNode, DynamicBuffer<PathPosition> pathPositionBuffer) {
