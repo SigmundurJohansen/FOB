@@ -119,7 +119,7 @@ public class Grid<TGridObject> {
         TextMeshPro textMesh = go.AddComponent<TextMeshPro>();
         textMesh.transform.localPosition = localPosition + offset;
         textMesh.autoSizeTextContainer = true;
-        textMesh.fontSize = 2;
+        textMesh.fontSize = 1;
         textMesh.alignment = TextAlignmentOptions.Center;
         textMesh.enableWordWrapping = false; 
         textMesh.SetText(x +"," + y);

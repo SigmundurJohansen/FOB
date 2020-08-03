@@ -12,6 +12,7 @@ using Unity.Burst;
 public class MovementSystem : JobComponentSystem
 {
     // IJobForEachWithEntity
+    #pragma warning disable 0618
     [BurstCompile]
     struct MovementSystemJob : IJobForEachWithEntity<RigidBody, MovementComponent>
     {
@@ -33,6 +34,8 @@ public class MovementSystem : JobComponentSystem
     }   
 }
 
+    #pragma warning restore 0618
+     
  /*
  
  float3 dontMove = new float3(0,0,0);

@@ -1,6 +1,3 @@
-
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
 using Unity.Collections;
@@ -11,48 +8,97 @@ using Unity.Jobs;
 using Unity.Burst;
 using System.Threading;
 using UnityEngine.Rendering;
-
+using SF = UnityEngine.SerializeField;
 
 public class ECSController : MonoBehaviour {
-
     public static ECSController instance;
     public Transform selectionAreaTransform;
     public Material unitSelectedCircleMaterial;
     public Mesh unitSelectedCircleMesh;
     private EntityManager entityManager;
     public Sprite mainSprite;
-
     public GameObject Prefab;
-    [SerializeField]
-    public Mesh spriteMesh;
-    [SerializeField]
-    public Material spriteMaterial;
+    [SF] public Mesh spriteMesh;
+    [SF] public Material spriteMaterial;
+    [SF] public Material terrainMaterial;
     
     private void Awake() {
         instance = this;
     }
 
-    void Update(){
-    }
-
-    private void Start() { 
-
+    private void Start() {
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        //SpawnGridMesh();
+        SpawnPrefabs();
         SpawnPlayer();
         SpawnHumans(100);
     }
 
-    public void SpawnPrefabs(int _count){
+    public void SpawnGridMesh()
+    {
+        int width = PathfindingGridSetup.Instance.pathfindingGrid.GetWidth();
+        int height = PathfindingGridSetup.Instance.pathfindingGrid.GetHeight();
+        int count =  width* height;
+        NativeArray<Entity> entities = new NativeArray<Entity>(count, Allocator.Temp);
+        EntityArchetype entityArchetype = entityManager.CreateArchetype(
+            typeof(NodeComponent),
+            typeof(RenderMesh),
+            typeof(Translation),
+            typeof(Scale),
+            typeof(LocalToWorld),
+            typeof(Collider),
+            typeof(NonUniformScale),
+            ComponentType.ReadWrite<WorldRenderBounds>(),
+            ComponentType.ChunkComponent<ChunkWorldRenderBounds>()
+        );
+        entityManager.CreateEntity(entityArchetype, entities);
+        //float offset = 3.2f;
+        int entityCounter = 0;
+        float cellSize = 0.32f;
+        float3 MinBound = new float3 (0, 0, 0);
+        float3 MaxBound = new float3 (50, 50, 50);
+        for (int y = 0; y < width; y++)
+        {
+            for(int x = 0; x < height; x++)
+            {
+                GridNode gridNode = (GridNode)PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(x, y);
+                Entity entity = entities[entityCounter];
+                float3 myPosition = new float3(x*cellSize,y*cellSize, 1.5f);
+                entityManager.SetComponentData(entities[entityCounter], new Translation {Value = myPosition});
+                entityManager.SetSharedComponentData(entities[entityCounter], new RenderMesh { mesh = gridNode.GetNodeMesh(), material = gridNode.GetNodeMaterial() });
+                if(!gridNode.IsWalkable()){
+                    entityManager.SetComponentData(entities[entityCounter], new Collider { size = 0.32f });
+                    entityManager.SetComponentData(entities[entityCounter], new NodeComponent { nodePosition = new int2(x,y), isWalkable = false});
+                }else{
+                    entityManager.SetComponentData(entities[entityCounter], new NodeComponent { nodePosition = new int2(x,y), isWalkable = true});
+                }
+                entityManager.SetComponentData(entities[entityCounter], new NonUniformScale { Value = 0.32f });
+                //entityManager.SetComponentData(entities[entityCounter], new WorldRenderBounds { Value = MaxBound });
+                entityCounter++;
+            }
+        }
+        entities.Dispose();
+    }
+
+    public void SpawnPrefabs(){
+        int width = PathfindingGridSetup.Instance.pathfindingGrid.GetWidth();
+        int height = PathfindingGridSetup.Instance.pathfindingGrid.GetHeight();
+        float cellSize =  PathfindingGridSetup.Instance.pathfindingGrid.GetCellSize();
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);        
         var prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(Prefab, settings);
 
-        for (var x = 0; x < _count; x++)
+        for (var y = 0; y < height; y++)
         {
-            var instance = entityManager.Instantiate(prefab);
-            var position = transform.TransformPoint(new float3(1.3F, 2F, -0.3F));
-            entityManager.SetComponentData(instance, new Translation {Value = position});        
+            for (var x = 0; x < width; x++)
+            {
+                var instance = entityManager.Instantiate(prefab);
+                var position = transform.TransformPoint(new float3((x+0.5f) * cellSize,(y+0.5f)* cellSize, 0.5f));
+                entityManager.SetComponentData(instance, new Translation {Value = position});
+                //entityManager.SetSharedComponentData(instance, new RenderMesh { mesh = spriteMesh, material = spriteMaterial });
+            }
         }
     }
+    
     private void SpawnPlayer(){
         NativeArray<Entity> entities = new NativeArray<Entity>(1, Allocator.Temp);
         EntityArchetype entityArchetype = entityManager.CreateArchetype(

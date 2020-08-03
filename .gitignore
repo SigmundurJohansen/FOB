@@ -43,7 +43,13 @@ ExportedObj/
 *.opendb
 *.VC.db
 
+#/FoeOrBro/Assets/Art/
 # Texture assets
+#/FoeOrBro/Assets/Art/GUI
+#/FoeOrBro/Assets/Art/Inside Ground
+#/FoeOrBro/Assets/Art/Interior
+#/FoeOrBro/Assets/Art/Inventory
+#/FoeOrBro/Assets/Art/Mini
 
 # Unity3D generated meta files
 *.pidb.meta

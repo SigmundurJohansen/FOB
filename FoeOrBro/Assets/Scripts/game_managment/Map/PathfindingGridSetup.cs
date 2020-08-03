@@ -1,13 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PathfindingGridSetup : MonoBehaviour {
-
     public static PathfindingGridSetup Instance { private set; get; }
     //private Vector3 originVector = new Vector3(-.5f,-.5f,0);
-    private Vector3 originVector = new Vector3(0,0,0);
-    
+    private Vector3 originVector = new Vector3(0,0,0);    
     #pragma warning disable 0649
     [SerializeField] private PathfindingVisual pathfindingVisual;
     #pragma warning restore 0649
@@ -19,11 +15,9 @@ public class PathfindingGridSetup : MonoBehaviour {
     }
 
     private void Start() {
-        pathfindingGrid = new Grid<GridNode>(50, 50, 1f, originVector, (Grid<GridNode> grid, int x, int y) => new GridNode(grid, x, y));
-
+        pathfindingGrid = new Grid<GridNode>(32, 32, 0.32f, originVector, (Grid<GridNode> grid, int x, int y) => new GridNode(grid, x, y));
         //pathfindingGrid.GetGridObject(2, 0).SetIsWalkable(false);
-
-        pathfindingVisual.SetGrid(pathfindingGrid);
+        //pathfindingVisual.SetGrid(pathfindingGrid);
     }
 
     private void Update() {
