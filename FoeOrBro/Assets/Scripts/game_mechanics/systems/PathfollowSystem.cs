@@ -8,7 +8,7 @@ using Unity.Jobs;
 public class PathFollowSystem : JobComponentSystem {
 
     private Unity.Mathematics.Random random;
-    float gridCellSize = 0.32f;
+    //float gridCellSize = 0.32f;
     protected override void OnCreate() {
         random = new Unity.Mathematics.Random(56);
     }
@@ -16,13 +16,14 @@ public class PathFollowSystem : JobComponentSystem {
     protected override JobHandle OnUpdate(JobHandle inputDeps) {
         float deltaTime = Time.DeltaTime;
 
-        return Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> pathPositionBuffer, ref Translation translation, ref PathFollow pathFollow, ref MovementComponent _move) => {
+        return Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> pathPositionBuffer, ref Translation translation, ref Rotation rot, ref PathFollow pathFollow, ref MovementComponent _move) => {
+            rot.Value = new quaternion(0,0,0,1);
             if (pathFollow.pathIndex >= 0) {
                 // Has path to follow
                 PathPosition pathPosition = pathPositionBuffer[pathFollow.pathIndex];
                 float3 targetPosition = new float3((pathPosition.position.x+.5f) * 0.32f, (pathPosition.position.y+.5f) * 0.32f, 0);
                 float3 moveDir = math.normalizesafe(targetPosition - translation.Value);
-                translation.Value += moveDir * _move.speed * deltaTime;                
+                translation.Value += moveDir * _move.speed * deltaTime;
                 if (math.distance(translation.Value, targetPosition) < .1f) {
                     // Next waypoint
                     pathFollow.pathIndex--;

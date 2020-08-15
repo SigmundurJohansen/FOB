@@ -7,82 +7,88 @@ using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
-class PhysicsSystem : JobComponentSystem
+class PhysicsSystem : ComponentSystem //JobComponentSystem
 {
     #pragma warning disable 0618
     #pragma warning disable 0219
-    BeginInitializationEntityCommandBufferSystem m_EntityCommandBufferSystem;
     private EntityQuery moving_group;
     private EntityQuery collider_group;
 
-    protected override void OnCreate()
-    {        
-        m_EntityCommandBufferSystem = World.GetOrCreateSystem<BeginInitializationEntityCommandBufferSystem>();
-        //moving_group = EntityManager.CreateEntityQuery(typeof(RigidBody), typeof(Collider));
-        //collider_group = EntityManager.CreateEntityQuery(typeof(RigidBody), typeof(Collider));
-    }
-    
-    [BurstCompile]
-    struct PhysicsSystemJob : IJobForEachWithEntity<RigidBody, Collider>
-    {       
-        public float DeltaTime;
-        public void Execute(Entity entity, int index, ref RigidBody _body , ref Collider _c)
-        { 
-            if (_body.velocity.x != 0f || _body.velocity.y != 0f)                           // Only update moving objects
-            {
-                float2 displacement = _body.velocity * DeltaTime;                                  // Compute number of steps and stepwise displacement
-                int steps = math.max(1, (int)math.round(math.length(displacement) / 0.05f));
-                float2 move_step = displacement / steps;
+    protected override void OnUpdate() {
 
-                for (int s = 0; s < steps; s++)                                             // Update object position in substeps
+        List<PhysicsSystemJob> physicsSystemJobList = new List<PhysicsSystemJob>();
+        NativeList<JobHandle> jobHandleList = new NativeList<JobHandle>(Allocator.Temp);
+        
+        Entities.ForEach((Entity _entity, ref RigidBody _body, ref Collider _colliders) => {
+
+        });
+
+        JobHandle.CompleteAll(jobHandleList);
+
+        foreach (PhysicsSystemJob findCollisionJob in physicsSystemJobList) {
+            new PhysicsSystemJob {
+            }.Run();
+        }
+
+        jobHandleList.Dispose();
+        
+    }
+
+    [BurstCompile]
+    struct PhysicsSystemJob : IJob // IJobForEachWithEntity<RigidBody, Collider>
+    {
+        public float DeltaTime;
+        [DeallocateOnJobCompletion]
+        public Entity entity;
+        public NativeArray<RigidBody> bodies;
+        public NativeArray<Collider> colliders;
+        public void Execute()// Entity entity, int index, ref RigidBody _body , ref Collider _colliders
+        { 
+            /* 
+            NativeArray<RigidBody> bodyEntities = bodies;
+            NativeArray<Collider> colliderEntities = colliders;
+            foreach (var rigidBody in bodyEntities)
+            {
+                if (rigidBody.velocity.x != 0f || rigidBody.velocity.y != 0f)                           // Only update moving objects
                 {
-                    _body.position += move_step;                                            // Apply velocity (step-by-step)                    
-                    bool collided = false;
+                    float2 displacement = rigidBody.velocity * DeltaTime;                                  // Compute number of steps and stepwise displacement
+                    int steps = math.max(1, (int)math.round(math.length(displacement) / 0.05f));
+                    float2 move_step = displacement / steps;
+
+                    for (int s = 0; s < steps; s++)                                             // Update object position in substeps
+                    {
+                        rigidBody.position += move_step;                                            // Apply velocity (step-by-step)                    
+                        bool collided = false;
 
                     #region hideme
-                    /*
+                    
                         for (int j = 0; j < colliderEntities.Length; j++)                         // Iterate over all other colliders
                         {                      
-                            collided = AreSquaresOverlapping(_body.position, _colliders.size, colliderEntities[j]._body.position,  colliderEntities[j]._colliders.Collider.size);  // Check collision                                
+                            collided = AreSquaresOverlapping(rigidBody.position, colliderEntities._colliders.size, colliderEntities[j]._body.position,  colliderEntities[j]._colliders.Collider.size);  // Check collision                                
                             if (collided)
                                 break;
                         }
                     }
                     if (collided)// A collision occured
                     {
-                        _body.velocity = new float2(0f, 0f);// Set velocity to 0
-                        moving_rigidbodies[i] = rigid_body;                        
+                        Debug.Log("collision detected");
+                        rigidBody.velocity = new float2(0f, 0f);// Set velocity to 0
+                        //moving_rigidbodies[i] = rigid_body;                        
                         break;// Do not perform any more substeps
                     }else{
-                        moving_positions[i] = position;// Store update position
+                        //moving_positions[i] = position;// Store update position
                     }
-                    */
+                    
                     #endregion
-                }                
+                    
+                }
             }
+            */
         }
    }
-
-    protected override JobHandle OnUpdate(JobHandle inputDeps)
-    {
-        float dt = UnityEngine.Time.deltaTime;
-        
-        //var movingEntities = moving_group.ToEntityArray(Allocator.TempJob);
-        //var colliderEntities = collider_group.ToEntityArray(Allocator.TempJob);
-
-        var job = new PhysicsSystemJob()
-        {
-            DeltaTime = UnityEngine.Time.deltaTime
-        };
-        return job.Schedule(this, inputDeps);
-
-        //var ecb2 = m_EntityCommandBufferSystem.CreateCommandBuffer().ToConcurrent();
-        /*
-        return Entities.WithAll<RigidBody>().WithAll<Collider>()
-                .ForEach((Entity entity, int nativeThreadIndex, ref RigidBody _body, ref Collider _colliders) =>{};
-        */
-    }
 
     // Checks if the square at position posA and size sizeA overlaps 
     // with the square at position posB and size sizeB
@@ -102,5 +108,4 @@ class PhysicsSystem : JobComponentSystem
     }
 }
 
-    /*
- */
+         
