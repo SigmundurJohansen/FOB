@@ -83,7 +83,7 @@ public class PathfindingSystem : ComponentSystem {
 	
 
     [BurstCompile]
-    private struct SetBufferPathJob : IJob {        
+    private struct SetBufferPathJob : IJob {
         public int2 gridSize;
         [DeallocateOnJobCompletion]
         public NativeArray<PathNode> pathNodeArray;

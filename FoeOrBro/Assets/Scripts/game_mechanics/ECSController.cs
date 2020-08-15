@@ -18,6 +18,9 @@ public class ECSController : MonoBehaviour {
     private EntityManager entityManager;
     public Sprite mainSprite;
     public GameObject Prefab;
+    public GameObject colliderPrefab;
+    public GameObject koboltPrefab;
+    public GameObject playerPrefab;
     [SF] public Mesh spriteMesh;
     [SF] public Material spriteMaterial;
     [SF] public Material terrainMaterial;
@@ -30,9 +33,73 @@ public class ECSController : MonoBehaviour {
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         //SpawnGridMesh();
         SpawnPrefabs();
-        SpawnPlayer();
-        SpawnHumans(100);
+        SpawnPlayerPrefab();
+        //SpawnPlayer();
+        //SpawnHumans(5);
+        SpawnKobolt(5);
     }
+
+    public void SpawnPlayerPrefab()
+    {
+        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld,  new BlobAssetStore());        
+        var myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(playerPrefab, settings);
+        var instance = entityManager.Instantiate(myPrefab);
+        entityManager.AddBuffer <PathPosition> ( instance ) ;  
+        DynamicBuffer <PathPosition> someBuffer = entityManager.GetBuffer <PathPosition> ( instance ) ;
+        PathPosition someBufferElement = new PathPosition () ;
+        someBufferElement.position = new int2(0,0) ;
+        someBuffer.Add ( someBufferElement ) ;
+        someBufferElement.position = new int2(0,0) ;
+        someBuffer.Add ( someBufferElement ) ;
+        var spawnPosition = transform.TransformPoint(new float3(0, 0, -0.1f));
+        entityManager.SetComponentData(instance, new Translation {Value = spawnPosition});
+        entityManager.AddComponentData(instance, new Selected {isSelected = true});
+        entityManager.AddComponentData(instance, new MovementComponent { isMoving = false, speed = 1.5f});
+        entityManager.AddComponentData(instance, new PathFollow());
+    }
+    
+    public void SpawnKobolt(int _count){
+        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld,  new BlobAssetStore());        
+        var myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(koboltPrefab, settings);
+
+        //Entity entity = EntityManager.CreateEntity ( typeof (Instance) ) ;
+        for (int i = 0; i < _count; i++)
+        {            
+            var instance = entityManager.Instantiate(myPrefab);
+            entityManager.AddBuffer <PathPosition> ( instance ) ;  
+            DynamicBuffer <PathPosition> someBuffer = entityManager.GetBuffer <PathPosition> ( instance ) ;
+            // Add two elements to dynamic buffer.
+            PathPosition someBufferElement = new PathPosition () ;
+            someBufferElement.position = new int2(1,1) ;
+            someBuffer.Add ( someBufferElement ) ;
+            someBufferElement.position = new int2(1,1) ;
+            someBuffer.Add ( someBufferElement ) ;
+            someBufferElement.position = new int2(1,1) ;
+            someBuffer.Add ( someBufferElement ) ;
+            someBufferElement.position = new int2(1,1) ;
+            someBuffer.Add ( someBufferElement ) ;
+            someBufferElement.position = new int2(1,1) ;
+            someBuffer.Add ( someBufferElement ) ;
+            someBufferElement.position = new int2(1,1) ;
+            someBuffer.Add ( someBufferElement ) ;
+            someBufferElement.position = new int2(1,1) ;
+            someBuffer.Add ( someBufferElement ) ;
+            someBufferElement.position = new int2(1,1) ;
+            someBuffer.Add ( someBufferElement ) ;
+            someBufferElement.position = new int2(1,1) ;
+            someBuffer.Add ( someBufferElement ) ;
+            someBufferElement.position = new int2(1,1) ;
+            someBuffer.Add ( someBufferElement ) ;
+            var spawnPosition = transform.TransformPoint(new float3(UnityEngine.Random.Range(0, 10f), UnityEngine.Random.Range(0f, 10f), -0.1f));
+            entityManager.SetComponentData(instance, new Translation {Value = spawnPosition});
+            //entityManager.RemoveComponent<Rotation>(instance);
+            entityManager.AddComponentData(instance, new Selected {isSelected = true});
+            entityManager.AddComponentData(instance, new MovementComponent { isMoving = false, speed = 1.2f});
+            entityManager.AddComponentData(instance, new PathFollow());
+           // entityManager.SetComponentData(instance, new NonUniformScale { Value = 0.32f });
+        }
+    }
+    
 
     public void SpawnGridMesh()
     {
@@ -84,7 +151,7 @@ public class ECSController : MonoBehaviour {
         int width = PathfindingGridSetup.Instance.pathfindingGrid.GetWidth();
         int height = PathfindingGridSetup.Instance.pathfindingGrid.GetHeight();
         float cellSize =  PathfindingGridSetup.Instance.pathfindingGrid.GetCellSize();
-        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);        
+        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld,  new BlobAssetStore());        
         var prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(Prefab, settings);
 
         for (var y = 0; y < height; y++)
@@ -113,6 +180,7 @@ public class ECSController : MonoBehaviour {
             typeof(PlayerInputComponent),
             typeof(PathPosition),
             typeof(PathFollow),
+            typeof(Rotation),
             typeof(Selected),
             typeof(DestinationComponent),
             typeof(NonUniformScale)
@@ -131,7 +199,13 @@ public class ECSController : MonoBehaviour {
         
         entities.Dispose();
     }
-
+public class EntityToGameObject : Component {
+    public GameObject GameObject;
+ 
+    public EntityToGameObject(GameObject GameObject) {
+        this.GameObject = GameObject;
+    }
+}
 
     private void SpawnHumans(int count) {
         NativeArray<Entity> entities = new NativeArray<Entity>(count, Allocator.Temp);
@@ -166,6 +240,8 @@ public class ECSController : MonoBehaviour {
             entityManager.SetComponentData(entities[i], new Collider { size = 0.16f });
             entityManager.SetComponentData(entities[i], new NonUniformScale { Value = 0.32f });
             entityManager.SetComponentData(entities[i], new Selected {isSelected = false});
+            //entityManager.SetComponent(entities[i], new Prefab {colliderPrefab });
+            entityManager.AddComponentObject(entities[i], new EntityToGameObject(colliderPrefab));
         }
         entities.Dispose();
     }
