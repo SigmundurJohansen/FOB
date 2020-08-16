@@ -18,9 +18,9 @@ public class ECSController : MonoBehaviour {
     private EntityManager entityManager;
     public Sprite mainSprite;
     public GameObject Prefab;
-    public GameObject colliderPrefab;
     public GameObject koboltPrefab;
     public GameObject playerPrefab;
+    BlobAssetStore blobAssetStore;
     [SF] public Mesh spriteMesh;
     [SF] public Material spriteMaterial;
     [SF] public Material terrainMaterial;
@@ -36,12 +36,13 @@ public class ECSController : MonoBehaviour {
         SpawnPlayerPrefab();
         //SpawnPlayer();
         //SpawnHumans(5);
-        SpawnKobolt(5);
+        SpawnKobolt(1000);
     }
 
     public void SpawnPlayerPrefab()
     {
-        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld,  new BlobAssetStore());        
+        blobAssetStore = new BlobAssetStore();
+        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld,  blobAssetStore);        
         var myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(playerPrefab, settings);
         var instance = entityManager.Instantiate(myPrefab);
         entityManager.AddBuffer <PathPosition> ( instance ) ;  
@@ -59,7 +60,8 @@ public class ECSController : MonoBehaviour {
     }
     
     public void SpawnKobolt(int _count){
-        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld,  new BlobAssetStore());        
+        blobAssetStore = new BlobAssetStore();
+        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);        
         var myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(koboltPrefab, settings);
 
         //Entity entity = EntityManager.CreateEntity ( typeof (Instance) ) ;
@@ -151,7 +153,8 @@ public class ECSController : MonoBehaviour {
         int width = PathfindingGridSetup.Instance.pathfindingGrid.GetWidth();
         int height = PathfindingGridSetup.Instance.pathfindingGrid.GetHeight();
         float cellSize =  PathfindingGridSetup.Instance.pathfindingGrid.GetCellSize();
-        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld,  new BlobAssetStore());        
+        blobAssetStore = new BlobAssetStore();
+        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);        
         var prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(Prefab, settings);
 
         for (var y = 0; y < height; y++)
@@ -199,6 +202,15 @@ public class ECSController : MonoBehaviour {
         
         entities.Dispose();
     }
+    private void OnDestroy()
+    {
+        Debug.Log("Calling Destroy!");
+        if(blobAssetStore!=null){
+            blobAssetStore.Dispose();
+        }
+        entityManager.DestroyEntity(entityManager.UniversalQuery);
+        Debug.Log("OnDestroy!");
+    }
 public class EntityToGameObject : Component {
     public GameObject GameObject;
  
@@ -240,8 +252,6 @@ public class EntityToGameObject : Component {
             entityManager.SetComponentData(entities[i], new Collider { size = 0.16f });
             entityManager.SetComponentData(entities[i], new NonUniformScale { Value = 0.32f });
             entityManager.SetComponentData(entities[i], new Selected {isSelected = false});
-            //entityManager.SetComponent(entities[i], new Prefab {colliderPrefab });
-            entityManager.AddComponentObject(entities[i], new EntityToGameObject(colliderPrefab));
         }
         entities.Dispose();
     }
