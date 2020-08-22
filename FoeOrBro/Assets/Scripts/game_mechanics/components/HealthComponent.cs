@@ -5,5 +5,6 @@ using Unity.Mathematics;
 
 public class HealthComponent  : IComponentData
 {
+    public float maxHealth;
     public float health;
 }

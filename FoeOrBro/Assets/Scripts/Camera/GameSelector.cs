@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Mathematics;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using SF = UnityEngine.SerializeField;
 
 public class GameSelector : MonoBehaviour
@@ -24,50 +25,59 @@ public class GameSelector : MonoBehaviour
     Vector2 pointOne;
     Vector2 pointTwo;
 
-    void Start(){        
+    void Start(){
         selectSquareImage.gameObject.SetActive(false);
         myGameSelector = this;
     }
 
     // Update is called once per frame
     void LateUpdate()
-    {
-        if(Input.GetMouseButtonDown(0))
+    {        
+        if (EventSystem.current.IsPointerOverGameObject())
         {
-            pointOne = WorldPosition();
-            startPos = Input.mousePosition;
-        }
-        if(Input.GetMouseButton(0)){
-            pointTwo = WorldPosition();
-            endPos = Input.mousePosition;
-            if((pointOne - pointTwo).magnitude > 0.2f)
-            {
-                MakeSelectionBox();
-                dragSelect = true;
-            }else{
-                dragSelect = false;
-            }
-        }
-        if(Input.GetMouseButtonUp(0)){
+            dragSelect = false;
             selectSquareImage.gameObject.SetActive(false);
-            if(dragSelect == false){
-                Select();
-            }else{
-            }
         }
-
-        if (Input.GetMouseButton (2))
+        else
         {
-            Diference=(fpsCam.ScreenToWorldPoint (Input.mousePosition))- fpsCam.transform.position;
-            if (Drag==false){
-                Drag=true;
-            Origin=fpsCam.ScreenToWorldPoint (Input.mousePosition);
+            if(Input.GetMouseButtonDown(0))
+            {
+                pointOne = WorldPosition();
+                startPos = Input.mousePosition;
             }
-        } else {
-            Drag=false;
-        }
-        if (Drag==true){
-            fpsCam.transform.position = Origin-Diference;
+            if(Input.GetMouseButton(0)){
+                pointTwo = WorldPosition();
+                endPos = Input.mousePosition;
+                if((pointOne - pointTwo).magnitude > 0.2f)
+                {
+                    MakeSelectionBox();
+                    dragSelect = true;
+                }else{
+                    dragSelect = false;
+                }
+            }
+            if(Input.GetMouseButtonUp(0)){
+                selectSquareImage.gameObject.SetActive(false);
+                if(dragSelect == false){
+                    Select();
+                }else{
+                }
+            }
+
+            if (Input.GetMouseButton (2))
+            {
+                Diference=(fpsCam.ScreenToWorldPoint (Input.mousePosition))- fpsCam.transform.position;
+                if (Drag==false)
+                {
+                    Drag = true;
+                    Origin = fpsCam.ScreenToWorldPoint (Input.mousePosition);
+                }
+            } else {
+                Drag=false;
+            }
+            if (Drag==true){
+                fpsCam.transform.position = Origin-Diference;
+            }
         }
     }
 

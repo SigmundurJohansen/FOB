@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class AbilitySlot : MonoBehaviour
+public class AbilitySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
 
     public void OnMouseOver()
@@ -15,12 +16,12 @@ public class AbilitySlot : MonoBehaviour
         Debug.Log("out");
     }
 
-    public void MousePointerEnter()
+    public void OnPointerEnter(PointerEventData eventData)
     {
         TooltipUI.ShowTooltipStatic("ability");
     }
 
-    public void MousePointerExit()
+    public void OnPointerExit(PointerEventData eventData)
     {
         TooltipUI.HideTooltipStatic();
     }

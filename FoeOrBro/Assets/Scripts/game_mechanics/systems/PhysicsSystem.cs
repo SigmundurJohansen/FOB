@@ -40,11 +40,11 @@ class PhysicsSystem : ComponentSystem //JobComponentSystem
     [BurstCompile]
     struct PhysicsSystemJob : IJob // IJobForEachWithEntity<RigidBody, Collider>
     {
-        public float DeltaTime;
-        [DeallocateOnJobCompletion]
-        public Entity entity;
-        public NativeArray<RigidBody> bodies;
-        public NativeArray<Collider> colliders;
+        //public float DeltaTime;
+        //[DeallocateOnJobCompletion]
+        //public Entity entity;
+        //public NativeArray<RigidBody> bodies;
+        //public NativeArray<Collider> colliders;
         public void Execute()// Entity entity, int index, ref RigidBody _body , ref Collider _colliders
         { 
             /* 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+#pragma warning disable 0649
 
 public class TooltipUI : MonoBehaviour
 {
