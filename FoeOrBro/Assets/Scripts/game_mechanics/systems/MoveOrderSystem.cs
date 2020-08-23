@@ -27,7 +27,6 @@ public class MoveOrderSystem : ComponentSystem {
 				if((pointOne - pointTwo).magnitude > 0.2f)
 				{
 					Entities.ForEach((Entity entity, ref Translation _translation, ref Selected _selected) => {
-						//Debug.Log("Add Component!");
 					_selected.isSelected = false;
 						if(_translation.Value.x > pointOne.x && _translation.Value.x < pointTwo.x && _translation.Value.y > pointOne.y && _translation.Value.y < pointTwo.y){
 							_selected.isSelected = true;                       
@@ -43,7 +42,6 @@ public class MoveOrderSystem : ComponentSystem {
 					ValidateGridPosition(ref endX, ref endY);
 
 					Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> pathPositionBuffer, ref Translation translation, ref Selected _selected) => {
-						//Debug.Log("Add Component!");
 						if(_selected.isSelected){
 							PathfindingGridSetup.Instance.pathfindingGrid.GetXY(translation.Value, out int startX, out int startY);
 							ValidateGridPosition(ref startX, ref startY);

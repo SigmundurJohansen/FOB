@@ -12,15 +12,16 @@ using TMPro;
 using SF = UnityEngine.SerializeField;
 
 public class ECSController : MonoBehaviour {
+    private EntityManager entityManager;
     public static ECSController instance;
     public static ECSController Instance { get { return instance; } }
     public Transform selectionAreaTransform;
     public Material unitSelectedCircleMaterial;
     public Mesh unitSelectedCircleMesh;
-    private EntityManager entityManager;
     public Sprite mainSprite;
     public GameObject Prefab;
     public GameObject koboltPrefab;
+    public GameObject dragonPrefab;
     public GameObject playerPrefab;
     public GameObject listViewPrefab;
     public GameObject listViewParent;
@@ -42,16 +43,12 @@ public class ECSController : MonoBehaviour {
     private void Start() {
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         blobAssetStore = new BlobAssetStore();
-        CreateArchetypes(entityManager);
-        //SpawnGridMesh();
-        SpawnPrefabs();
+        CreateArchetypes(entityManager);        
+        SpawnPrefabs();  //SpawnGridMesh();
         SpawnPlayerPrefab();
-        //SpawnPlayer();
-        //SpawnHumans(5);
-        //SpawnKobolt(5);
-        //PopulateListView();
     }
     
+    #region not in use
     private void CreateArchetypes(EntityManager _em)
     {
         var localtoWorl = typeof(LocalToWorld);
@@ -73,15 +70,13 @@ public class ECSController : MonoBehaviour {
         var id = typeof(IDComponent);
         var health = typeof(HealthComponent);
 
-        
         ArchHuman = _em.CreateArchetype(human,render,translate,movement,scale,localtoWorl, renderBounds, dest, collider,selectable,pathPos,pathFollow,nonUniform,health);
         ArchKobolt = _em.CreateArchetype(kobolt,pathPos, render, translate, selectable, id, movement,pathFollow, health);        
     }
-
+    #endregion
+   
     public void CreateEntities(int count)
     {
-        NativeArray<Entity> entities = new NativeArray<Entity>(count, Allocator.Temp);
-        entityManager.CreateEntity(ArchKobolt, entities);
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);        
         var myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(koboltPrefab, settings);
 
@@ -106,7 +101,35 @@ public class ECSController : MonoBehaviour {
             someBufferElement.position = new int2(xValueI,yValueI);
             someBuffer.Add ( someBufferElement );
         }
-        entities.Dispose();
+    }
+    public void CreateEntity(string name)
+    {
+        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);
+        Entity myPrefab;
+        if(name=="kobolt")
+            myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(koboltPrefab, settings);        
+        else
+            myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(dragonPrefab, settings);
+
+        var instance = entityManager.Instantiate(myPrefab);
+        float xValueF = UnityEngine.Random.Range(0, 10f);
+        float yValueF = UnityEngine.Random.Range(0f, 10f);
+        int xValueI = (int)Mathf.Round(xValueF) * (int)Mathf.Round(PathfindingGridSetup.Instance.pathfindingGrid.GetCellSize());
+        int yValueI = (int)Mathf.Round(yValueF) * (int)Mathf.Round(PathfindingGridSetup.Instance.pathfindingGrid.GetCellSize());
+        entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(xValueF, yValueF, -0.1f)) });
+        entityManager.AddComponentData(instance, new IDComponent() { id = GameController.Instance.GetID()});
+        entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 100, health = 100 });
+        entityManager.AddComponentData(instance, new MovementComponent() { isMoving = false, speed = 1.2f });
+        entityManager.AddComponentData(instance, new PathFollow() {});
+        entityManager.AddComponentData(instance, new Selected() {isSelected = false});
+        entityManager.AddBuffer <PathPosition> (instance );
+        PathPosition someBufferElement = new PathPosition();
+        DynamicBuffer<PathPosition> someBuffer = entityManager.GetBuffer<PathPosition>(instance);
+        someBufferElement.position = new int2(xValueI,yValueI);
+        someBuffer.Add(someBufferElement);
+        someBufferElement.position = new int2(xValueI,yValueI);
+        someBuffer.Add(someBufferElement);
+        GameController.Instance.AddUnit(name,new Vector3(xValueF, yValueF, -0.1f));
     }
 
     public void DestroyUnit()
@@ -147,15 +170,16 @@ public class ECSController : MonoBehaviour {
             someBuffer.Add ( someBufferElement ) ;
             someBufferElement.position = new int2(1,1) ;
             someBuffer.Add ( someBufferElement ) ;
-            var spawnPosition = transform.TransformPoint(new float3(UnityEngine.Random.Range(0, 10f), UnityEngine.Random.Range(0f, 10f), -0.1f));
+            float xValueF = UnityEngine.Random.Range(0, 10f);
+            float yValueF =UnityEngine.Random.Range(0f, 10f);
+            var spawnPosition = transform.TransformPoint(new float3(xValueF, yValueF, -0.1f));
             entityManager.SetComponentData(instance, new Translation {Value = spawnPosition});
             entityManager.AddComponentData(instance, new Selected {isSelected = true});
             entityManager.AddComponentData(instance, new MovementComponent { isMoving = false, speed = 1.2f});
             entityManager.AddComponentData(instance, new PathFollow());
-
-            int unitID= GameController.Instance.GetUnitListLength();
-            entityManager.AddComponentData(instance, new IDComponent { id = unitID});
-            GameController.Instance.AddUnitName("Kobolt" + unitID);
+            entityManager.AddComponentData(instance, new IDComponent { id = GameController.Instance.GetID()});
+            GameController.Instance.AddUnit("kobolt",new Vector3(xValueF, yValueF, -0.1f));
+            //GameController.Instance.AddUnitName("Kobolt " + unitID);
         }
     }
     
@@ -257,7 +281,7 @@ public class ECSController : MonoBehaviour {
         entityManager.SetComponentData(entities[0], new Selected {isSelected = true});
         int unitID= GameController.Instance.GetUnitListLength();
         entityManager.AddComponentData(entities[0], new IDComponent { id = unitID});
-        GameController.Instance.AddUnitName("Kobolt" + unitID);        
+        GameController.Instance.AddUnit("Player",new Vector3(0, 0, -0.1f));
         entities.Dispose();
     }
     private void OnDestroy()

@@ -16,7 +16,7 @@ public class PathFollowSystem : JobComponentSystem {
     protected override JobHandle OnUpdate(JobHandle inputDeps) {
         float deltaTime = Time.DeltaTime;
 
-        return Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> pathPositionBuffer, ref Translation translation, ref Rotation rot, ref PathFollow pathFollow, ref MovementComponent _move) => {
+        return Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> pathPositionBuffer, ref Translation translation, ref Rotation rot, ref PathFollow pathFollow, ref MovementComponent _move, ref IDComponent _id) => {
             rot.Value = new quaternion(0,0,0,1);
             if (pathFollow.pathIndex >= 0) {
                 // Has path to follow
@@ -24,6 +24,9 @@ public class PathFollowSystem : JobComponentSystem {
                 float3 targetPosition = new float3((pathPosition.position.x+.5f) * 0.32f, (pathPosition.position.y+.5f) * 0.32f, 0);
                 float3 moveDir = math.normalizesafe(targetPosition - translation.Value);
                 translation.Value += moveDir * _move.speed * deltaTime;
+                float3 myXy = translation.Value;
+                //Debug.Log(_id.id);
+                GameController.Instance.SetPosition(_id.id, myXy.x, myXy.y);
                 if (math.distance(translation.Value, targetPosition) < .1f) {
                     // Next waypoint
                     pathFollow.pathIndex--;

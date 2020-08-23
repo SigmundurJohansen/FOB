@@ -4,6 +4,7 @@ using Unity.Transforms;
 using Unity.Mathematics;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Timers;
 using SF = UnityEngine.SerializeField;
 
 public class GameSelector : MonoBehaviour
@@ -24,10 +25,14 @@ public class GameSelector : MonoBehaviour
     private Vector3 Diference;
     Vector2 pointOne;
     Vector2 pointTwo;
+    public CameraController myCameraController;
+    private readonly Timer _MouseSingleClickTimer = new Timer();
 
     void Start(){
         selectSquareImage.gameObject.SetActive(false);
         myGameSelector = this;
+        _MouseSingleClickTimer.Interval = 300;
+        _MouseSingleClickTimer.Elapsed += SingleClick;
     }
 
     // Update is called once per frame
@@ -57,10 +62,24 @@ public class GameSelector : MonoBehaviour
                 }
             }
             if(Input.GetMouseButtonUp(0)){
-                selectSquareImage.gameObject.SetActive(false);
                 if(dragSelect == false){
-                    Select();
+                    //Select();
                 }else{
+                }
+                selectSquareImage.gameObject.SetActive(false);
+                if (_MouseSingleClickTimer.Enabled == false)
+                {
+                    // ... timer start
+                    _MouseSingleClickTimer.Start();
+                    // ... wait for double click...
+                    return;
+                }
+                else
+                {
+                    //Doubleclick performed - Cancel single click
+                    _MouseSingleClickTimer.Stop(); 
+                    myCameraController.SetCameraPosition(Input.mousePosition);
+                    //Do your stuff here for double click...
                 }
             }
 
@@ -79,6 +98,13 @@ public class GameSelector : MonoBehaviour
                 fpsCam.transform.position = Origin-Diference;
             }
         }
+    }
+
+    void SingleClick(object _o, System.EventArgs _e)
+    {
+        _MouseSingleClickTimer.Stop();
+ 
+        //Do your stuff for single click here....
     }
 
     void MakeSelectionBox()
