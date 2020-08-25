@@ -5,23 +5,45 @@ using SF = UnityEngine.SerializeField;
 
 public class UIController : MonoBehaviour
 {
-    private bool isActive = true;
     [SF] public GameObject entityListView;
+    private bool entityIsActive = false;
+    [SF] public GameObject map;
+    private bool mapIsActive = false;
 
+    void Awake()
+    {
+        entityListView.SetActive(false);
+        map.SetActive(false);
+    }
     void Update()
     {
         
         if(Input.GetKeyDown("a"))
         {
             //rectTransform.Set
-            if(isActive){
+            if(entityIsActive)
+            {
                 entityListView.SetActive(false);
-                isActive = false;
-            }
-            else
+                entityIsActive = false;
+            }else
             {
                 entityListView.SetActive(true);
-                isActive = true;
+                entityIsActive = true;
+                entityListView.GetComponent<RectTransform>().SetAsLastSibling();
+            }
+        }
+        if(Input.GetKeyDown("m"))
+        {
+            //rectTransform.Set
+            if(mapIsActive)
+            {
+                map.SetActive(false);
+                mapIsActive = false;
+            }else
+            {
+                map.SetActive(true);
+                mapIsActive = true;
+                map.GetComponent<RectTransform>().SetAsLastSibling();
             }
         }
     }

@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Mathematics;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class MoveOrderSystem : ComponentSystem {
 
@@ -11,7 +12,8 @@ public class MoveOrderSystem : ComponentSystem {
 
     protected override void OnUpdate() 
 	{
-		
+		if(SceneManager.GetActiveScene().name == "GameScene"){
+			
         if (EventSystem.current.IsPointerOverGameObject())
         {
 			
@@ -55,6 +57,7 @@ public class MoveOrderSystem : ComponentSystem {
 					_selected.isSelected = false;
 				});
 			}
+		}
 		}
     }
 

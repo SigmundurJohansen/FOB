@@ -4,9 +4,18 @@ using UnityEngine.EventSystems;
 public class Draggable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     private Vector2 lastMousePosition;
+    public GameObject parent;
  
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if(parent!= null)
+        {
+            parent.GetComponent<RectTransform>().SetAsLastSibling();
+        }
+        else{            
+            RectTransform rect = GetComponent<RectTransform>();
+            rect.SetAsLastSibling();
+        }
         lastMousePosition = eventData.position;
     }
  
@@ -19,9 +28,6 @@ public class Draggable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
         Vector3 newPosition = rect.position +  new Vector3(diff.x, diff.y, transform.position.z);
         Vector3 oldPos = rect.position;
         rect.position = newPosition;
-
-        //if(!IsRectTransformInsideSreen(rect))
-        //    rect.position = oldPos;
 
         lastMousePosition = currentMousePosition;
     }

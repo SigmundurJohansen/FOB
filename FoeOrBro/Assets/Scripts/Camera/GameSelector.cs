@@ -113,12 +113,12 @@ public class GameSelector : MonoBehaviour
         {
             selectSquareImage.gameObject.SetActive(true);
         }
-        Vector3 centre = (startPos + endPos) / 2f;
+        Vector3 centre = (startPos + (endPos)) / 2f;
         selectSquareImage.position = centre;
 
         //Change the size of the square
         float sizeX = Mathf.Abs(startPos.x - endPos.x);
-        float sizeY = Mathf.Abs(startPos.y - endPos.y);
+        float sizeY = Mathf.Abs(startPos.y - (endPos.y));
         selectSquareImage.sizeDelta = new Vector2(sizeX,sizeY);
     }
 

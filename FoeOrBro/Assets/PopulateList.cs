@@ -15,7 +15,7 @@ public class PopulateList : MonoBehaviour
 
     public void Awake() 
     {
-        entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        //entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         
         
     }

@@ -7,13 +7,16 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Burst;
+using UnityEngine.SceneManagement;
 
+[UpdateAfter(typeof(PathfindingGridSetup))]
 public class PathfindingSystem : ComponentSystem {
 
     private const int MOVE_STRAIGHT_COST = 10;
     private const int MOVE_DIAGONAL_COST = 14;
 
     protected override void OnUpdate() {
+		if(SceneManager.GetActiveScene().name == "GameScene"){
         int gridWidth = PathfindingGridSetup.Instance.pathfindingGrid.GetWidth();
         int gridHeight = PathfindingGridSetup.Instance.pathfindingGrid.GetHeight();
         int2 gridSize = new int2(gridWidth, gridHeight);
@@ -54,6 +57,7 @@ public class PathfindingSystem : ComponentSystem {
         }
 
         pathNodeArray.Dispose();
+        }
     }
     
     private NativeArray<PathNode> GetPathNodeArray() {

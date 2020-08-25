@@ -3,12 +3,15 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.Jobs;
+using UnityEngine.SceneManagement;
+
 
 [UpdateAfter(typeof(PathfindingSystem))]
 public class PathFollowSystem : JobComponentSystem {
 
     private Unity.Mathematics.Random random;
     //float gridCellSize = 0.32f;
+
     protected override void OnCreate() {
         random = new Unity.Mathematics.Random(56);
     }
@@ -50,8 +53,8 @@ public class PathFollowGetNewPathSystem : JobComponentSystem {
 
     protected override void OnCreate() {
         random = new Unity.Mathematics.Random(56);
-
-        endSimulationEntityCommandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+        if( SceneManager.GetActiveScene().name == "GameScene")
+            endSimulationEntityCommandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
     }
 
     protected override JobHandle OnUpdate(JobHandle inputDeps) {
