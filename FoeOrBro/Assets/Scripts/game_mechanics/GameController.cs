@@ -156,13 +156,14 @@ public class GameController : MonoBehaviour
     {
         foreach(var unit in gameUnitList){
             Vector3 position = WorldPosition(unit.GetPosition());
-            position = position - new Vector3(Screen.width/2 ,Screen.height/2-20,0);
-            unit.menu.GetComponent<RectTransform >().anchoredPosition = position;
             float size = CameraController.Instance.GetSize();
-            size = 8 - size; 
+            size = Mathf.Clamp(6 -1.4f *size, 1, 6); 
             unit.menu.GetComponent<RectTransform >().localScale = new Vector3(size,size,size);
 
             unit.menu.GetComponent<Slider>().value = unit.health;
+
+            position = position - new Vector3(Screen.width/2 ,Screen.height/2-size*15,0);
+            unit.menu.GetComponent<RectTransform >().anchoredPosition = position;
         }
     }
     
