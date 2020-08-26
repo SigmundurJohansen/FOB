@@ -12,6 +12,7 @@ public class worldgenerator : MonoBehaviour
     public int width;
     public int height;
     public Slider randomSlider;
+    public Slider repititionSlider;
     public Slider deathSlider;
     public Slider birthSlider;
     public Slider widthSlider;
@@ -150,15 +151,7 @@ public class worldgenerator : MonoBehaviour
         birthLimit = (int)birthSlider.value; 
         width = (int)widthSlider.value; 
         height = (int)heightSlider.value; 
-        if(Input.GetMouseButtonDown(0))
-        {
-            //Generate();
-        }
-
-        if(Input.GetMouseButtonDown(1))
-        {
-            //clearMap();
-        }
+        repetitions =(int)repititionSlider.value;
     }
 /* 
     public void SaveAssetMap()

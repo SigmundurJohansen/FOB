@@ -3,6 +3,8 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Mathematics;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using System.Timers;
 using SF = UnityEngine.SerializeField;
 
 public class GameSelector : MonoBehaviour
@@ -23,52 +25,86 @@ public class GameSelector : MonoBehaviour
     private Vector3 Diference;
     Vector2 pointOne;
     Vector2 pointTwo;
+    public CameraController myCameraController;
+    private readonly Timer _MouseSingleClickTimer = new Timer();
 
-    void Start(){        
+    void Start(){
         selectSquareImage.gameObject.SetActive(false);
         myGameSelector = this;
+        _MouseSingleClickTimer.Interval = 300;
+        _MouseSingleClickTimer.Elapsed += SingleClick;
     }
 
     // Update is called once per frame
     void LateUpdate()
-    {
-        if(Input.GetMouseButtonDown(0))
+    {        
+        if (EventSystem.current.IsPointerOverGameObject())
         {
-            pointOne = WorldPosition();
-            startPos = Input.mousePosition;
-        }
-        if(Input.GetMouseButton(0)){
-            pointTwo = WorldPosition();
-            endPos = Input.mousePosition;
-            if((pointOne - pointTwo).magnitude > 0.2f)
-            {
-                MakeSelectionBox();
-                dragSelect = true;
-            }else{
-                dragSelect = false;
-            }
-        }
-        if(Input.GetMouseButtonUp(0)){
+            dragSelect = false;
             selectSquareImage.gameObject.SetActive(false);
-            if(dragSelect == false){
-                Select();
-            }else{
-            }
         }
-
-        if (Input.GetMouseButton (2))
+        else
         {
-            Diference=(fpsCam.ScreenToWorldPoint (Input.mousePosition))- fpsCam.transform.position;
-            if (Drag==false){
-                Drag=true;
-            Origin=fpsCam.ScreenToWorldPoint (Input.mousePosition);
+            if(Input.GetMouseButtonDown(0))
+            {
+                pointOne = WorldPosition();
+                startPos = Input.mousePosition;
             }
-        } else {
-            Drag=false;
+            if(Input.GetMouseButton(0)){
+                pointTwo = WorldPosition();
+                endPos = Input.mousePosition;
+                if((pointOne - pointTwo).magnitude > 0.2f)
+                {
+                    MakeSelectionBox();
+                    dragSelect = true;
+                }else{
+                    dragSelect = false;
+                }
+            }
+            if(Input.GetMouseButtonUp(0)){
+                if(dragSelect == false){
+                    //Select();
+                }else{
+                }
+                selectSquareImage.gameObject.SetActive(false);
+                if (_MouseSingleClickTimer.Enabled == false)
+                {
+                    // ... timer start
+                    _MouseSingleClickTimer.Start();
+                    // ... wait for double click...
+                    return;
+                }
+                else
+                {
+                    //Doubleclick performed - Cancel single click
+                    _MouseSingleClickTimer.Stop(); 
+                    myCameraController.SetCameraPosition(Input.mousePosition);
+                    //Do your stuff here for double click...
+                }
+            }
+
+            if (Input.GetMouseButton (2))
+            {
+                Diference=(fpsCam.ScreenToWorldPoint (Input.mousePosition))- fpsCam.transform.position;
+                if (Drag==false)
+                {
+                    Drag = true;
+                    Origin = fpsCam.ScreenToWorldPoint (Input.mousePosition);
+                }
+            } else {
+                Drag=false;
+            }
+            if (Drag==true){
+                fpsCam.transform.position = Origin-Diference;
+            }
         }
-        if (Drag==true){
-            fpsCam.transform.position = Origin-Diference;
-        }
+    }
+
+    void SingleClick(object _o, System.EventArgs _e)
+    {
+        _MouseSingleClickTimer.Stop();
+ 
+        //Do your stuff for single click here....
     }
 
     void MakeSelectionBox()
@@ -77,12 +113,12 @@ public class GameSelector : MonoBehaviour
         {
             selectSquareImage.gameObject.SetActive(true);
         }
-        Vector3 centre = (startPos + endPos) / 2f;
+        Vector3 centre = (startPos + (endPos)) / 2f;
         selectSquareImage.position = centre;
 
         //Change the size of the square
         float sizeX = Mathf.Abs(startPos.x - endPos.x);
-        float sizeY = Mathf.Abs(startPos.y - endPos.y);
+        float sizeY = Mathf.Abs(startPos.y - (endPos.y));
         selectSquareImage.sizeDelta = new Vector2(sizeX,sizeY);
     }
 

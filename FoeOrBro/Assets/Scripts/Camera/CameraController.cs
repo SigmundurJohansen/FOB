@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    private static CameraController m_Instance;
+    public static CameraController Instance { get { return m_Instance; } }
     public float panSpeed = 10f;
     public float panBorderThickness = 10f;
     public Vector2 panLimit;
@@ -13,11 +15,13 @@ public class CameraController : MonoBehaviour
     public float maxZ = -10f;
     public GameObject player; 
     public Camera whoAmI;
+    private Vector3 size;
     //float mDelta = 10f; // Pixels. The width border at the edge in which the movement work
     //float mSpeed = 3.0f; // Scale. Speed of the movement
 
     void Start () 
     {
+        m_Instance = this; 
     }
     void Update()
     {
@@ -29,8 +33,12 @@ public class CameraController : MonoBehaviour
 
         Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, minZ,  maxZ);
         transform.position = pos;
-         
     }
+
+    public float GetSize(){
+        return Camera.main.orthographicSize;
+    }
+
 
     public void SetStaticCamera(){
         Vector3 pos = transform.position;
