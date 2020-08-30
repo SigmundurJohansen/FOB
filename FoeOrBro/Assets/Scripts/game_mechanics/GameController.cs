@@ -42,6 +42,21 @@ public class GameController : MonoBehaviour
 
     void OnDestroy(){m_Instance = null;}
 
+    void Update()
+    {
+        foreach(var unit in gameUnitList){
+            Vector3 position = WorldPosition(unit.GetPosition());
+            float size = CameraController.Instance.GetSize();
+            size = Mathf.Clamp(6 -1.4f *size, 1, 6); 
+            unit.menu.GetComponent<RectTransform >().localScale = new Vector3(size,size,size);
+
+            unit.menu.GetComponent<Slider>().value = unit.health;
+
+            position = position - new Vector3(Screen.width/2 ,Screen.height/2-size*15,0);
+            unit.menu.GetComponent<RectTransform >().anchoredPosition = position;
+        }
+    }
+    
     public int GetUnitListLength()
     {
         return gameUnitList.Count;
@@ -152,21 +167,6 @@ public class GameController : MonoBehaviour
         gameUnitList[_index].SetName(_name);
     }
 
-    void Update()
-    {
-        foreach(var unit in gameUnitList){
-            Vector3 position = WorldPosition(unit.GetPosition());
-            float size = CameraController.Instance.GetSize();
-            size = Mathf.Clamp(6 -1.4f *size, 1, 6); 
-            unit.menu.GetComponent<RectTransform >().localScale = new Vector3(size,size,size);
-
-            unit.menu.GetComponent<Slider>().value = unit.health;
-
-            position = position - new Vector3(Screen.width/2 ,Screen.height/2-size*15,0);
-            unit.menu.GetComponent<RectTransform >().anchoredPosition = position;
-        }
-    }
-    
 
 
     public void OnGui()
