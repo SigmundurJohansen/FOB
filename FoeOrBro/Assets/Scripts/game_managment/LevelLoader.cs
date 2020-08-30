@@ -109,11 +109,18 @@ public class LevelLoader : MonoBehaviour {
 				HeightType height = cMap.mapTiles[x,y].HeightType;
 				
 				if(height == HeightType.DeepWater)
-					ECSController.Instance.SpawnPrefabs( prefabDeepWater, (float) x, (float) y, collidable);
+				{
+					ECSController.Instance.SpawnPrefabs( prefabDeepWater, (float) x, (float) y, false);
+					PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(x, y).SetIsWalkable(false);
+
+				}
 				if(height == HeightType.ShallowWater)
-					ECSController.Instance.SpawnPrefabs( prefabWater, (float) x, (float) y, collidable);
+				{
+					ECSController.Instance.SpawnPrefabs( prefabWater, (float) x, (float) y, false);
+					PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(x, y).SetIsWalkable(false);
+				}
 				
-				if(height != HeightType.DeepWater || height != HeightType.ShallowWater)
+				if(height != HeightType.DeepWater && height != HeightType.ShallowWater)
 					ECSController.Instance.SpawnPrefabs( prefab, (float) x, (float) y, collidable);				 
 
 				PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(x, y).SetIsWalkable(collidable);

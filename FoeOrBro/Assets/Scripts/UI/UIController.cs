@@ -8,13 +8,13 @@ public class UIController : MonoBehaviour
     [SF] public GameObject entityListView;
     private bool entityIsActive = false;
     [SF] public GameObject map;
-    private bool mapIsActive = false;
+    private bool mapIsActive = true;
     public GameObject menuPanel;
 
     void Awake()
     {
         entityListView.SetActive(false);
-        map.SetActive(false);
+        map.SetActive(true);
     }
     void Update()
     {

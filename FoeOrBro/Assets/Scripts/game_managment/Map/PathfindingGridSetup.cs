@@ -18,6 +18,11 @@ public class PathfindingGridSetup : MonoBehaviour {
         //pathfindingGrid.GetGridObject(2, 0).SetIsWalkable(false);
         //pathfindingVisual.SetGrid(pathfindingGrid);
     }
+    private void Update() {
+        if (Input.GetMouseButtonDown(1)) {
+            printPos();
+        }
+    }
 
 /*
     private void Update() {
@@ -39,4 +44,10 @@ public class PathfindingGridSetup : MonoBehaviour {
         return mousePos;
     }
  */
+    public void printPos(){        
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
+        //Debug.Log("WorldPosition: " + mousePos);
+        //mousePos.z = transform.position.z;
+        Debug.Log(mousePos);
+    }
 }

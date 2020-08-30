@@ -109,8 +109,8 @@ public class ECSController : MonoBehaviour {
         float xValueF = UnityEngine.Random.Range(0, 100f)*fcellSize;
         float yValueF = UnityEngine.Random.Range(0f, 100f)*fcellSize;
         int icellSize = (int)Mathf.Round(fcellSize);
-        int xValueI = (int)Mathf.Round(xValueF) * icellSize;
-        int yValueI = (int)Mathf.Round(yValueF) * icellSize;
+        int xValueI = (int)Mathf.Round(xValueF);
+        int yValueI = (int)Mathf.Round(yValueF);
         bool isWalkabler = PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(xValueI, yValueI).IsWalkable();
         Debug.Log("x : " + xValueI + " y : " +yValueI);
         Debug.Log(isWalkabler);
