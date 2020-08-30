@@ -34,20 +34,6 @@ public enum MoistureType
 	Dryest = 0
 }
 
-public enum BiomeType
-{
-	Desert,
-	Savanna,
-	TropicalRainforest,
-	Grassland,
-	Woodland,
-	SeasonalForest,
-	TemperateRainforest,
-	BorealForest,
-	Tundra,
-	Ice
-}
-
 
 [System.Serializable]
 public class Tile
@@ -74,10 +60,7 @@ public class Tile
 	public bool Collidable;
 	public bool FloodFilled;
 
-	//public Color Color = Color.black;
-
 	public List<River> Rivers = new List<River>();
-
 	public int RiverSize { get ;set; }
 		
 	public Tile()

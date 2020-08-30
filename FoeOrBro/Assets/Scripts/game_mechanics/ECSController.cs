@@ -12,20 +12,19 @@ using TMPro;
 using SF = UnityEngine.SerializeField;
 
 public class ECSController : MonoBehaviour {
-    private EntityManager entityManager;
+    public EntityManager entityManager;
     public static ECSController instance;
     public static ECSController Instance { get { return instance; } }
     public Transform selectionAreaTransform;
     public Material unitSelectedCircleMaterial;
     public Mesh unitSelectedCircleMesh;
     public Sprite mainSprite;
-    public GameObject Prefab;
     public GameObject koboltPrefab;
     public GameObject dragonPrefab;
     public GameObject playerPrefab;
     public GameObject listViewPrefab;
     public GameObject listViewParent;
-    BlobAssetStore blobAssetStore;
+    public BlobAssetStore blobAssetStore;
     [SF] public Mesh spriteMesh;
     [SF] public Material spriteMaterial;
     [SF] public Material terrainMaterial;
@@ -43,8 +42,9 @@ public class ECSController : MonoBehaviour {
     private void Start() {
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         blobAssetStore = new BlobAssetStore();
-        CreateArchetypes(entityManager);        
-        SpawnPrefabs();  //SpawnGridMesh();
+        CreateArchetypes(entityManager);
+        LevelLoader.Instance.LoadMap();       
+
         SpawnPlayerPrefab();
     }
     
@@ -102,8 +102,21 @@ public class ECSController : MonoBehaviour {
             someBuffer.Add ( someBufferElement );
         }
     }
-    public void CreateEntity(string name)
+
+    public int CreateEntity(string name)
     {
+        float fcellSize = 0.32f;
+        float xValueF = UnityEngine.Random.Range(0, 100f)*fcellSize;
+        float yValueF = UnityEngine.Random.Range(0f, 100f)*fcellSize;
+        int icellSize = (int)Mathf.Round(fcellSize);
+        int xValueI = (int)Mathf.Round(xValueF) * icellSize;
+        int yValueI = (int)Mathf.Round(yValueF) * icellSize;
+        bool isWalkabler = PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(xValueI, yValueI).IsWalkable();
+        Debug.Log("x : " + xValueI + " y : " +yValueI);
+        Debug.Log(isWalkabler);
+        if(!isWalkabler)
+            return -1;
+
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);
         Entity myPrefab;
         if(name=="kobolt")
@@ -112,10 +125,6 @@ public class ECSController : MonoBehaviour {
             myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(dragonPrefab, settings);
 
         var instance = entityManager.Instantiate(myPrefab);
-        float xValueF = UnityEngine.Random.Range(0, 10f);
-        float yValueF = UnityEngine.Random.Range(0f, 10f);
-        int xValueI = (int)Mathf.Round(xValueF) * (int)Mathf.Round(PathfindingGridSetup.Instance.pathfindingGrid.GetCellSize());
-        int yValueI = (int)Mathf.Round(yValueF) * (int)Mathf.Round(PathfindingGridSetup.Instance.pathfindingGrid.GetCellSize());
         entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(xValueF, yValueF, -0.1f)) });
         entityManager.AddComponentData(instance, new IDComponent() { id = GameController.Instance.GetID()});
         entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 100, health = 100 });
@@ -130,6 +139,7 @@ public class ECSController : MonoBehaviour {
         someBufferElement.position = new int2(xValueI,yValueI);
         someBuffer.Add(someBufferElement);
         GameController.Instance.AddUnit(name,new Vector3(xValueF, yValueF, -0.1f));
+        return 0;
     }
 
     public void DestroyUnit()
@@ -183,6 +193,17 @@ public class ECSController : MonoBehaviour {
         }
     }
     
+    public void SpawnPrefabs(GameObject _prefab, float _x, float _y, bool _collidable){
+        int width = PathfindingGridSetup.Instance.pathfindingGrid.GetWidth();
+        int height = PathfindingGridSetup.Instance.pathfindingGrid.GetHeight();
+        float cellSize =  PathfindingGridSetup.Instance.pathfindingGrid.GetCellSize();
+        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);        
+        var prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(_prefab, settings);
+
+        var instance = entityManager.Instantiate(prefab);
+        var position = transform.TransformPoint(new float3((_x+0.5f) * cellSize,(_y+0.5f)* cellSize, 0.5f));
+        entityManager.SetComponentData(instance, new Translation {Value = position});
+    }
 
     public void SpawnGridMesh()
     {
@@ -230,24 +251,6 @@ public class ECSController : MonoBehaviour {
         entities.Dispose();
     }
 
-    public void SpawnPrefabs(){
-        int width = PathfindingGridSetup.Instance.pathfindingGrid.GetWidth();
-        int height = PathfindingGridSetup.Instance.pathfindingGrid.GetHeight();
-        float cellSize =  PathfindingGridSetup.Instance.pathfindingGrid.GetCellSize();
-        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);        
-        var prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(Prefab, settings);
-
-        for (var y = 0; y < height; y++)
-        {
-            for (var x = 0; x < width; x++)
-            {
-                var instance = entityManager.Instantiate(prefab);
-                var position = transform.TransformPoint(new float3((x+0.5f) * cellSize,(y+0.5f)* cellSize, 0.5f));
-                entityManager.SetComponentData(instance, new Translation {Value = position});
-                //entityManager.SetSharedComponentData(instance, new RenderMesh { mesh = spriteMesh, material = spriteMaterial });
-            }
-        }
-    }
     
     private void SpawnPlayer(){
         NativeArray<Entity> entities = new NativeArray<Entity>(1, Allocator.Temp);

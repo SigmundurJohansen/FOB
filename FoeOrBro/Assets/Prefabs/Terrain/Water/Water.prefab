@@ -10,11 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 631920376991785377}
   - component: {fileID: 2786200893781004434}
-  - component: {fileID: -7673818886532798028}
-  - component: {fileID: 2400183100334521760}
   - component: {fileID: -874446718577397304}
   - component: {fileID: -6836549587945384168}
-  - component: {fileID: 2895129697567482151}
+  - component: {fileID: 9071017338260470590}
   m_Layer: 4
   m_Name: Water
   m_TagString: Ground
@@ -31,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 3463652404694774189}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.3, y: 3.3, z: 1}
+  m_LocalScale: {x: 3.2, y: 3.2, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -75,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 1067289625
   m_SortingLayer: 1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 41199196555812882, guid: 7e1696dd211b6cc4a845b816ffe21bd5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e0b04c248d8469c499517465f8ec2d00, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -86,60 +84,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1839735485 &-7673818886532798028
-Tilemap:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3463652404694774189}
-  m_Enabled: 1
-  m_Tiles: {}
-  m_AnimatedTiles: {}
-  m_TileAssetArray: []
-  m_TileSpriteArray: []
-  m_TileMatrixArray: []
-  m_TileColorArray: []
-  m_TileObjectToInstantiateArray: []
-  m_AnimationFrameRate: 1
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Origin: {x: 0, y: 0, z: 0}
-  m_Size: {x: 0, y: 0, z: 1}
-  m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
-  m_TileOrientation: 0
-  m_TileOrientationMatrix:
-    e00: 1
-    e01: 0
-    e02: 0
-    e03: 0
-    e10: 0
-    e11: 1
-    e12: 0
-    e13: 0
-    e20: 0
-    e21: 0
-    e22: 1
-    e23: 0
-    e30: 0
-    e31: 0
-    e32: 0
-    e33: 1
---- !u!19719996 &2400183100334521760
-TilemapCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3463652404694774189}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_MaximumTileChangeCount: 1000
-  m_ExtrusionFactor: 0.00001
 --- !u!50 &-874446718577397304
 Rigidbody2D:
   serializedVersion: 4
@@ -178,7 +122,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.32006836, y: 0.32}
+    oldSize: {x: 0.32, y: 0.32}
     newSize: {x: 0.32006836, y: 0.32}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -187,39 +131,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.32, y: 0.32}
   m_EdgeRadius: 0
---- !u!66 &2895129697567482151
-CompositeCollider2D:
+--- !u!114 &9071017338260470590
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3463652404694774189}
   m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_GeometryType: 0
-  m_GenerationType: 0
-  m_EdgeRadius: 0
-  m_ColliderPaths:
-  - m_Collider: {fileID: -6836549587945384168}
-    m_ColliderPaths:
-    - - X: 5279707
-        Y: -5280000
-      - X: 5279707
-        Y: 5280000
-      - X: -5280000
-        Y: 5279707
-      - X: -5279707
-        Y: -5280000
-  m_CompositePaths:
-    m_Paths:
-    - - {x: 0.5279414, y: -0.528}
-      - {x: 0.5279414, y: 0.528}
-      - {x: -0.528, y: 0.5279414}
-      - {x: -0.5279414, y: -0.528}
-  m_VertexDistance: 0.0005
-  m_OffsetDistance: 0.00005
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea7d7495833204790ba1d3a8755397f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ConversionMode: 0

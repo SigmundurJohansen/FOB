@@ -16,47 +16,48 @@ public class PathfindingSystem : ComponentSystem {
     private const int MOVE_DIAGONAL_COST = 14;
 
     protected override void OnUpdate() {
-		if(SceneManager.GetActiveScene().name == "GameScene"){
-        int gridWidth = PathfindingGridSetup.Instance.pathfindingGrid.GetWidth();
-        int gridHeight = PathfindingGridSetup.Instance.pathfindingGrid.GetHeight();
-        int2 gridSize = new int2(gridWidth, gridHeight);
+		if(SceneManager.GetActiveScene().name == "GameScene")
+        {
+            int gridWidth = PathfindingGridSetup.Instance.pathfindingGrid.GetWidth();
+            int gridHeight = PathfindingGridSetup.Instance.pathfindingGrid.GetHeight();
+            int2 gridSize = new int2(gridWidth, gridHeight);
 
-        List<FindPathJob> findPathJobList = new List<FindPathJob>();
-        NativeList<JobHandle> jobHandleList = new NativeList<JobHandle>(Allocator.Temp);
-        
-        NativeArray<PathNode> pathNodeArray = GetPathNodeArray();
+            List<FindPathJob> findPathJobList = new List<FindPathJob>();
+            NativeList<JobHandle> jobHandleList = new NativeList<JobHandle>(Allocator.Temp);
+            
+            NativeArray<PathNode> pathNodeArray = GetPathNodeArray();
 
-        Entities.ForEach((Entity entity, ref DestinationComponent destination) => {
+            Entities.ForEach((Entity entity, ref DestinationComponent destination) => {
 
-            NativeArray<PathNode> tmpPathNodeArray = new NativeArray<PathNode>(pathNodeArray, Allocator.TempJob);
+                NativeArray<PathNode> tmpPathNodeArray = new NativeArray<PathNode>(pathNodeArray, Allocator.TempJob);
 
-            FindPathJob findPathJob = new FindPathJob {
-                gridSize = gridSize,
-                pathNodeArray = tmpPathNodeArray,
-                startPosition = destination.startPosition,
-                endPosition = destination.endPosition,
-                entity = entity,
-            };
-            findPathJobList.Add(findPathJob);
-            jobHandleList.Add(findPathJob.Schedule());
+                FindPathJob findPathJob = new FindPathJob {
+                    gridSize = gridSize,
+                    pathNodeArray = tmpPathNodeArray,
+                    startPosition = destination.startPosition,
+                    endPosition = destination.endPosition,
+                    entity = entity,
+                };
+                findPathJobList.Add(findPathJob);
+                jobHandleList.Add(findPathJob.Schedule());
 
-            PostUpdateCommands.RemoveComponent<DestinationComponent>(entity);
-        });
+                PostUpdateCommands.RemoveComponent<DestinationComponent>(entity);
+            });
 
-        JobHandle.CompleteAll(jobHandleList);
+            JobHandle.CompleteAll(jobHandleList);
 
-        foreach (FindPathJob findPathJob in findPathJobList) {
-            new SetBufferPathJob {
-                entity = findPathJob.entity,
-                gridSize = findPathJob.gridSize,
-                pathNodeArray = findPathJob.pathNodeArray,
-                destinationComponentDataFromEntity = GetComponentDataFromEntity<DestinationComponent>(),
-                pathFollowComponentDataFromEntity = GetComponentDataFromEntity<PathFollow>(),
-                pathPositionBufferFromEntity = GetBufferFromEntity<PathPosition>(),
-            }.Run();
-        }
+            foreach (FindPathJob findPathJob in findPathJobList) {
+                new SetBufferPathJob {
+                    entity = findPathJob.entity,
+                    gridSize = findPathJob.gridSize,
+                    pathNodeArray = findPathJob.pathNodeArray,
+                    destinationComponentDataFromEntity = GetComponentDataFromEntity<DestinationComponent>(),
+                    pathFollowComponentDataFromEntity = GetComponentDataFromEntity<PathFollow>(),
+                    pathPositionBufferFromEntity = GetBufferFromEntity<PathPosition>(),
+                }.Run();
+            }
 
-        pathNodeArray.Dispose();
+            pathNodeArray.Dispose();
         }
     }
     

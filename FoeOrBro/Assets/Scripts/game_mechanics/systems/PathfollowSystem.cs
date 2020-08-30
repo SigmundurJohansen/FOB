@@ -21,7 +21,7 @@ public class PathFollowSystem : JobComponentSystem {
 
         return Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> pathPositionBuffer, ref Translation translation, ref Rotation rot, ref PathFollow pathFollow, ref MovementComponent _move, ref IDComponent _id) => {
             rot.Value = new quaternion(0,0,0,1);
-            if (pathFollow.pathIndex >= 0) {
+            if (pathFollow.pathIndex >= 0 && _move.isMoving) {
                 // Has path to follow
                 PathPosition pathPosition = pathPositionBuffer[pathFollow.pathIndex];
                 float3 targetPosition = new float3((pathPosition.position.x+.5f) * 0.32f, (pathPosition.position.y+.5f) * 0.32f, 0);
@@ -35,6 +35,8 @@ public class PathFollowSystem : JobComponentSystem {
                     pathFollow.pathIndex--;
                 }
             }
+            else
+                _move.isMoving = false;
         }).Schedule(inputDeps);
     }
 

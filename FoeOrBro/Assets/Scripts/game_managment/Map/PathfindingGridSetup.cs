@@ -5,7 +5,7 @@ public class PathfindingGridSetup : MonoBehaviour {
     //private Vector3 originVector = new Vector3(-.5f,-.5f,0);
     private Vector3 originVector = new Vector3(0,0,0);
     #pragma warning disable 0649
-    [SerializeField] private PathfindingVisual pathfindingVisual;
+    //[SerializeField] private PathfindingVisual pathfindingVisual;
     public Grid<GridNode> pathfindingGrid;
 
 
@@ -13,12 +13,13 @@ public class PathfindingGridSetup : MonoBehaviour {
         Instance = this;
     }
 
-    private void Start() {
-        pathfindingGrid = new Grid<GridNode>(32, 32, 0.32f, originVector, (Grid<GridNode> grid, int x, int y) => new GridNode(grid, x, y));
+    public void CreateGrid(int _x, int _y) {
+        pathfindingGrid = new Grid<GridNode>(_x, _y, 0.32f, originVector, (Grid<GridNode> grid, int x, int y) => new GridNode(grid, x, y));
         //pathfindingGrid.GetGridObject(2, 0).SetIsWalkable(false);
         //pathfindingVisual.SetGrid(pathfindingGrid);
     }
 
+/*
     private void Update() {
         if (Input.GetMouseButtonDown(1)) {
             Vector3 mousePosition = WorldPosition();// .5f    + (new Vector3(+1, +1) * pathfindingGrid.GetCellSize())
@@ -37,4 +38,5 @@ public class PathfindingGridSetup : MonoBehaviour {
         //mousePos.z = transform.position.z;
         return mousePos;
     }
+ */
 }
