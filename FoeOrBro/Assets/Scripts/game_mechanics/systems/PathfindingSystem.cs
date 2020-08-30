@@ -73,12 +73,9 @@ public class PathfindingSystem : ComponentSystem {
                 pathNode.x = x;
                 pathNode.y = y;
                 pathNode.index = CalculateIndex(x, y, gridSize.x);
-
-                pathNode.gCost = int.MaxValue;
-                
+                pathNode.gCost = int.MaxValue;                
                 pathNode.isWalkable = grid.GetGridObject(x, y).IsWalkable();
                 pathNode.cameFromNodeIndex = -1;
-
                 pathNodeArray[pathNode.index] = pathNode;
             }
         }

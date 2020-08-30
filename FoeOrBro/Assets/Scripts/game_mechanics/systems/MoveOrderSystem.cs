@@ -42,15 +42,17 @@ public class MoveOrderSystem : ComponentSystem {
 					Vector3 mousePosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
 					PathfindingGridSetup.Instance.pathfindingGrid.GetXY(mousePosition, out int endX, out int endY); //  + new Vector3(1,1,0)* cellSize
 					ValidateGridPosition(ref endX, ref endY);
-
-					Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> pathPositionBuffer, ref Translation translation, ref Selected _selected, ref MovementComponent _move) => {
-						if(_selected.isSelected){
-							PathfindingGridSetup.Instance.pathfindingGrid.GetXY(translation.Value, out int startX, out int startY);
-							ValidateGridPosition(ref startX, ref startY);
-							_move.isMoving = true;
-							EntityManager.AddComponentData(entity, new DestinationComponent {startPosition = new int2(startX, startY),endPosition = new int2(endX, endY)});
-						}
-					});
+					if(PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(endX, endY).IsWalkable())
+					{
+						Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> pathPositionBuffer, ref Translation translation, ref Selected _selected, ref MovementComponent _move) => {
+							if(_selected.isSelected){
+								PathfindingGridSetup.Instance.pathfindingGrid.GetXY(translation.Value, out int startX, out int startY);
+								ValidateGridPosition(ref startX, ref startY);
+								_move.isMoving = true;
+								EntityManager.AddComponentData(entity, new DestinationComponent {startPosition = new int2(startX, startY),endPosition = new int2(endX, endY)});
+							}
+						});
+					}
 				}
 			}
 			if(Input.GetMouseButtonDown(1)){			
