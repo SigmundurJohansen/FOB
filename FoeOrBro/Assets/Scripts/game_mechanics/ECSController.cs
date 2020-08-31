@@ -43,6 +43,7 @@ public class ECSController : MonoBehaviour {
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         blobAssetStore = new BlobAssetStore();
         CreateArchetypes(entityManager);
+        PathfindingGridSetup.Instance.CreateGrid(100,100);
         LevelLoader.Instance.LoadMap();       
 
         SpawnPlayerPrefab();
