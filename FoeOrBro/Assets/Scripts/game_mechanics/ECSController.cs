@@ -40,11 +40,11 @@ public class ECSController : MonoBehaviour {
     }
 
     private void Start() {
+        LevelLoader.Instance.CreateMap();       
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         blobAssetStore = new BlobAssetStore();
         CreateArchetypes(entityManager);
-        PathfindingGridSetup.Instance.CreateGrid(100,100);
-        LevelLoader.Instance.LoadMap();       
+        //PathfindingGridSetup.Instance.CreateGrid(100,100);
 
         SpawnPlayerPrefab();
     }
@@ -201,7 +201,7 @@ public class ECSController : MonoBehaviour {
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);        
         var prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(_prefab, settings);
 
-        var instance = entityManager.Instantiate(prefab);
+        var instance = entityManager.Instantiate(_prefab);
         var position = transform.TransformPoint(new float3((_x+0.5f) * cellSize,(_y+0.5f)* cellSize, 0.5f));
         entityManager.SetComponentData(instance, new Translation {Value = position});
     }
@@ -294,7 +294,7 @@ public class ECSController : MonoBehaviour {
             blobAssetStore.Dispose();
         }
     }
-
+/*Ð
     public class EntityToGameObject : Component {
         public GameObject GameObject;
     
@@ -302,7 +302,8 @@ public class ECSController : MonoBehaviour {
             this.GameObject = GameObject;
         }
     }
-
+ */
+ 
     private void SpawnHumans(int count) {
         NativeArray<Entity> entities = new NativeArray<Entity>(count, Allocator.Temp);
         EntityArchetype entityArchetype = entityManager.CreateArchetype(
