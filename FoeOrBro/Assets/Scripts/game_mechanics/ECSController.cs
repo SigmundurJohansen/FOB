@@ -39,10 +39,10 @@ public class ECSController : MonoBehaviour {
         instance = this;
     }
 
-    private void Start() {
-        LevelLoader.Instance.CreateMap();       
+    private void Start() {      
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         blobAssetStore = new BlobAssetStore();
+        LevelLoader.Instance.CreateMap(); 
         CreateArchetypes(entityManager);
         //PathfindingGridSetup.Instance.CreateGrid(100,100);
 
@@ -107,8 +107,8 @@ public class ECSController : MonoBehaviour {
     public int CreateEntity(string name)
     {
         float fcellSize = 0.32f;
-        float xValueF = UnityEngine.Random.Range(0, 100f)*fcellSize;
-        float yValueF = UnityEngine.Random.Range(0f, 100f)*fcellSize;
+        float xValueF = UnityEngine.Random.Range(0, 100f);
+        float yValueF = UnityEngine.Random.Range(0f, 100f);
         int icellSize = (int)Mathf.Round(fcellSize);
         int xValueI = (int)Mathf.Round(xValueF);
         int yValueI = (int)Mathf.Round(yValueF);
@@ -117,7 +117,8 @@ public class ECSController : MonoBehaviour {
         Debug.Log(isWalkabler);
         if(!isWalkabler)
             return -1;
-
+        xValueF = xValueF *fcellSize;
+        yValueF = yValueF * fcellSize;
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);
         Entity myPrefab;
         if(name=="kobolt")
@@ -201,7 +202,7 @@ public class ECSController : MonoBehaviour {
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);        
         var prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(_prefab, settings);
 
-        var instance = entityManager.Instantiate(_prefab);
+        var instance = entityManager.Instantiate(prefab);
         var position = transform.TransformPoint(new float3((_x+0.5f) * cellSize,(_y+0.5f)* cellSize, 0.5f));
         entityManager.SetComponentData(instance, new Translation {Value = position});
     }
