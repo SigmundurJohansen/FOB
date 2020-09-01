@@ -10,8 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7337708558176611066}
   - component: {fileID: 7337708558176611069}
-  - component: {fileID: 7337708558176611068}
-  - component: {fileID: 7337708558176611071}
   m_Layer: 14
   m_Name: Grass 03
   m_TagString: Ground
@@ -83,40 +81,3 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &7337708558176611068
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7337708558176611070}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.32, y: 0.32}
-    newSize: {x: 0.32006836, y: 0.32}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.32006836, y: 0.32}
-  m_EdgeRadius: 0
---- !u!210 &7337708558176611071
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7337708558176611070}
-  m_Enabled: 1
-  m_SortingLayerID: -2065973465
-  m_SortingLayer: -1
-  m_SortingOrder: 0
