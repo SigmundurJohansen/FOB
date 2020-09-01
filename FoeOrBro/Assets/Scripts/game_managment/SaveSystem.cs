@@ -2,9 +2,8 @@ using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-public static class SaveSystem{
-
-
+public static class SaveSystem
+{
     public static void SaveMap(int _width, int _height, Tile[,] _tile)
     {
         BinaryFormatter formatter = new BinaryFormatter();
@@ -18,7 +17,7 @@ public static class SaveSystem{
     public static Map LoadMap()
     {
         string path = Application.persistentDataPath + "/map.sig";
-        if(File.Exists(path))
+        if (File.Exists(path))
         {
             BinaryFormatter formatter = new BinaryFormatter();
             FileStream stream = new FileStream(path, FileMode.Open);
@@ -26,7 +25,8 @@ public static class SaveSystem{
             stream.Close();
             return data;
         }
-        else{
+        else
+        {
             Debug.LogError("Can't find map" + path);
             return null;
         }

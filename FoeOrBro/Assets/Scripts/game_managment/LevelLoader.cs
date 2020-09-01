@@ -126,44 +126,44 @@ public class LevelLoader : MonoBehaviour
         }
     }
 
-    public Color GetTileColor(int width, int height, Tile[,] tiles, float coldest, float colder, float cold)
+    public Color GetTileColor(int _width, int _height, Tile[,] _tiles, float _coldest, float _colder, float _cold)
     {
-        var texture = new Texture2D(width, height);
-        var pixels = new Color[width * height];
-        for (var x = 0; x < width; x++)
+        var texture = new Texture2D(_width, _height);
+        var pixels = new Color[_width * _height];
+        for (var x = 0; x < _width; x++)
         {
-            for (var y = 0; y < height; y++)
+            for (var y = 0; y < _height; y++)
             {
-                BiomeType value = tiles[x, y].BiomeType;
-                pixels[x + y * width] = Ice;
+                BiomeType value = _tiles[x, y].BiomeType;
+                pixels[x + y * _width] = Ice;
                 // Water tiles
-                if (tiles[x, y].HeightType == HeightType.DeepWater)
+                if (_tiles[x, y].HeightType == HeightType.DeepWater)
                 {
-                    pixels[x + y * width] = DeepColor;
+                    pixels[x + y * _width] = DeepColor;
                 }
-                else if (tiles[x, y].HeightType == HeightType.ShallowWater)
+                else if (_tiles[x, y].HeightType == HeightType.ShallowWater)
                 {
-                    pixels[x + y * width] = ShallowColor;
+                    pixels[x + y * _width] = ShallowColor;
                 }
                 // draw rivers
-                if (tiles[x, y].HeightType == HeightType.River)
+                if (_tiles[x, y].HeightType == HeightType.River)
                 {
-                    float heatValue = tiles[x, y].HeatValue;
+                    float heatValue = _tiles[x, y].HeatValue;
 
-                    if (tiles[x, y].HeatType == HeatType.Coldest)
-                        pixels[x + y * width] = Color.Lerp(IceWater, ColdWater, (heatValue) / (coldest));
-                    else if (tiles[x, y].HeatType == HeatType.Colder)
-                        pixels[x + y * width] = Color.Lerp(ColdWater, RiverWater, (heatValue - coldest) / (colder - coldest));
-                    else if (tiles[x, y].HeatType == HeatType.Cold)
-                        pixels[x + y * width] = Color.Lerp(RiverWater, ShallowColor, (heatValue - colder) / (cold - colder));
+                    if (_tiles[x, y].HeatType == HeatType.Coldest)
+                        pixels[x + y * _width] = Color.Lerp(IceWater, ColdWater, (heatValue) / (_coldest));
+                    else if (_tiles[x, y].HeatType == HeatType.Colder)
+                        pixels[x + y * _width] = Color.Lerp(ColdWater, RiverWater, (heatValue - _coldest) / (_colder - _coldest));
+                    else if (_tiles[x, y].HeatType == HeatType.Cold)
+                        pixels[x + y * _width] = Color.Lerp(RiverWater, ShallowColor, (heatValue - _colder) / (_cold - _colder));
                     else
-                        pixels[x + y * width] = ShallowColor;
+                        pixels[x + y * _width] = ShallowColor;
                 }
                 // add a outline
-                if (tiles[x, y].HeightType >= HeightType.Shore && tiles[x, y].HeightType != HeightType.River)
+                if (_tiles[x, y].HeightType >= HeightType.Shore && _tiles[x, y].HeightType != HeightType.River)
                 {
-                    if (tiles[x, y].BiomeBitmask != 15)
-                        pixels[x + y * width] = Color.Lerp(pixels[x + y * width], Color.black, 0.35f);
+                    if (_tiles[x, y].BiomeBitmask != 15)
+                        pixels[x + y * _width] = Color.Lerp(pixels[x + y * _width], Color.black, 0.35f);
                 }
             }
         }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
@@ -20,17 +17,17 @@ public class Grid<TGridObject> {
     private Vector3 originPosition;
     private TGridObject[,] gridArray;
 
-    public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid<TGridObject>, int, int, TGridObject> createGridObject) {
-        this.width = width;
-        this.height = height;
-        this.cellSize = cellSize;
-        this.originPosition = originPosition;
+    public Grid(int _width, int _height, float _cellSize, Vector3 _originPosition, Func<Grid<TGridObject>, int, int, TGridObject> _createGridObject) {
+        this.width = _width;
+        this.height = _height;
+        this.cellSize = _cellSize;
+        this.originPosition = _originPosition;
 
         gridArray = new TGridObject[width, height];
 
         for (int x = 0; x < gridArray.GetLength(0); x++) {
             for (int y = 0; y < gridArray.GetLength(1); y++) {
-                gridArray[x, y] = createGridObject(this, x, y);
+                gridArray[x, y] = _createGridObject(this, x, y);
             }
         }
         bool showDebug = false;
@@ -65,14 +62,14 @@ public class Grid<TGridObject> {
         return cellSize;
     }
 
-    public Vector3 GetWorldPosition(int x, int y) {
-        return new Vector3(x, y) * cellSize + originPosition;  //   new Vector3(x, y) * cellSize + originPosition
+    public Vector3 GetWorldPosition(int _x, int _y) {
+        return new Vector3(_x, _y) * cellSize + originPosition;  //   new Vector3(x, y) * cellSize + originPosition
     }
 
-    public void GetXY(Vector3 _vector3, out int x, out int y) {
+    public void GetXY(Vector3 _vector3, out int _x, out int _y) {
         
-        x = Mathf.FloorToInt(_vector3.x / cellSize);
-        y = Mathf.FloorToInt(_vector3.y / cellSize);//  / cellSize
+        _x = Mathf.FloorToInt(_vector3.x / cellSize);
+        _y = Mathf.FloorToInt(_vector3.y / cellSize);//  / cellSize
     }
     /*
     public void SetGridObject(int x, int y, TGridObject value) {
@@ -89,40 +86,38 @@ public class Grid<TGridObject> {
     } 
     */
 
-    public void TriggerGridObjectChanged(int x, int y) {
-        //Debug.Log("TriggerGridObjectChanged");
-        if (OnGridObjectChanged != null) OnGridObjectChanged(this, new OnGridObjectChangedEventArgs { x = x, y = y });
+    public void TriggerGridObjectChanged(int _x, int _y) {
+        if (OnGridObjectChanged != null) OnGridObjectChanged(this, new OnGridObjectChangedEventArgs { x = _x, y = _y });
     }
 
 
-    public TGridObject GetGridObject(int x, int y) {
-        //Debug.Log("GetGridObject(int,int)" + x +"," +y);
-        if (x >= 0 && y >= 0 && x < width && y < height) {
-            return gridArray[x, y];
+    public TGridObject GetGridObject(int _x, int _y) {
+        if (_x >= 0 && _y >= 0 && _x < width && _y < height) {
+            return gridArray[_x, _y];
         } else {
-            Debug.Log("GetGridObject(int,int)" + x +"," +y +"returning default");
+            Debug.Log("GetGridObject(int,int)" + _x +"," +_y +"returning default");
             return default(TGridObject);
         }
     }
 
-    public TGridObject GetGridObject(Vector3 worldPosition) {
+    public TGridObject GetGridObject(Vector3 _worldPosition) {
         int x, y;
-        GetXY(worldPosition, out x, out y);
+        GetXY(_worldPosition, out x, out y);
         //Debug.Log("after GetXY(Vector3)" + x +"," +y);
         return GetGridObject(x, y);
     }
     
-    public TextMeshPro CreateGridText( Vector3 localPosition, int x, int y){      
+    public TextMeshPro CreateGridText( Vector3 _localPosition, int _x, int _y){      
         Vector3 offset = new Vector3(this.cellSize / 2, this.cellSize / 2, 0);
         GameObject go = new GameObject();
         Transform transform = go.transform;
         TextMeshPro textMesh = go.AddComponent<TextMeshPro>();
-        textMesh.transform.localPosition = localPosition + offset;
+        textMesh.transform.localPosition = _localPosition + offset;
         textMesh.autoSizeTextContainer = true;
         textMesh.fontSize = 1;
         textMesh.alignment = TextAlignmentOptions.Center;
         textMesh.enableWordWrapping = false; 
-        textMesh.SetText(x +"," + y);
+        textMesh.SetText(_x +"," + _y);
         return textMesh;
     }
 }

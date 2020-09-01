@@ -13,10 +13,10 @@ public class GridNode {
 
     private bool isWalkable;
     
-    public GridNode(Grid<GridNode> grid, int x, int y) {
-        this.grid = grid;
-        this.x = x;
-        this.y = y;
+    public GridNode(Grid<GridNode> _grid, int _x, int _y) {
+        this.grid = _grid;
+        this.x = _x;
+        this.y = _y;
         isWalkable = true;
     }
 
@@ -24,8 +24,8 @@ public class GridNode {
         return isWalkable;
     }
 
-    public void SetIsWalkable(bool isWalkable) {
-        this.isWalkable = isWalkable;
+    public void SetIsWalkable(bool _isWalkable) {
+        this.isWalkable = _isWalkable;
         grid.TriggerGridObjectChanged(x, y);
     }
 
