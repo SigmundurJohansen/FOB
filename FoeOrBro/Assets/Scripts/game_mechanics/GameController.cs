@@ -32,6 +32,7 @@ public class GameController : MonoBehaviour
 
     public delegate void UpdateListViewHandler();
     public event UpdateListViewHandler ViewUpdated;
+    private float fixedDeltaTime;
 
     private Vector3 startPosition = new Vector3(-100,-100, -1);
     void Awake()
@@ -54,6 +55,18 @@ public class GameController : MonoBehaviour
 
             position = position - new Vector3(Screen.width/2 ,Screen.height/2-size*15,0);
             unit.menu.GetComponent<RectTransform >().anchoredPosition = position;
+        }
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            
+            if (Time.timeScale == 1.0f)
+                Time.timeScale = 0.0f;
+            else
+                Time.timeScale = 1.0f;
+            // Adjust fixed delta time according to timescale
+            // The fixed delta time will now be 0.02 frames per real-time second
+            Time.fixedDeltaTime = this.fixedDeltaTime * Time.timeScale;
         }
     }
     

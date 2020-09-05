@@ -98,6 +98,11 @@ public class ECSController : MonoBehaviour
             myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(dragonPrefab, settings);
 
         var instance = entityManager.Instantiate(myPrefab);
+        if (name == "kobolt")
+            entityManager.AddComponentData(instance, new RaceComponent() { race = 0 });
+        else
+            entityManager.AddComponentData(instance, new RaceComponent() { race = 1 });
+
         entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(xValueF, yValueF, -0.1f)) });
         entityManager.AddComponentData(instance, new IDComponent() { id = GameController.Instance.GetID() });
         entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 100, health = 100 });
@@ -316,3 +321,9 @@ public class ECSController : MonoBehaviour
     public struct Player : IComponentData { }
     public struct Kobolt : IComponentData { }
 }
+public enum Race{
+    kobolt = 0,
+    dragon = 1,
+    human =2,
+    player
+};
