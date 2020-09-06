@@ -31,14 +31,14 @@ public class GameController : MonoBehaviour
     private int count = 0;
 
     public delegate void UpdateListViewHandler();
-    public event UpdateListViewHandler ViewUpdated;
-    private float fixedDeltaTime;
+    //public event UpdateListViewHandler ViewUpdated;
+    private float fixedDeltaTime = 0;
 
     private Vector3 startPosition = new Vector3(-100,-100, -1);
     void Awake()
     {
         m_Instance = this;
-        m_Instance.ViewUpdated += OnGui;
+        //m_Instance.ViewUpdated += OnGui;
     }
 
     void OnDestroy(){m_Instance = null;}

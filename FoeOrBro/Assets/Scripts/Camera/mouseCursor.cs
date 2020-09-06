@@ -7,10 +7,11 @@ public class MouseCursor : MonoBehaviour
     private SpriteRenderer myRend;
     public Texture2D handCursor;
     public Texture2D normalCursor;
+    public Texture2D targetCursor;
     public Camera myCamera;
 
     void Start(){
-        Cursor.SetCursor(normalCursor, new Vector3(0,0,0), CursorMode.ForceSoftware);
+        Cursor.SetCursor(targetCursor, new Vector3(0,0,0), CursorMode.ForceSoftware);
     }
     void Update(){
         //float oi = myCamera.orthographicSize/6.5f;

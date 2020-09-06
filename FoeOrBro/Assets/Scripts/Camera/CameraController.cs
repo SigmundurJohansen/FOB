@@ -79,7 +79,12 @@ public class CameraController : MonoBehaviour
         Vector3 tempPos = WorldPosition();
         transform.position = tempPos;
     }
-
+    public void SetCameraPositionS(Vector3 _pos){
+        transform.position = new Vector3(_pos.x,_pos.y, -1f);
+    }
+    public void SetCameraPositionW(Vector3 _pos){
+        whoAmI.WorldToScreenPoint( new Vector3(_pos.x,_pos.y, -1f));
+    }
     public Vector3 WorldPosition(){        
         Vector3 mousePos = whoAmI.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
         mousePos.z = transform.position.z;

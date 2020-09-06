@@ -46,7 +46,7 @@ public class ECSController : MonoBehaviour
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         blobAssetStore = new BlobAssetStore();
         LevelLoader.Instance.CreateMap();
-        //SpawnPlayerPrefab();
+        SpawnPlayerPrefab();
     }
 
     public void CreateEntities(int count)
@@ -80,16 +80,14 @@ public class ECSController : MonoBehaviour
     public int CreateEntity(string name)
     {
         float fcellSize = 0.32f;
-        float xValueF = UnityEngine.Random.Range(0, 100f);
-        float yValueF = UnityEngine.Random.Range(0f, 100f);
-        int icellSize = (int)Mathf.Round(fcellSize);
-        int xValueI = (int)Mathf.Round(xValueF);
-        int yValueI = (int)Mathf.Round(yValueF);
-        bool isWalkabler = PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(xValueI, yValueI).IsWalkable();
+
+        float2 ValueF = SetRandomLocation();
+        int2 ValueI = ConvertFloat2(ValueF);
+        bool isWalkabler = PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(ValueI.x, ValueI.y).IsWalkable();
         if (!isWalkabler)
             return -1;
-        xValueF = xValueF * fcellSize;
-        yValueF = yValueF * fcellSize;
+
+        ValueF = ValueF * fcellSize;
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);
         Entity myPrefab;
         if (name == "kobolt")
@@ -103,7 +101,7 @@ public class ECSController : MonoBehaviour
         else
             entityManager.AddComponentData(instance, new RaceComponent() { race = 1 });
 
-        entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(xValueF, yValueF, -0.1f)) });
+        entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(ValueF.x, ValueF.y, -0.1f)) });
         entityManager.AddComponentData(instance, new IDComponent() { id = GameController.Instance.GetID() });
         entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 100, health = 100 });
         entityManager.AddComponentData(instance, new MovementComponent() { isMoving = false, speed = 1.2f });
@@ -112,11 +110,11 @@ public class ECSController : MonoBehaviour
         entityManager.AddBuffer<PathPosition>(instance);
         PathPosition someBufferElement = new PathPosition();
         DynamicBuffer<PathPosition> someBuffer = entityManager.GetBuffer<PathPosition>(instance);
-        someBufferElement.position = new int2(xValueI, yValueI);
+        someBufferElement.position = new int2(ValueI.x, ValueI.y);
         someBuffer.Add(someBufferElement);
-        someBufferElement.position = new int2(xValueI, yValueI);
+        someBufferElement.position = new int2(ValueI.x, ValueI.y);
         someBuffer.Add(someBufferElement);
-        GameController.Instance.AddUnit(name, new Vector3(xValueF, yValueF, -0.1f));
+        GameController.Instance.AddUnit(name, new Vector3(ValueF.x, ValueF.y, -0.1f));
         return 0;
     }
 
@@ -125,23 +123,35 @@ public class ECSController : MonoBehaviour
 
     }
 
+
     public void SpawnPlayerPrefab()
     {
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);
         var myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(playerPrefab, settings);
         var instance = entityManager.Instantiate(myPrefab);
+
+        //float2 ValueF = SetRandomLocation();
+        float2 ValueF = new float2(20f, 27f);
+        int2 ValueI = ConvertFloat2(ValueF);
+
+        float fcellSize = 0.32f;
+        ValueF.x = ValueF.x * fcellSize;
+        ValueF.y = ValueF.y * fcellSize;
+        CameraController.Instance.SetCameraPositionS(new float3(ValueF.x, ValueF.y, -0.5f));
+        entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(ValueF.x, ValueF.y, -0.1f)) });
+        entityManager.AddComponentData(instance, new IDComponent() { id = GameController.Instance.GetID() });
+        entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 100, health = 100 });
+        entityManager.AddComponentData(instance, new MovementComponent() { isMoving = false, speed = 1.5f });
+        entityManager.AddComponentData(instance, new PathFollow() { });
+        entityManager.AddComponentData(instance, new Selected() { isSelected = false });
         entityManager.AddBuffer<PathPosition>(instance);
-        DynamicBuffer<PathPosition> someBuffer = entityManager.GetBuffer<PathPosition>(instance);
         PathPosition someBufferElement = new PathPosition();
-        someBufferElement.position = new int2(0, 0);
+        DynamicBuffer<PathPosition> someBuffer = entityManager.GetBuffer<PathPosition>(instance);
+        someBufferElement.position = new int2(ValueI.x, ValueI.y);
         someBuffer.Add(someBufferElement);
-        someBufferElement.position = new int2(0, 0);
+        someBufferElement.position = new int2(ValueI.x, ValueI.y);
         someBuffer.Add(someBufferElement);
-        var spawnPosition = transform.TransformPoint(new float3(0, 0, -0.1f));
-        entityManager.SetComponentData(instance, new Translation { Value = spawnPosition });
-        entityManager.AddComponentData(instance, new Selected { isSelected = true });
-        entityManager.AddComponentData(instance, new MovementComponent { isMoving = false, speed = 1.5f });
-        entityManager.AddComponentData(instance, new PathFollow());
+        GameController.Instance.AddUnit("player", new Vector3(ValueF.x, ValueF.y, -0.1f));
     }
 
     public void SpawnKobolt(int _count)
@@ -316,14 +326,42 @@ public class ECSController : MonoBehaviour
         }
         entities.Dispose();
     }
+    public int2 ConvertFloat2(float2 _value)
+    {
+        return new int2((int)Mathf.Round(_value.x), (int)Mathf.Round(_value.y));
+    }
+
+    public float2 RandomFloat2(float _min, float _max)
+    {
+        return new float2(UnityEngine.Random.Range(_min, _max), UnityEngine.Random.Range(_min, _max));
+    }
+
+    public int2 RandomInt2(float _min, float _max)
+    {
+        return new int2((int)Mathf.Round(UnityEngine.Random.Range(_min, _max)), (int)Mathf.Round(UnityEngine.Random.Range(_min, _max)));
+    }
+
+    public float2 SetRandomLocation()
+    {
+        float2 ValueF = RandomFloat2(1f, 99f);
+        int2 ValueI = new int2((int)Mathf.Round(ValueF.x), (int)Mathf.Round(ValueF.y));
+        bool isWalkabler = PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(ValueI.x, ValueI.y).IsWalkable();
+        while (!isWalkabler)
+        {
+            int2 temp = RandomInt2(1f, 99f);
+            isWalkabler = PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(temp.x, temp.y).IsWalkable();
+        }
+        return ValueF;
+    }
 
     public struct Human : IComponentData { }
     public struct Player : IComponentData { }
     public struct Kobolt : IComponentData { }
 }
-public enum Race{
+public enum Race
+{
     kobolt = 0,
     dragon = 1,
-    human =2,
+    human = 2,
     player
 };
