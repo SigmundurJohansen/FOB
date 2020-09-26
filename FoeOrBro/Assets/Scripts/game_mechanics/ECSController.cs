@@ -17,8 +17,8 @@ public class ECSController : MonoBehaviour
     public static ECSController instance;
     public static ECSController Instance { get { return instance; } }
     public Transform selectionAreaTransform;
-    public Material unitSelectedCircleMaterial;
-    public Mesh unitSelectedCircleMesh;
+    //public Material unitSelectedCircleMaterial;
+    //public Mesh unitSelectedCircleMesh;
     public Sprite mainSprite;
     public GameObject koboltPrefab;
     public GameObject dragonPrefab;
@@ -26,9 +26,9 @@ public class ECSController : MonoBehaviour
     public GameObject listViewPrefab;
     public GameObject listViewParent;
     public BlobAssetStore blobAssetStore;
-    [SF] public Mesh spriteMesh;
-    [SF] public Material spriteMaterial;
-    [SF] public Material terrainMaterial;
+    //[SF] public Mesh spriteMesh;
+    //[SF] public Material spriteMaterial;
+    //[SF] public Material terrainMaterial;
 
     EntityArchetype ArchKobolt;
     EntityArchetype ArchHuman;
@@ -107,6 +107,9 @@ public class ECSController : MonoBehaviour
         entityManager.AddComponentData(instance, new MovementComponent() { isMoving = false, speed = 1.2f });
         entityManager.AddComponentData(instance, new PathFollow() { });
         entityManager.AddComponentData(instance, new Selected() { isSelected = false });
+        entityManager.AddComponentData(instance, new FactionComponent() { });
+        entityManager.AddComponentData(instance, new TargetableComponent() { });
+        entityManager.AddComponentData(instance, new TargetComponent() { });
         entityManager.AddBuffer<PathPosition>(instance);
         PathPosition someBufferElement = new PathPosition();
         DynamicBuffer<PathPosition> someBuffer = entityManager.GetBuffer<PathPosition>(instance);
@@ -218,6 +221,14 @@ public class ECSController : MonoBehaviour
         float cellSize = 0.32f;
         float3 MinBound = new float3(0, 0, 0);
         float3 MaxBound = new float3(50, 50, 50);
+
+    
+        Material cachMaterial = new Material(Shader.Find("Unlit/Texture"));
+        //Mesh cachmesh = gridNode.GetNodeMesh();
+
+        entityManager.SetSharedComponentData(entities[entityCounter], new RenderMesh { mesh = cachmesh, material = cachMaterial });
+
+
         for (int y = 0; y < width; y++)
         {
             for (int x = 0; x < height; x++)
@@ -226,7 +237,6 @@ public class ECSController : MonoBehaviour
                 Entity entity = entities[entityCounter];
                 float3 myPosition = new float3(x * cellSize, y * cellSize, 1.5f);
                 entityManager.SetComponentData(entities[entityCounter], new Translation { Value = myPosition });
-                entityManager.SetSharedComponentData(entities[entityCounter], new RenderMesh { mesh = gridNode.GetNodeMesh(), material = gridNode.GetNodeMaterial() });
                 if (!gridNode.IsWalkable())
                 {
                     entityManager.SetComponentData(entities[entityCounter], new Collider { size = 0.32f });
@@ -289,43 +299,6 @@ public class ECSController : MonoBehaviour
         }
     }
 
-    private void SpawnHumans(int count)
-    {
-        NativeArray<Entity> entities = new NativeArray<Entity>(count, Allocator.Temp);
-        EntityArchetype entityArchetype = entityManager.CreateArchetype(
-            typeof(Human),
-            typeof(RenderMesh),
-            typeof(Translation),
-            typeof(MovementComponent),
-            typeof(Scale),
-            typeof(LocalToWorld),
-            typeof(RenderBounds),
-            typeof(DestinationComponent),
-            typeof(Collider),
-            typeof(Selected),
-            typeof(PathPosition),
-            typeof(PathFollow),
-            typeof(NonUniformScale)
-        );
-
-        entityManager.CreateEntity(entityArchetype, entities);
-
-        for (int i = 0; i < count; i++)
-        {
-            Entity entity = entities[i];
-            float3 myPosition = new float3(UnityEngine.Random.Range(0, 10f), UnityEngine.Random.Range(0f, 10f), -0.1f);
-            float3 myDestination = new float3(UnityEngine.Random.Range(0f, 20f), UnityEngine.Random.Range(0f, 20f), -0.1f);
-            entityManager.SetComponentData(entities[i], new Translation { Value = myPosition });
-            entityManager.SetComponentData(entities[i], new DestinationComponent { startPosition = new int2(8, 8), endPosition = new int2(4, 4) });
-            entityManager.SetComponentData(entities[i], new MovementComponent { isMoving = true, speed = 1.0f });
-            entityManager.SetSharedComponentData(entities[i], new RenderMesh { mesh = spriteMesh, material = spriteMaterial });
-            entityManager.SetComponentData(entities[i], new PathFollow { pathIndex = 1 });
-            entityManager.SetComponentData(entities[i], new Collider { size = 0.16f });
-            entityManager.SetComponentData(entities[i], new NonUniformScale { Value = 0.32f });
-            entityManager.SetComponentData(entities[i], new Selected { isSelected = false });
-        }
-        entities.Dispose();
-    }
     public int2 ConvertFloat2(float2 _value)
     {
         return new int2((int)Mathf.Round(_value.x), (int)Mathf.Round(_value.y));
