@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using SF = UnityEngine.SerializeField;
-
+/*
 public class PathfindingVisual : MonoBehaviour {
 
     private Grid<GridNode> grid;
@@ -122,3 +122,4 @@ public class PathfindingVisual : MonoBehaviour {
         mesh.triangles = triangles;
     }
      */
+     

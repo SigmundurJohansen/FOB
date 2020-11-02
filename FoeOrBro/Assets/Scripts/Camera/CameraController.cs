@@ -7,7 +7,7 @@ public class CameraController : MonoBehaviour
 {
     private static CameraController m_Instance;
     public static CameraController Instance { get { return m_Instance; } }
-    public float panSpeed = 10f;
+    public float panSpeed = 7f;
     public float panBorderThickness = 10f;
     public Vector2 panLimit;
     public float scrollSpeed = 20f;

@@ -13,6 +13,7 @@ using SF = UnityEngine.SerializeField;
 
 public class ECSController : MonoBehaviour
 {
+    public bool useSectorSystem;
     public EntityManager entityManager;
     public static ECSController instance;
     public static ECSController Instance { get { return instance; } }
@@ -26,15 +27,11 @@ public class ECSController : MonoBehaviour
     public GameObject listViewPrefab;
     public GameObject listViewParent;
     public BlobAssetStore blobAssetStore;
+    [SF] private Mesh quad;
     //[SF] public Mesh spriteMesh;
     //[SF] public Material spriteMaterial;
     //[SF] public Material terrainMaterial;
 
-    EntityArchetype ArchKobolt;
-    EntityArchetype ArchHuman;
-
-    //private var ArchKobolt;
-    //private var ArchHuman;
 
     private void Awake()
     {
@@ -47,6 +44,8 @@ public class ECSController : MonoBehaviour
         blobAssetStore = new BlobAssetStore();
         LevelLoader.Instance.CreateMap();
         SpawnPlayerPrefab();
+        CreateEntity("Dragon", new float2(16f, 32f));
+        CreateEntity("kobolt", new float2(10f, 33f));
     }
 
     public void CreateEntities(int count)
@@ -77,16 +76,21 @@ public class ECSController : MonoBehaviour
         }
     }
 
-    public int CreateEntity(string name)
+    public int CreateEntity(string name, float2 _location = new float2())
     {
         float fcellSize = 0.32f;
-
-        float2 ValueF = SetRandomLocation();
+        float2 ValueF = new float2(0f, 0f);
+        if (ValueF.Equals(_location))
+            ValueF = SetRandomLocation();
+        else
+            ValueF = _location;
         int2 ValueI = ConvertFloat2(ValueF);
         bool isWalkabler = PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(ValueI.x, ValueI.y).IsWalkable();
         if (!isWalkabler)
+        {
+            Debug.Log("not walkable");
             return -1;
-
+        }
         ValueF = ValueF * fcellSize;
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);
         Entity myPrefab;
@@ -97,9 +101,17 @@ public class ECSController : MonoBehaviour
 
         var instance = entityManager.Instantiate(myPrefab);
         if (name == "kobolt")
+        {
             entityManager.AddComponentData(instance, new RaceComponent() { race = 0 });
+            entityManager.AddComponentData(instance, new Kobolt() { });
+            entityManager.AddComponentData(instance, new SectorEntity { typeEnum = SectorEntity.TypeEnum.Unit });
+        }
         else
+        {
             entityManager.AddComponentData(instance, new RaceComponent() { race = 1 });
+            entityManager.AddComponentData(instance, new Dragon() { });
+            entityManager.AddComponentData(instance, new SectorEntity { typeEnum = SectorEntity.TypeEnum.Target });
+        }
 
         entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(ValueF.x, ValueF.y, -0.1f)) });
         entityManager.AddComponentData(instance, new IDComponent() { id = GameController.Instance.GetID() });
@@ -175,6 +187,7 @@ public class ECSController : MonoBehaviour
             float xValueF = UnityEngine.Random.Range(0, 10f);
             float yValueF = UnityEngine.Random.Range(0f, 10f);
             var spawnPosition = transform.TransformPoint(new float3(xValueF, yValueF, -0.1f));
+            entityManager.SetComponentData(instance, new Kobolt { });
             entityManager.SetComponentData(instance, new Translation { Value = spawnPosition });
             entityManager.AddComponentData(instance, new Selected { isSelected = true });
             entityManager.AddComponentData(instance, new MovementComponent { isMoving = false, speed = 1.2f });
@@ -222,9 +235,9 @@ public class ECSController : MonoBehaviour
         float3 MinBound = new float3(0, 0, 0);
         float3 MaxBound = new float3(50, 50, 50);
 
-    
+
         Material cachMaterial = new Material(Shader.Find("Unlit/Texture"));
-        //Mesh cachmesh = gridNode.GetNodeMesh();
+        Mesh cachmesh = quad;
 
         entityManager.SetSharedComponentData(entities[entityCounter], new RenderMesh { mesh = cachmesh, material = cachMaterial });
 
@@ -254,43 +267,6 @@ public class ECSController : MonoBehaviour
         entities.Dispose();
     }
 
-
-    private void SpawnPlayer()
-    {
-        NativeArray<Entity> entities = new NativeArray<Entity>(1, Allocator.Temp);
-        EntityArchetype entityArchetype = entityManager.CreateArchetype(
-            typeof(Player),
-            typeof(RenderMesh),
-            typeof(Translation),
-            typeof(MovementComponent),
-            typeof(Scale),
-            typeof(LocalToWorld),
-            typeof(RenderBounds),
-            typeof(Collider),
-            typeof(PlayerInputComponent),
-            typeof(PathPosition),
-            typeof(PathFollow),
-            typeof(Rotation),
-            typeof(Selected),
-            typeof(DestinationComponent),
-            typeof(NonUniformScale)
-        );
-        entityManager.CreateEntity(entityArchetype, entities);
-
-        Entity entity = entities[0];
-        float3 myPosition = new float3(0, 0, -0.1f);
-        float3 myDestination = new float3(0, 0, -0.1f);
-        entityManager.SetComponentData(entities[0], new Translation { Value = myPosition });
-        entityManager.SetComponentData(entities[0], new MovementComponent { isMoving = false, speed = 1.2f });
-        entityManager.SetSharedComponentData(entities[0], new RenderMesh { mesh = spriteMesh, material = spriteMaterial });
-        entityManager.SetComponentData(entities[0], new PlayerInputComponent { speed = 1 });
-        entityManager.SetComponentData(entities[0], new NonUniformScale { Value = 0.32f });
-        entityManager.SetComponentData(entities[0], new Selected { isSelected = true });
-        int unitID = GameController.Instance.GetUnitListLength();
-        entityManager.AddComponentData(entities[0], new IDComponent { id = unitID });
-        GameController.Instance.AddUnit("Player", new Vector3(0, 0, -0.1f));
-        entities.Dispose();
-    }
     private void OnDestroy()
     {
         if (blobAssetStore != null)
@@ -327,10 +303,11 @@ public class ECSController : MonoBehaviour
         return ValueF;
     }
 
-    public struct Human : IComponentData { }
-    public struct Player : IComponentData { }
-    public struct Kobolt : IComponentData { }
 }
+public struct Human : IComponentData { }
+public struct Player : IComponentData { }
+public struct Kobolt : IComponentData { }
+public struct Dragon : IComponentData { }
 public enum Race
 {
     kobolt = 0,
@@ -338,3 +315,10 @@ public enum Race
     human = 2,
     player
 };
+
+
+public struct HasTarget : IComponentData
+{
+    public Entity targetEntity;
+}
+

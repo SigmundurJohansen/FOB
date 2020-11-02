@@ -42,7 +42,7 @@ public class PathfindingSystem : ComponentSystem
                 };
                 findPathJobList.Add(findPathJob);
                 jobHandleList.Add(findPathJob.Schedule());
-                Debug.Log("erea)");
+                Debug.Log("pathfinding system onupdate)");
                 PostUpdateCommands.RemoveComponent<DestinationComponent>(entity);
             });
 

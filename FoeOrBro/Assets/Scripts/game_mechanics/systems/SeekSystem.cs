@@ -1,103 +1,204 @@
-
 using UnityEngine;
 using Unity.Burst;
 using Unity.Collections;
+using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Unity.Rendering;
 using UnityEngine.SceneManagement;
 
-public class SeekSystem : SystemBase
+[UpdateAfter(typeof(SectorSystem))]
+public class SeekSystem : JobComponentSystem
 {
-    private EntityQuery TargetQuery;
-    private EntityQuery PickerQuery;
+    private struct EntityWithPosition
+    {
+        public Entity entity;
+        public float3 position;
+    }
+
+    [RequireComponentTag(typeof(Dragon))]
+    [BurstCompile]
+    // Fill single array with Target Entity and Position
+    private struct FillArrayEntityWithPositionJob : IJobForEachWithEntity<Translation>
+    {
+
+        public NativeArray<EntityWithPosition> targetArray;
+
+        public void Execute(Entity entity, int index, ref Translation translation)
+        {
+            if (targetArray.Length != 0)
+            {
+                targetArray[index] = new EntityWithPosition
+                {
+                    entity = entity,
+                    position = translation.Value
+                };
+            }
+        }
+    }
+
+    [RequireComponentTag(typeof(Dragon))]
+    [ExcludeComponent(typeof(HasTarget))]
+    [BurstCompile]
+    // Find Closest Target
+    private struct FindTargetBurstJob : IJobForEachWithEntity<Translation>
+    {
+
+        [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<EntityWithPosition> targetArray;
+        public NativeArray<Entity> closestTargetEntityArray;
+
+        public void Execute(Entity entity, int index, [ReadOnly] ref Translation translation)
+        {
+            float3 unitPosition = translation.Value;
+            Entity closestTargetEntity = Entity.Null;
+            float closestTargetDistance = float.MaxValue;
+
+            for (int i = 0; i < targetArray.Length; i++)
+            {
+                // Cycling through all target entities
+                EntityWithPosition targetEntityWithPosition = targetArray[i];
+
+                if (closestTargetEntity == Entity.Null)
+                {
+                    // No target
+                    Debug.Log("no target");
+                    closestTargetEntity = targetEntityWithPosition.entity;
+                    closestTargetDistance = math.distancesq(unitPosition, targetEntityWithPosition.position);
+                }
+                else
+                {
+                    if (math.distancesq(unitPosition, targetEntityWithPosition.position) < closestTargetDistance)
+                    {
+                        // This target is closer
+                        Debug.Log("target is closer");
+                        closestTargetEntity = targetEntityWithPosition.entity;
+                        closestTargetDistance = math.distancesq(unitPosition, targetEntityWithPosition.position);
+                    }
+                }
+            }
+            if (closestTargetEntityArray.Length != 0)
+                closestTargetEntityArray[index] = closestTargetEntity;
+        }
+
+    }
+
+    [RequireComponentTag(typeof(Dragon))]
+    [ExcludeComponent(typeof(HasTarget))]
+    // Add HasTarget Component to Entities that have a Closest Target
+    private struct AddComponentJob : IJobForEachWithEntity<Translation>
+    {
+
+        [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<Entity> closestTargetEntityArray;
+        public EntityCommandBuffer.Concurrent entityCommandBuffer;
+
+        public void Execute(Entity entity, int index, ref Translation translation)
+        {
+            if (closestTargetEntityArray.Length != 0)
+                if (closestTargetEntityArray[index] != Entity.Null)
+                {
+                    Debug.Log("give hastarget");
+                    entityCommandBuffer.AddComponent(index, entity, new HasTarget { targetEntity = closestTargetEntityArray[index] });
+                }
+        }
+
+    }
+
+
+    [RequireComponentTag(typeof(Dragon))]
+    [ExcludeComponent(typeof(HasTarget))]
+    [BurstCompile]
+    private struct FindTargetSectorSystemJob : IJobForEachWithEntity<Translation, SectorEntity>
+    {
+
+        [ReadOnly] public NativeMultiHashMap<int, SectorData> SectorMultiHashMap;
+        public NativeArray<Entity> closestTargetEntityArray;
+
+        public void Execute(Entity entity, int index, [ReadOnly] ref Translation translation, [ReadOnly] ref SectorEntity SectorEntity)
+        {
+            float3 unitPosition = translation.Value;
+            Entity closestTargetEntity = Entity.Null;
+            float closestTargetDistance = float.MaxValue;
+            int hashMapKey = SectorSystem.GetPositionHashMapKey(translation.Value);
+
+            FindTarget(hashMapKey, unitPosition, SectorEntity, ref closestTargetEntity, ref closestTargetDistance);
+            FindTarget(hashMapKey + 1, unitPosition, SectorEntity, ref closestTargetEntity, ref closestTargetDistance);
+            FindTarget(hashMapKey - 1, unitPosition, SectorEntity, ref closestTargetEntity, ref closestTargetDistance);
+            FindTarget(hashMapKey + SectorSystem.SectorYMultiplier, unitPosition, SectorEntity, ref closestTargetEntity, ref closestTargetDistance);
+            FindTarget(hashMapKey - SectorSystem.SectorYMultiplier, unitPosition, SectorEntity, ref closestTargetEntity, ref closestTargetDistance);
+            FindTarget(hashMapKey + 1 + SectorSystem.SectorYMultiplier, unitPosition, SectorEntity, ref closestTargetEntity, ref closestTargetDistance);
+            FindTarget(hashMapKey - 1 + SectorSystem.SectorYMultiplier, unitPosition, SectorEntity, ref closestTargetEntity, ref closestTargetDistance);
+            FindTarget(hashMapKey + 1 - SectorSystem.SectorYMultiplier, unitPosition, SectorEntity, ref closestTargetEntity, ref closestTargetDistance);
+            FindTarget(hashMapKey - 1 - SectorSystem.SectorYMultiplier, unitPosition, SectorEntity, ref closestTargetEntity, ref closestTargetDistance);
+            if (closestTargetEntityArray.Length != 0)
+                closestTargetEntityArray[index] = closestTargetEntity;
+        }
+
+        private void FindTarget(int hashMapKey, float3 unitPosition, SectorEntity SectorEntity, ref Entity closestTargetEntity, ref float closestTargetDistance)
+        {
+            SectorData SectorData;
+            NativeMultiHashMapIterator<int> nativeMultiHashMapIterator;
+            if (SectorMultiHashMap.TryGetFirstValue(hashMapKey, out SectorData, out nativeMultiHashMapIterator))
+            {
+                do
+                {
+                    if (SectorEntity.typeEnum != SectorData.SectorEntity.typeEnum)
+                    {
+                        if (closestTargetEntity == Entity.Null)
+                        {
+                            // No target
+                            closestTargetEntity = SectorData.entity;
+                            closestTargetDistance = math.distancesq(unitPosition, SectorData.position);
+                        }
+                        else
+                        {
+                            if (math.distancesq(unitPosition, SectorData.position) < closestTargetDistance)
+                            {
+                                // This target is closer
+                                closestTargetEntity = SectorData.entity;
+                                closestTargetDistance = math.distancesq(unitPosition, SectorData.position);
+                            }
+                        }
+                    }
+                } while (SectorMultiHashMap.TryGetNextValue(out SectorData, ref nativeMultiHashMapIterator));
+            }
+        }
+    }
+
     private EndSimulationEntityCommandBufferSystem endSimulationEntityCommandBufferSystem;
 
     protected override void OnCreate()
     {
-        if (SceneManager.GetActiveScene().name == "GameScene")
-            endSimulationEntityCommandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
-
-
-        PickerQuery = GetEntityQuery(new EntityQueryDesc
-        {
-            All = new[] {
-                    ComponentType.ReadOnly<LocalToWorld>(),
-                    ComponentType.ReadOnly<FactionComponent>(),
-                    ComponentType.ReadOnly<PerceptionComponent>(),
-                    //ComponentType.ReadOnly<AggroLocation>(),
-                    ComponentType.ReadWrite<TargetComponent>()
-                }
-        });
+        endSimulationEntityCommandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+        base.OnCreate();
     }
 
-    protected override void OnUpdate()
+    protected override JobHandle OnUpdate(JobHandle inputDeps)
     {
-        //PickerQuery.AddDependency(Dependency);
-        //TargetQuery.AddDependency(Dependency);
+        EntityQuery targetQuery = GetEntityQuery(typeof(Kobolt), ComponentType.ReadOnly<Translation>());
 
-        //int targetN = TargetQuery.CalculateEntityCount();
-        //var targetables = GetComponentDataFromEntity<Targetable>(true);
+        EntityQuery unitQuery = GetEntityQuery(typeof(Dragon), ComponentType.Exclude<HasTarget>());
+        NativeArray<Entity> closestTargetEntityArray = new NativeArray<Entity>(unitQuery.CalculateEntityCount(), Allocator.TempJob);
 
-        //var targetPositions = TargetQuery.ToComponentDataArrayAsync<LocalToWorld>(Allocator.TempJob, out var tposJH);
-        //ar targetIDs = TargetQuery.ToEntityArrayAsync(Allocator.TempJob, out JobHandle tidJH);
-        EntityCommandBuffer.Concurrent entityCommandBuffer = endSimulationEntityCommandBufferSystem.CreateCommandBuffer().ToConcurrent();
-        //.WithStoreEntityQueryInField(ref TargetQuery).
-        var hashTargetsJobHandle = Entities.WithNone<DestinationComponent>().WithAll<FactionComponent, TargetableComponent>()
-        .ForEach((Entity entity, int entityInQueryIndex, ref LocalToWorld _localToWorld, ref TargetComponent _target) =>
+        FindTargetSectorSystemJob findTargetSectorSystemJob = new FindTargetSectorSystemJob
         {
-            if (_target.Value == Entity.Null)
-            {
-                Debug.Log("i'm in!");
-                var position = _localToWorld.Position;
-                float3 vec = position;
-                vec += 20;
-                Debug.Log(vec);
-                PathfindingGridSetup.Instance.pathfindingGrid.GetXY(vec, out int endX, out int endY); //  + new Vector3(1,1,0)* cellSize
+            SectorMultiHashMap = SectorSystem.SectorMultiHashMap,
+            closestTargetEntityArray = closestTargetEntityArray,
+        };
+        JobHandle jobHandle = findTargetSectorSystemJob.Schedule(this, inputDeps);
 
-                if (PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(endX, endY).IsWalkable())
-                {
-                    PathfindingGridSetup.Instance.pathfindingGrid.GetXY(_localToWorld.Position, out int startX, out int startY);
-                    entityCommandBuffer.AddComponent(entityInQueryIndex, entity, new DestinationComponent
-                    {
-                        startPosition = new int2(startX, startY),
-                        endPosition = new int2(endX, endY)
-                    });
-                }
-                //_target.Value = entity;
-            }
-        }).Schedule(Dependency);
-        endSimulationEntityCommandBufferSystem.AddJobHandleForProducer(hashTargetsJobHandle);
-
-        /*
-        Entities.ForEach((Entity entity, ref RaceComponent _race, ref IDComponent _id, ref TargetComponent _target, ref StateComponent _state, ref PerceptionComponent _perc) =>
+        // Add HasTarget Component to Entities that have a Closest Target
+        AddComponentJob addComponentJob = new AddComponentJob
         {
-            if (_state.state == 0) //seek
-            {
+            closestTargetEntityArray = closestTargetEntityArray,
+            entityCommandBuffer = endSimulationEntityCommandBufferSystem.CreateCommandBuffer().ToConcurrent(),
+        };
+        jobHandle = addComponentJob.Schedule(this, jobHandle);
 
-            }
-        });
-         */
+        endSimulationEntityCommandBufferSystem.AddJobHandleForProducer(jobHandle);
 
+        return jobHandle;
     }
 
-    [BurstCompile]
-    struct IdentifyBestTargetChunkJob : IJobChunk
-    {
-        public float CellSize;
-
-        //Picker components
-        [ReadOnly] public ArchetypeChunkComponentType<LocalToWorld> PickerLocalToWorld;
-        [ReadOnly] public ArchetypeChunkComponentType<PerceptionComponent> PickerAggroRadii;
-        [ReadOnly] public ArchetypeChunkComponentType<FactionComponent> PickerTeams;
-        public ArchetypeChunkComponentType<TargetComponent> PickerTargets;
-
-        public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
-        {
-            for (int picker = 0; picker < chunk.Count; picker++)
-            {
-            }
-        }
-    }
 }

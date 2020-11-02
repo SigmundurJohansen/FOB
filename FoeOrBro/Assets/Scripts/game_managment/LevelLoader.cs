@@ -98,6 +98,7 @@ public class LevelLoader : MonoBehaviour
         cMap = SaveSystem.LoadMap();
         PathfindingGridSetup.Instance.CreateGrid(cMap.mapWidth, cMap.mapHeight);
         miniMapRenderer.materials[0].mainTexture = TextureGenerator.GetBiomeMapTexture(100, 100, cMap.mapTiles, 0.05f, 0.18f, 0.4f);
+        //GameObject prefab = GetPrefabFromType(cMap.mapTiles[x, y].BiomeType);
         for (int y = 0; y < cMap.mapHeight; y++)
         {
             for (int x = 0; x < cMap.mapWidth; x++)

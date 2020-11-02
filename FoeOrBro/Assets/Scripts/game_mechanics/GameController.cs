@@ -24,7 +24,7 @@ public class GameController : MonoBehaviour
 
     public GameObject healthBarPrefab;
     public GameObject healthBarParent;
-    
+
     private List<GameUnit> gameUnitList = new List<GameUnit>();
     private List<GameObject> unitListView = new List<GameObject>();
     private int ID = 0;
@@ -34,32 +34,33 @@ public class GameController : MonoBehaviour
     //public event UpdateListViewHandler ViewUpdated;
     private float fixedDeltaTime = 0;
 
-    private Vector3 startPosition = new Vector3(-100,-100, -1);
+    private Vector3 startPosition = new Vector3(-100, -100, -1);
     void Awake()
     {
         m_Instance = this;
         //m_Instance.ViewUpdated += OnGui;
     }
 
-    void OnDestroy(){m_Instance = null;}
+    void OnDestroy() { m_Instance = null; }
 
     void Update()
     {
-        foreach(var unit in gameUnitList){
+        foreach (var unit in gameUnitList)
+        {
             Vector3 position = WorldPosition(unit.GetPosition());
             float size = CameraController.Instance.GetSize();
-            size = Mathf.Clamp(6 -1.4f *size, 1, 6); 
-            unit.menu.GetComponent<RectTransform >().localScale = new Vector3(size,size,size);
+            size = Mathf.Clamp(6 - 1.4f * size, 1, 6);
+            unit.menu.GetComponent<RectTransform>().localScale = new Vector3(size, size, size);
 
             unit.menu.GetComponent<Slider>().value = unit.health;
 
-            position = position - new Vector3(Screen.width/2 ,Screen.height/2-size*15,0);
-            unit.menu.GetComponent<RectTransform >().anchoredPosition = position;
+            position = position - new Vector3(Screen.width / 2, Screen.height / 2 - size * 15, 0);
+            unit.menu.GetComponent<RectTransform>().anchoredPosition = position;
         }
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            
+
             if (Time.timeScale == 1.0f)
                 Time.timeScale = 0.0f;
             else
@@ -69,39 +70,39 @@ public class GameController : MonoBehaviour
             Time.fixedDeltaTime = this.fixedDeltaTime * Time.timeScale;
         }
     }
-    
+
     public int GetUnitListLength()
     {
         return gameUnitList.Count;
     }
     public void SetPosition(int _id, float _x, float _y)
     {
-        for(int i = 0; i< gameUnitList.Count; i++)
+        for (int i = 0; i < gameUnitList.Count; i++)
         {
-            if(gameUnitList[i].GetID() == _id)
+            if (gameUnitList[i].GetID() == _id)
             {
-                gameUnitList[i].SetPosition(new Vector3(_x,_y,-0.1f));
+                gameUnitList[i].SetPosition(new Vector3(_x, _y, -0.1f));
             }
         }
     }
 
-    public int AddID(){ID++; count++; return ID;}
+    public int AddID() { ID++; count++; return ID; }
 
-    public int GetID(){return ID;}
+    public int GetID() { return ID; }
 
     public void AddUnit(string _name, Vector3 _position)
     {
-        GameUnit newUnit = new GameUnit(ID,_name,_position);
+        GameUnit newUnit = new GameUnit(ID, _name, _position);
         gameUnitList.Add(newUnit);
-   
+
         var krec = healthBarParent.GetComponent<RectTransform>();
         GameObject healthBar = Instantiate(healthBarPrefab) as GameObject;
         healthBar.transform.SetParent(krec, true);//.transform.parent
         Vector3 position = WorldPosition(_position);
         Vector2 anchor = _position / krec.localScale.x;
-        position= position / krec.localScale.x;
-        position = position - new Vector3(512, 384,0);
-        healthBar.GetComponent<RectTransform >().anchoredPosition = position;
+        position = position / krec.localScale.x;
+        position = position - new Vector3(512, 384, 0);
+        healthBar.GetComponent<RectTransform>().anchoredPosition = position;
         healthBar.SetActive(true);
         newUnit.menu = healthBar;
         AddID();
@@ -110,9 +111,9 @@ public class GameController : MonoBehaviour
 
     public float GetUnitHealth(int _id)
     {
-        foreach(var unit in gameUnitList)
+        foreach (var unit in gameUnitList)
         {
-            if(unit.GetID() == _id)
+            if (unit.GetID() == _id)
             {
                 return unit.health;
             }
@@ -122,11 +123,11 @@ public class GameController : MonoBehaviour
 
     public void SetUnitHealth(int _id, float _amount)
     {
-        foreach(var unit in gameUnitList)
+        foreach (var unit in gameUnitList)
         {
-            if(unit.GetID() == _id)
+            if (unit.GetID() == _id)
             {
-                unit.health = _amount;   
+                unit.health = _amount;
             }
         }
     }
@@ -134,14 +135,14 @@ public class GameController : MonoBehaviour
     public void RemoveUnit(int _id)
     {
         int die = -1;
-        for(int i = 0; i< gameUnitList.Count; i++)
+        for (int i = 0; i < gameUnitList.Count; i++)
         {
-            if(gameUnitList[i].GetID() == _id)
+            if (gameUnitList[i].GetID() == _id)
             {
-               die = i;
+                die = i;
             }
         }
-        if(die >0)
+        if (die > 0)
         {
             Destroy(gameUnitList[die].menu);
             gameUnitList.RemoveAt(die);
@@ -150,8 +151,9 @@ public class GameController : MonoBehaviour
             Debug.Log("Error killing unit");
         OnGui();
     }
-    
-    public enum damageType{
+
+    public enum damageType
+    {
         Physical = 0,
         Fire,
         Ice,
@@ -161,16 +163,16 @@ public class GameController : MonoBehaviour
     public void DamageUnit(int _id, float _amount, damageType _type)
     {
         bool hit = false;
-        foreach(var unit in gameUnitList)
+        foreach (var unit in gameUnitList)
         {
-            if(unit.GetID()== _id)
+            if (unit.GetID() == _id)
             {
                 unit.health = unit.health - _amount;
-                Debug.Log(unit.GetName() +" takes " + _amount + "damage");
+                Debug.Log(unit.GetName() + " takes " + _amount + "damage");
                 hit = true;
             }
         }
-        if(!hit)
+        if (!hit)
             Debug.Log("Attack Missed!");
         OnGui();
     }
@@ -184,11 +186,11 @@ public class GameController : MonoBehaviour
 
     public void OnGui()
     {
-        foreach(var eView in unitListView)
+        foreach (var eView in unitListView)
         {
             Destroy(eView);
         }
-        foreach(var munit in gameUnitList)
+        foreach (var munit in gameUnitList)
         {
             GameObject newObject = Instantiate(listViewPrefab) as GameObject;
             newObject.SetActive(true);
@@ -210,11 +212,13 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public Vector3 ScreenPosition(Vector3 _pos ){        
+    public Vector3 ScreenPosition(Vector3 _pos)
+    {
         Vector3 screenPos = myCamera.ScreenToWorldPoint(new Vector3(_pos.x, _pos.y, 0));
         return screenPos;
     }
-    public Vector3 WorldPosition(Vector3 _pos ){
+    public Vector3 WorldPosition(Vector3 _pos)
+    {
         Vector3 worldPos = myCamera.WorldToScreenPoint(new Vector3(_pos.x, _pos.y, 0));
         return worldPos;
     }
@@ -228,14 +232,15 @@ public class GameUnit
     float maxHealth = 100;
     Vector3 position;
     public GameObject menu;
-    public GameUnit(int _id,string _name,Vector3 _pos){
+    public GameUnit(int _id, string _name, Vector3 _pos)
+    {
         id = _id;
         name = _name;
         position = _pos;
     }
-    public int GetID(){return id;}
-    public void SetName(string _name){name = _name;}
-    public string GetName(){return name;}
-    public void SetPosition(Vector3 _pos){position = _pos;}
-    public Vector3 GetPosition(){return position;}
+    public int GetID() { return id; }
+    public void SetName(string _name) { name = _name; }
+    public string GetName() { return name; }
+    public void SetPosition(Vector3 _pos) { position = _pos; }
+    public Vector3 GetPosition() { return position; }
 }
