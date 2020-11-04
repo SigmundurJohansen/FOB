@@ -8,6 +8,7 @@ public class CameraController : MonoBehaviour
     private static CameraController m_Instance;
     public static CameraController Instance { get { return m_Instance; } }
     public float panSpeed = 7f;
+    public float panSpeedRelative = 7f;
     public float panBorderThickness = 10f;
     public Vector2 panLimit;
     public float scrollSpeed = 20f;
@@ -30,8 +31,9 @@ public class CameraController : MonoBehaviour
         Vector3 pos = transform.position;
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         Camera.main.orthographicSize  -= scroll * scrollSpeed * 100f * Time.deltaTime;
-
         Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, minZ,  maxZ);
+
+        panSpeedRelative = (panSpeed*2) / Camera.main.orthographicSize;
         transform.position = pos;
     }
 
@@ -44,13 +46,13 @@ public class CameraController : MonoBehaviour
         Vector3 pos = transform.position;
 
         if(Input.GetKey("w") || Input.mousePosition.y >= Screen.height - panBorderThickness)
-            pos.y += panSpeed * Time.deltaTime;
+            pos.y += panSpeedRelative * Time.deltaTime;
         if(Input.GetKey("s") || Input.mousePosition.y >= Screen.height - panBorderThickness)
-            pos.y -= panSpeed * Time.deltaTime;
+            pos.y -= panSpeedRelative * Time.deltaTime;
         if(Input.GetKey("a") || Input.mousePosition.y >= Screen.height - panBorderThickness)
-            pos.x -= panSpeed * Time.deltaTime;
+            pos.x -= panSpeedRelative * Time.deltaTime;
         if(Input.GetKey("d") || Input.mousePosition.y >= Screen.height - panBorderThickness)
-            pos.x += panSpeed * Time.deltaTime;
+            pos.x += panSpeedRelative * Time.deltaTime;
 
         //float scroll = Input.GetAxis("Mouse ScrollWheel");
         //pos.z += scroll * scrollSpeed * 100f * Time.deltaTime;

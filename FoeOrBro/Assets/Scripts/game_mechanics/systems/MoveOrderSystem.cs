@@ -44,6 +44,23 @@ public class MoveOrderSystem : ComponentSystem
                         CurrentState = ClickState.Selecting;
                         Deselect();
                     }
+                    if(CurrentState == ClickState.Targeting)
+                    {
+                        
+                        if ((pointOne - pointTwo).magnitude < 0.2f)
+                        {
+                            Entities.ForEach((Entity entity, ref Translation _translation, ref Selected _selected, ref AttackComponent _attack) =>
+                            {
+                                if (_translation.Value.x > (pointTwo.x - 0.2f) && _translation.Value.x < (pointTwo.x + 0.2f) && _translation.Value.y > (pointTwo.y - 0.2f) && _translation.Value.y < (pointTwo.y + 0.2f))
+                                {
+                                    _attack.isAttacking = true;
+                                }
+
+                            });
+
+                        }
+
+                    }
                     if (CurrentState == ClickState.Moving)
                     {
                         //float cellSize = PathfindingGridSetup.Instance.pathfindingGrid.GetCellSize();
@@ -126,6 +143,11 @@ public class MoveOrderSystem : ComponentSystem
                 }
             }
         }
+    }
+    public void SetTargetingState(bool _state)
+    {
+        if (GameController.Instance.GetAttackState())
+            CurrentState = ClickState.Targeting;
     }
 
     public void Deselect()

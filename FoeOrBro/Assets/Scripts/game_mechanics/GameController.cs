@@ -17,6 +17,8 @@ public class GameController : MonoBehaviour
 {
     private static GameController m_Instance;
     public static GameController Instance { get { return m_Instance; } }
+
+    public bool attackState = false;
     public Camera myCamera;
 
     public GameObject listViewPrefab;
@@ -70,6 +72,16 @@ public class GameController : MonoBehaviour
             Time.fixedDeltaTime = this.fixedDeltaTime * Time.timeScale;
         }
     }
+
+    public void SetAttackState(bool _state)
+    {
+        attackState = _state;
+    }
+    public bool GetAttackState()
+    {
+        return attackState;
+    }
+    
 
     public int GetUnitListLength()
     {
