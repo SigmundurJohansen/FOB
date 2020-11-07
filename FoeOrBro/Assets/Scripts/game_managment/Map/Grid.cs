@@ -67,9 +67,18 @@ public class Grid<TGridObject> {
     }
 
     public void GetXY(Vector3 _vector3, out int _x, out int _y) {
-        
-        _x = Mathf.FloorToInt(_vector3.x / cellSize);
-        _y = Mathf.FloorToInt(_vector3.y / cellSize);//  / cellSize
+        float x = _vector3.x;
+        float y = _vector3.y;
+        if(_vector3.x >= this.width)
+            x  = this.width-10;
+        if(_vector3.x <= 0)
+            x  = 0;
+        if(_vector3.y >= this.height)
+            y  = this.height-10;
+        if(_vector3.y <= 0)
+            y  = 0;
+        _x = Mathf.FloorToInt(x / cellSize);
+        _y = Mathf.FloorToInt(y / cellSize);//  / cellSize
     }
     /*
     public void SetGridObject(int x, int y, TGridObject value) {

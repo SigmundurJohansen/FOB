@@ -13,12 +13,13 @@ using SF = UnityEngine.SerializeField;
 
 public class ECSController : MonoBehaviour
 {
+    public bool useSectorSystem;
     public EntityManager entityManager;
     public static ECSController instance;
     public static ECSController Instance { get { return instance; } }
     public Transform selectionAreaTransform;
-    public Material unitSelectedCircleMaterial;
-    public Mesh unitSelectedCircleMesh;
+    //public Material unitSelectedCircleMaterial;
+    //public Mesh unitSelectedCircleMesh;
     public Sprite mainSprite;
     public GameObject koboltPrefab;
     public GameObject dragonPrefab;
@@ -26,15 +27,11 @@ public class ECSController : MonoBehaviour
     public GameObject listViewPrefab;
     public GameObject listViewParent;
     public BlobAssetStore blobAssetStore;
-    [SF] public Mesh spriteMesh;
-    [SF] public Material spriteMaterial;
-    [SF] public Material terrainMaterial;
+    [SF] private Mesh quad;
+    //[SF] public Mesh spriteMesh;
+    //[SF] public Material spriteMaterial;
+    //[SF] public Material terrainMaterial;
 
-    EntityArchetype ArchKobolt;
-    EntityArchetype ArchHuman;
-
-    //private var ArchKobolt;
-    //private var ArchHuman;
 
     private void Awake()
     {
@@ -46,7 +43,9 @@ public class ECSController : MonoBehaviour
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         blobAssetStore = new BlobAssetStore();
         LevelLoader.Instance.CreateMap();
-        //SpawnPlayerPrefab();
+        SpawnPlayerPrefab();
+        CreateEntity("Dragon", new float2(16f, 32f));
+        CreateEntity("kobolt", new float2(10f, 33f));
     }
 
     public void CreateEntities(int count)
@@ -77,19 +76,23 @@ public class ECSController : MonoBehaviour
         }
     }
 
-    public int CreateEntity(string name)
+    public int CreateEntity(string name, float2 _location = new float2())
     {
+        float entityHealth = 50;
         float fcellSize = 0.32f;
-        float xValueF = UnityEngine.Random.Range(0, 100f);
-        float yValueF = UnityEngine.Random.Range(0f, 100f);
-        int icellSize = (int)Mathf.Round(fcellSize);
-        int xValueI = (int)Mathf.Round(xValueF);
-        int yValueI = (int)Mathf.Round(yValueF);
-        bool isWalkabler = PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(xValueI, yValueI).IsWalkable();
+        float2 ValueF = new float2(0f, 0f);
+        if (ValueF.Equals(_location))
+            ValueF = SetRandomLocation();
+        else
+            ValueF = _location;
+        int2 ValueI = ConvertFloat2(ValueF);
+        bool isWalkabler = PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(ValueI.x, ValueI.y).IsWalkable();
         if (!isWalkabler)
+        {
+            Debug.Log("not walkable");
             return -1;
-        xValueF = xValueF * fcellSize;
-        yValueF = yValueF * fcellSize;
+        }
+        ValueF = ValueF * fcellSize;
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);
         Entity myPrefab;
         if (name == "kobolt")
@@ -98,20 +101,44 @@ public class ECSController : MonoBehaviour
             myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(dragonPrefab, settings);
 
         var instance = entityManager.Instantiate(myPrefab);
-        entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(xValueF, yValueF, -0.1f)) });
+        if (name == "kobolt")
+        {
+            entityManager.AddComponentData(instance, new RaceComponent() { race = 0 });
+            entityManager.AddComponentData(instance, new Kobolt() { });
+            entityManager.AddComponentData(instance, new SectorEntity { typeEnum = SectorEntity.TypeEnum.Unit });
+            entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 30, health = 30 });
+            entityManager.AddComponentData(instance, new AttackComponent() { isAttacking = false, nrOfAttacks = 1, timer = 1, range = 2, weapon = 0 });
+            entityManager.AddComponentData(instance, new WeaponComponent() { weapon = 0, toHit = 0, damage = 5 });
+            entityHealth = 30;
+        }
+        else
+        {
+            entityManager.AddComponentData(instance, new RaceComponent() { race = 1 });
+            entityManager.AddComponentData(instance, new Dragon() { });
+            entityManager.AddComponentData(instance, new SectorEntity { typeEnum = SectorEntity.TypeEnum.Target });
+            entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 100, health = 100 });
+            entityManager.AddComponentData(instance, new AttackComponent() { isAttacking = false, nrOfAttacks = 4, timer = 1, range = 2, weapon = 0 });
+            entityManager.AddComponentData(instance, new WeaponComponent() { weapon = 0, toHit = 2, damage = 20 });
+            entityHealth = 100;
+        }
+
+        entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(ValueF.x, ValueF.y, -0.1f)) });
         entityManager.AddComponentData(instance, new IDComponent() { id = GameController.Instance.GetID() });
-        entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 100, health = 100 });
         entityManager.AddComponentData(instance, new MovementComponent() { isMoving = false, speed = 1.2f });
         entityManager.AddComponentData(instance, new PathFollow() { });
         entityManager.AddComponentData(instance, new Selected() { isSelected = false });
+        entityManager.AddComponentData(instance, new FactionComponent() { });
+        entityManager.AddComponentData(instance, new DeathComponent() { isDead = false, corpseTimer = 10.0f });
+        entityManager.AddComponentData(instance, new TargetableComponent() { });
+        entityManager.AddComponentData(instance, new TargetComponent() { });
         entityManager.AddBuffer<PathPosition>(instance);
         PathPosition someBufferElement = new PathPosition();
         DynamicBuffer<PathPosition> someBuffer = entityManager.GetBuffer<PathPosition>(instance);
-        someBufferElement.position = new int2(xValueI, yValueI);
+        someBufferElement.position = new int2(ValueI.x, ValueI.y);
         someBuffer.Add(someBufferElement);
-        someBufferElement.position = new int2(xValueI, yValueI);
+        someBufferElement.position = new int2(ValueI.x, ValueI.y);
         someBuffer.Add(someBufferElement);
-        GameController.Instance.AddUnit(name, new Vector3(xValueF, yValueF, -0.1f));
+        GameController.Instance.AddUnit(name, new Vector3(ValueF.x, ValueF.y, -0.1f), entityHealth);
         return 0;
     }
 
@@ -120,23 +147,38 @@ public class ECSController : MonoBehaviour
 
     }
 
+
     public void SpawnPlayerPrefab()
     {
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);
         var myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(playerPrefab, settings);
         var instance = entityManager.Instantiate(myPrefab);
+
+        //float2 ValueF = SetRandomLocation();
+        float2 ValueF = new float2(20f, 27f);
+        int2 ValueI = ConvertFloat2(ValueF);
+
+        float fcellSize = 0.32f;
+        ValueF.x = ValueF.x * fcellSize;
+        ValueF.y = ValueF.y * fcellSize;
+        CameraController.Instance.SetCameraPositionS(new float3(ValueF.x, ValueF.y, -0.5f));
+        entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(ValueF.x, ValueF.y, -0.1f)) });
+        entityManager.AddComponentData(instance, new IDComponent() { id = GameController.Instance.GetID() });
+        entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 100, health = 100 });
+        entityManager.AddComponentData(instance, new MovementComponent() { isMoving = false, speed = 1.5f });
+        entityManager.AddComponentData(instance, new PathFollow() { });
+        entityManager.AddComponentData(instance, new Player() { });
+        entityManager.AddComponentData(instance, new AttackComponent() { isAttacking = false, nrOfAttacks = 2, timer = 1, range = 2, weapon = 0 });
+        entityManager.AddComponentData(instance, new WeaponComponent() { weapon = 0, toHit = 0, damage = 10 });
+        entityManager.AddComponentData(instance, new Selected() { isSelected = false });
         entityManager.AddBuffer<PathPosition>(instance);
-        DynamicBuffer<PathPosition> someBuffer = entityManager.GetBuffer<PathPosition>(instance);
         PathPosition someBufferElement = new PathPosition();
-        someBufferElement.position = new int2(0, 0);
+        DynamicBuffer<PathPosition> someBuffer = entityManager.GetBuffer<PathPosition>(instance);
+        someBufferElement.position = new int2(ValueI.x, ValueI.y);
         someBuffer.Add(someBufferElement);
-        someBufferElement.position = new int2(0, 0);
+        someBufferElement.position = new int2(ValueI.x, ValueI.y);
         someBuffer.Add(someBufferElement);
-        var spawnPosition = transform.TransformPoint(new float3(0, 0, -0.1f));
-        entityManager.SetComponentData(instance, new Translation { Value = spawnPosition });
-        entityManager.AddComponentData(instance, new Selected { isSelected = true });
-        entityManager.AddComponentData(instance, new MovementComponent { isMoving = false, speed = 1.5f });
-        entityManager.AddComponentData(instance, new PathFollow());
+        GameController.Instance.AddUnit("player", new Vector3(ValueF.x, ValueF.y, -0.1f), 100);
     }
 
     public void SpawnKobolt(int _count)
@@ -157,12 +199,13 @@ public class ECSController : MonoBehaviour
             float xValueF = UnityEngine.Random.Range(0, 10f);
             float yValueF = UnityEngine.Random.Range(0f, 10f);
             var spawnPosition = transform.TransformPoint(new float3(xValueF, yValueF, -0.1f));
+            entityManager.SetComponentData(instance, new Kobolt { });
             entityManager.SetComponentData(instance, new Translation { Value = spawnPosition });
             entityManager.AddComponentData(instance, new Selected { isSelected = true });
             entityManager.AddComponentData(instance, new MovementComponent { isMoving = false, speed = 1.2f });
             entityManager.AddComponentData(instance, new PathFollow());
             entityManager.AddComponentData(instance, new IDComponent { id = GameController.Instance.GetID() });
-            GameController.Instance.AddUnit("kobolt", new Vector3(xValueF, yValueF, -0.1f));
+            GameController.Instance.AddUnit("kobolt", new Vector3(xValueF, yValueF, -0.1f), 30);
             //GameController.Instance.AddUnitName("Kobolt " + unitID);
         }
     }
@@ -203,6 +246,14 @@ public class ECSController : MonoBehaviour
         float cellSize = 0.32f;
         float3 MinBound = new float3(0, 0, 0);
         float3 MaxBound = new float3(50, 50, 50);
+
+
+        Material cachMaterial = new Material(Shader.Find("Unlit/Texture"));
+        Mesh cachmesh = quad;
+
+        entityManager.SetSharedComponentData(entities[entityCounter], new RenderMesh { mesh = cachmesh, material = cachMaterial });
+
+
         for (int y = 0; y < width; y++)
         {
             for (int x = 0; x < height; x++)
@@ -211,7 +262,6 @@ public class ECSController : MonoBehaviour
                 Entity entity = entities[entityCounter];
                 float3 myPosition = new float3(x * cellSize, y * cellSize, 1.5f);
                 entityManager.SetComponentData(entities[entityCounter], new Translation { Value = myPosition });
-                entityManager.SetSharedComponentData(entities[entityCounter], new RenderMesh { mesh = gridNode.GetNodeMesh(), material = gridNode.GetNodeMaterial() });
                 if (!gridNode.IsWalkable())
                 {
                     entityManager.SetComponentData(entities[entityCounter], new Collider { size = 0.32f });
@@ -229,43 +279,6 @@ public class ECSController : MonoBehaviour
         entities.Dispose();
     }
 
-
-    private void SpawnPlayer()
-    {
-        NativeArray<Entity> entities = new NativeArray<Entity>(1, Allocator.Temp);
-        EntityArchetype entityArchetype = entityManager.CreateArchetype(
-            typeof(Player),
-            typeof(RenderMesh),
-            typeof(Translation),
-            typeof(MovementComponent),
-            typeof(Scale),
-            typeof(LocalToWorld),
-            typeof(RenderBounds),
-            typeof(Collider),
-            typeof(PlayerInputComponent),
-            typeof(PathPosition),
-            typeof(PathFollow),
-            typeof(Rotation),
-            typeof(Selected),
-            typeof(DestinationComponent),
-            typeof(NonUniformScale)
-        );
-        entityManager.CreateEntity(entityArchetype, entities);
-
-        Entity entity = entities[0];
-        float3 myPosition = new float3(0, 0, -0.1f);
-        float3 myDestination = new float3(0, 0, -0.1f);
-        entityManager.SetComponentData(entities[0], new Translation { Value = myPosition });
-        entityManager.SetComponentData(entities[0], new MovementComponent { isMoving = false, speed = 1.2f });
-        entityManager.SetSharedComponentData(entities[0], new RenderMesh { mesh = spriteMesh, material = spriteMaterial });
-        entityManager.SetComponentData(entities[0], new PlayerInputComponent { speed = 1 });
-        entityManager.SetComponentData(entities[0], new NonUniformScale { Value = 0.32f });
-        entityManager.SetComponentData(entities[0], new Selected { isSelected = true });
-        int unitID = GameController.Instance.GetUnitListLength();
-        entityManager.AddComponentData(entities[0], new IDComponent { id = unitID });
-        GameController.Instance.AddUnit("Player", new Vector3(0, 0, -0.1f));
-        entities.Dispose();
-    }
     private void OnDestroy()
     {
         if (blobAssetStore != null)
@@ -274,45 +287,50 @@ public class ECSController : MonoBehaviour
         }
     }
 
-    private void SpawnHumans(int count)
+    public int2 ConvertFloat2(float2 _value)
     {
-        NativeArray<Entity> entities = new NativeArray<Entity>(count, Allocator.Temp);
-        EntityArchetype entityArchetype = entityManager.CreateArchetype(
-            typeof(Human),
-            typeof(RenderMesh),
-            typeof(Translation),
-            typeof(MovementComponent),
-            typeof(Scale),
-            typeof(LocalToWorld),
-            typeof(RenderBounds),
-            typeof(DestinationComponent),
-            typeof(Collider),
-            typeof(Selected),
-            typeof(PathPosition),
-            typeof(PathFollow),
-            typeof(NonUniformScale)
-        );
-
-        entityManager.CreateEntity(entityArchetype, entities);
-
-        for (int i = 0; i < count; i++)
-        {
-            Entity entity = entities[i];
-            float3 myPosition = new float3(UnityEngine.Random.Range(0, 10f), UnityEngine.Random.Range(0f, 10f), -0.1f);
-            float3 myDestination = new float3(UnityEngine.Random.Range(0f, 20f), UnityEngine.Random.Range(0f, 20f), -0.1f);
-            entityManager.SetComponentData(entities[i], new Translation { Value = myPosition });
-            entityManager.SetComponentData(entities[i], new DestinationComponent { startPosition = new int2(8, 8), endPosition = new int2(4, 4) });
-            entityManager.SetComponentData(entities[i], new MovementComponent { isMoving = true, speed = 1.0f });
-            entityManager.SetSharedComponentData(entities[i], new RenderMesh { mesh = spriteMesh, material = spriteMaterial });
-            entityManager.SetComponentData(entities[i], new PathFollow { pathIndex = 1 });
-            entityManager.SetComponentData(entities[i], new Collider { size = 0.16f });
-            entityManager.SetComponentData(entities[i], new NonUniformScale { Value = 0.32f });
-            entityManager.SetComponentData(entities[i], new Selected { isSelected = false });
-        }
-        entities.Dispose();
+        return new int2((int)Mathf.Round(_value.x), (int)Mathf.Round(_value.y));
     }
 
-    public struct Human : IComponentData { }
-    public struct Player : IComponentData { }
-    public struct Kobolt : IComponentData { }
+    public float2 RandomFloat2(float _min, float _max)
+    {
+        return new float2(UnityEngine.Random.Range(_min, _max), UnityEngine.Random.Range(_min, _max));
+    }
+
+    public int2 RandomInt2(float _min, float _max)
+    {
+        return new int2((int)Mathf.Round(UnityEngine.Random.Range(_min, _max)), (int)Mathf.Round(UnityEngine.Random.Range(_min, _max)));
+    }
+
+    public float2 SetRandomLocation()
+    {
+        float2 ValueF = RandomFloat2(1f, 99f);
+        int2 ValueI = new int2((int)Mathf.Round(ValueF.x), (int)Mathf.Round(ValueF.y));
+        bool isWalkabler = PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(ValueI.x, ValueI.y).IsWalkable();
+        while (!isWalkabler)
+        {
+            int2 temp = RandomInt2(1f, 99f);
+            isWalkabler = PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(temp.x, temp.y).IsWalkable();
+        }
+        return ValueF;
+    }
+
 }
+public struct Human : IComponentData { }
+public struct Player : IComponentData { }
+public struct Kobolt : IComponentData { }
+public struct Dragon : IComponentData { }
+public enum Race
+{
+    kobolt = 0,
+    dragon = 1,
+    human = 2,
+    player
+};
+
+
+public struct HasTarget : IComponentData
+{
+    public Entity targetEntity;
+}
+

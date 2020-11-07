@@ -6,6 +6,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Burst;
 using UnityEngine.SceneManagement;
+using UnityEngine;
 
 [UpdateAfter(typeof(PathfindingGridSetup))]
 public class PathfindingSystem : ComponentSystem
@@ -41,7 +42,7 @@ public class PathfindingSystem : ComponentSystem
                 };
                 findPathJobList.Add(findPathJob);
                 jobHandleList.Add(findPathJob.Schedule());
-
+                Debug.Log("pathfinding system onupdate)");
                 PostUpdateCommands.RemoveComponent<DestinationComponent>(entity);
             });
 
