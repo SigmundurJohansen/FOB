@@ -13,7 +13,8 @@ public class TestScript : MonoBehaviour
 
     public void DestroyUnit()
     {
-        GameController.Instance.DamageUnit(2, 20, 0);
+        Debug.Log("not implemented atm");
+        //GameController.Instance.DamageUnit(2, 20, 0);
     }
 
     public void SpawnUnit()

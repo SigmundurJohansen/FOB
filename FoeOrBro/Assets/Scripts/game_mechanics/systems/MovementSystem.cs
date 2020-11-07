@@ -8,7 +8,7 @@ using Unity.Mathematics;
 using Unity.Collections;
 using System.Threading;
 using Unity.Burst;
-
+/*
 public class MovementSystem : JobComponentSystem
 {
     // IJobForEachWithEntity
@@ -16,8 +16,7 @@ public class MovementSystem : JobComponentSystem
     [BurstCompile]
     struct MovementSystemJob : IJobForEachWithEntity<RigidBody, MovementComponent>
     {
-        public float DeltaTime;
-       
+        public float DeltaTime;       
         public void Execute(Entity entity, int index, ref RigidBody _rigidbody , ref MovementComponent _movement)
         {
             _rigidbody.velocity = _movement.speed * DeltaTime;            
@@ -34,4 +33,5 @@ public class MovementSystem : JobComponentSystem
     }
     #pragma warning restore 0618
 }
+*/
      

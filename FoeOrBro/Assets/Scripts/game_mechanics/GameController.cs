@@ -59,6 +59,10 @@ public class GameController : MonoBehaviour
             position = position - new Vector3(Screen.width / 2, Screen.height / 2 - size * 15, 0);
             unit.menu.GetComponent<RectTransform>().anchoredPosition = position;
         }
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            SetAttackState(true);
+        }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -81,7 +85,7 @@ public class GameController : MonoBehaviour
     {
         return attackState;
     }
-    
+
 
     public int GetUnitListLength()
     {
@@ -102,9 +106,9 @@ public class GameController : MonoBehaviour
 
     public int GetID() { return ID; }
 
-    public void AddUnit(string _name, Vector3 _position)
+    public void AddUnit(string _name, Vector3 _position, float _health)
     {
-        GameUnit newUnit = new GameUnit(ID, _name, _position);
+        GameUnit newUnit = new GameUnit(ID, _name, _position, _health);
         gameUnitList.Add(newUnit);
 
         var krec = healthBarParent.GetComponent<RectTransform>();
@@ -172,20 +176,26 @@ public class GameController : MonoBehaviour
         Magical
     }
 
-    public void DamageUnit(int _id, float _amount, damageType _type)
+    public void DamageUnit(int _id1, int _id2, float _amount, damageType _type)
     {
+        string attackerName = "someone";
+        foreach (var attacker in gameUnitList)
+        {
+            if (attacker.GetID() == _id1)
+                attackerName = attacker.GetName();
+        }
         bool hit = false;
         foreach (var unit in gameUnitList)
         {
-            if (unit.GetID() == _id)
+            if (unit.GetID() == _id2)
             {
                 unit.health = unit.health - _amount;
-                Debug.Log(unit.GetName() + " takes " + _amount + "damage");
+                Debug.Log(unit.GetName() + " takes " + _amount + " " + _type + " damage from " + attackerName);
                 hit = true;
             }
         }
         if (!hit)
-            Debug.Log("Attack Missed!");
+            Debug.Log(attackerName + " Attack Missed!");
         OnGui();
     }
 
@@ -244,11 +254,13 @@ public class GameUnit
     float maxHealth = 100;
     Vector3 position;
     public GameObject menu;
-    public GameUnit(int _id, string _name, Vector3 _pos)
+    public GameUnit(int _id, string _name, Vector3 _pos, float _health)
     {
         id = _id;
         name = _name;
         position = _pos;
+        health  =_health;
+        maxHealth =_health;
     }
     public int GetID() { return id; }
     public void SetName(string _name) { name = _name; }

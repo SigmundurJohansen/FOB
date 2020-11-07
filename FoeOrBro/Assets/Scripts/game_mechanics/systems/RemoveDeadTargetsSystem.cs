@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-
+/*
 public class RemoveDeadTargetReferencesSystem : SystemBase
 {
     protected override void OnUpdate()
@@ -19,3 +19,4 @@ public class RemoveDeadTargetReferencesSystem : SystemBase
             .Schedule();
     }
 }
+*/

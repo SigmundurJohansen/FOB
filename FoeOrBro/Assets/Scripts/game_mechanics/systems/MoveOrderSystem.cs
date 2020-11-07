@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 using Unity.Mathematics;
@@ -22,12 +23,11 @@ public class MoveOrderSystem : ComponentSystem
 
     protected override void OnUpdate()
     {
+        SetTargetingState();
         if (SceneManager.GetActiveScene().name == "GameScene")
         {
-
             if (EventSystem.current.IsPointerOverGameObject())
             {
-
             }
             else
             {
@@ -38,29 +38,13 @@ public class MoveOrderSystem : ComponentSystem
                 if (Input.GetMouseButtonUp(0))
                 {
                     pointTwo = WorldPosition();
-
                     if ((pointOne - pointTwo).magnitude > 0.3f)
                     {
                         CurrentState = ClickState.Selecting;
                         Deselect();
                     }
-                    if(CurrentState == ClickState.Targeting)
-                    {
-                        
-                        if ((pointOne - pointTwo).magnitude < 0.2f)
-                        {
-                            Entities.ForEach((Entity entity, ref Translation _translation, ref Selected _selected, ref AttackComponent _attack) =>
-                            {
-                                if (_translation.Value.x > (pointTwo.x - 0.2f) && _translation.Value.x < (pointTwo.x + 0.2f) && _translation.Value.y > (pointTwo.y - 0.2f) && _translation.Value.y < (pointTwo.y + 0.2f))
-                                {
-                                    _attack.isAttacking = true;
-                                }
 
-                            });
 
-                        }
-
-                    }
                     if (CurrentState == ClickState.Moving)
                     {
                         //float cellSize = PathfindingGridSetup.Instance.pathfindingGrid.GetCellSize();
@@ -76,12 +60,13 @@ public class MoveOrderSystem : ComponentSystem
                                     PathfindingGridSetup.Instance.pathfindingGrid.GetXY(translation.Value, out int startX, out int startY);
                                     ValidateGridPosition(ref startX, ref startY);
                                     _move.isMoving = true;
+                                    _move.chaseTarget = false;
+                                    Debug.Log("dechasing");
                                     EntityManager.AddComponentData(entity, new DestinationComponent { startPosition = new int2(startX, startY), endPosition = new int2(endX, endY) });
                                 }
                             });
                         }
                     }
-
                     if (CurrentState == ClickState.Selecting)
                     {
                         if ((pointOne - pointTwo).magnitude < 0.2f)
@@ -98,9 +83,7 @@ public class MoveOrderSystem : ComponentSystem
                                         isContinue = false;
                                     }
                                 }
-
                             });
-
                         }
                         if ((pointOne - pointTwo).magnitude > 0.3f)
                         {
@@ -135,8 +118,44 @@ public class MoveOrderSystem : ComponentSystem
                                 CurrentState = ClickState.Selecting;
                         }
                     }
-                }
 
+                    if (CurrentState == ClickState.Targeting)
+                    {
+                        Debug.Log("attacking system");
+                        // none player units adding HasTarget  // .WithNone<Player>()
+                        Entities.WithNone<HasTarget>().ForEach((Entity entity, ref Translation _translation, ref Selected _selected, ref AttackComponent _attack, ref MovementComponent _move) =>
+                        {
+                            if (_selected.isSelected == true)
+                            {
+
+                                int setAttack = 0;
+                                Entities.ForEach((Entity _targetEntity, ref Translation _targetTranslation, ref TargetableComponent _targetable) =>
+                                {
+                                    if (_targetTranslation.Value.x > (pointOne.x - 0.2f) && _targetTranslation.Value.x < (pointOne.x + 0.2f)
+                                    && _targetTranslation.Value.y > (pointOne.y - 0.2f) && _targetTranslation.Value.y < (pointOne.y + 0.2f))
+                                    {
+                                        EntityManager.AddComponentData(entity, new HasTarget { targetEntity = _targetEntity });
+                                        setAttack = 1;
+                                        Debug.Log("found target");
+                                    }
+                                });
+                                if (setAttack == 1)
+                                {
+                                    _attack.isAttacking = true;
+                                    _move.chaseTarget = true;
+                                }
+                                else
+                                {
+                                    Debug.Log("no target found");
+                                    _move.chaseTarget = false;
+                                    _attack.isAttacking = false;
+                                }
+                            }
+                        });
+                        GameController.Instance.SetAttackState(false);
+                        CurrentState = ClickState.Moving;
+                    }
+                }
                 if (Input.GetMouseButtonDown(1))
                 {
                     Deselect();
@@ -144,15 +163,17 @@ public class MoveOrderSystem : ComponentSystem
             }
         }
     }
-    public void SetTargetingState(bool _state)
+    public void SetTargetingState()
     {
         if (GameController.Instance.GetAttackState())
+        {
             CurrentState = ClickState.Targeting;
+            Debug.Log("state targeting");
+        }
     }
 
     public void Deselect()
     {
-
         Entities.ForEach((Entity entity, ref Translation _translation, ref Selected _selected) =>
         {
             _selected.isSelected = false;

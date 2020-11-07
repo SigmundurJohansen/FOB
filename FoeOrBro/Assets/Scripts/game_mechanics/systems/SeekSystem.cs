@@ -16,24 +16,24 @@ public class SeekSystem : JobComponentSystem
     {
         public Entity entity;
         public float3 position;
+        public bool isDead;
     }
 
     [RequireComponentTag(typeof(Dragon))]
     [BurstCompile]
     // Fill single array with Target Entity and Position
-    private struct FillArrayEntityWithPositionJob : IJobForEachWithEntity<Translation>
+    private struct FillArrayEntityWithPositionJob : IJobForEachWithEntity<Translation, MovementComponent, AttackComponent, DeathComponent>
     {
-
         public NativeArray<EntityWithPosition> targetArray;
-
-        public void Execute(Entity entity, int index, ref Translation translation)
+        public void Execute(Entity entity, int index, ref Translation translation, ref MovementComponent _move, ref AttackComponent _attack, ref DeathComponent _dead)
         {
             if (targetArray.Length != 0)
             {
                 targetArray[index] = new EntityWithPosition
                 {
                     entity = entity,
-                    position = translation.Value
+                    position = translation.Value,
+                    isDead = _dead.isDead
                 };
             }
         }
@@ -43,13 +43,13 @@ public class SeekSystem : JobComponentSystem
     [ExcludeComponent(typeof(HasTarget))]
     [BurstCompile]
     // Find Closest Target
-    private struct FindTargetBurstJob : IJobForEachWithEntity<Translation>
+    private struct FindTargetBurstJob : IJobForEachWithEntity<Translation, MovementComponent, AttackComponent>
     {
 
         [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<EntityWithPosition> targetArray;
         public NativeArray<Entity> closestTargetEntityArray;
 
-        public void Execute(Entity entity, int index, [ReadOnly] ref Translation translation)
+        public void Execute(Entity entity, int index, [ReadOnly] ref Translation translation, ref MovementComponent _move, ref AttackComponent _attack)
         {
             float3 unitPosition = translation.Value;
             Entity closestTargetEntity = Entity.Null;
@@ -69,7 +69,7 @@ public class SeekSystem : JobComponentSystem
                 }
                 else
                 {
-                    if (math.distancesq(unitPosition, targetEntityWithPosition.position) < closestTargetDistance)
+                    if (math.distancesq(unitPosition, targetEntityWithPosition.position) < closestTargetDistance && targetEntityWithPosition.isDead == false)
                     {
                         // This target is closer
                         Debug.Log("target is closer");
@@ -87,22 +87,27 @@ public class SeekSystem : JobComponentSystem
     [RequireComponentTag(typeof(Dragon))]
     [ExcludeComponent(typeof(HasTarget))]
     // Add HasTarget Component to Entities that have a Closest Target
-    private struct AddComponentJob : IJobForEachWithEntity<Translation>
+    private struct AddComponentJob : IJobForEachWithEntity<Translation, MovementComponent, AttackComponent>
     {
 
         [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<Entity> closestTargetEntityArray;
         public EntityCommandBuffer.Concurrent entityCommandBuffer;
 
-        public void Execute(Entity entity, int index, ref Translation translation)
+        public void Execute(Entity entity, int index, ref Translation translation, ref MovementComponent _move, ref AttackComponent _attack)
         {
             if (closestTargetEntityArray.Length != 0)
                 if (closestTargetEntityArray[index] != Entity.Null)
                 {
-                    Debug.Log("give hastarget");
-                    entityCommandBuffer.AddComponent(index, entity, new HasTarget { targetEntity = closestTargetEntityArray[index] });
+                    DeathComponent dead = World.DefaultGameObjectInjectionWorld.EntityManager.GetComponentData<DeathComponent>(closestTargetEntityArray[index]);
+                    if (dead.isDead == false)
+                    {
+                        Debug.Log("give hastarget");
+                        entityCommandBuffer.AddComponent(index, entity, new HasTarget { targetEntity = closestTargetEntityArray[index] });
+                        _move.chaseTarget = true;
+                        _attack.isAttacking = true;
+                    }
                 }
         }
-
     }
 
 

@@ -4,17 +4,26 @@ using Unity.Mathematics;
 
 public class DeathSystem : ComponentSystem
 {
-    protected override void OnUpdate() 
+    float checkDeadTimer = 2;
+    protected override void OnUpdate()
     {
-        Entities.ForEach((Entity entity, ref HealthComponent _health, ref IDComponent _id) => {
-            if(_health.health <=0)
+        checkDeadTimer -= UnityEngine.Time.deltaTime;
+        Entities.ForEach((Entity entity, ref HealthComponent _health, ref IDComponent _id, ref DeathComponent _death) =>
+        {
+            if (_health.health <= 0 && _death.isDead == false)
             {
-                PostUpdateCommands.DestroyEntity(entity);
+                _death.isDead = true;
+                Debug.Log("dead true " + _id.id);
                 GameController.Instance.RemoveUnit(_id.id);
-                Debug.Log("destroy entity nr" + _id.id);
+            }
+            if (_death.isDead == true)
+            {
+                _death.corpseTimer -= UnityEngine.Time.deltaTime;
+                if (_death.corpseTimer < 0)
+                {
+                    PostUpdateCommands.DestroyEntity(entity);
+                }
             }
         });
-       
     }
-
 }

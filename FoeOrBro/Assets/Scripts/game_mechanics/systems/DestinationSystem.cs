@@ -21,14 +21,17 @@ public class DestinationSystem : ComponentSystem
         {
             Entities.WithNone<DestinationComponent>().ForEach((Entity entity, ref Translation translation, ref HasTarget hasTarget, ref MovementComponent _move) =>
             {
-                if (World.DefaultGameObjectInjectionWorld.EntityManager.Exists(hasTarget.targetEntity))
+                if (_move.chaseTarget == true)
                 {
-                    Translation targetTranslation = World.DefaultGameObjectInjectionWorld.EntityManager.GetComponentData<Translation>(hasTarget.targetEntity);
-                    PathfindingGridSetup.Instance.pathfindingGrid.GetXY(translation.Value, out int startX, out int startY);
-                    PathfindingGridSetup.Instance.pathfindingGrid.GetXY(targetTranslation.Value, out int endX, out int endY);
-                    World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(entity, new DestinationComponent { startPosition = new int2(startX, startY), endPosition = new int2(endX, endY) });
-                    _move.isMoving = true;
-                    Debug.Log("destination given");
+                    if (World.DefaultGameObjectInjectionWorld.EntityManager.Exists(hasTarget.targetEntity))
+                    {
+                        Translation targetTranslation = World.DefaultGameObjectInjectionWorld.EntityManager.GetComponentData<Translation>(hasTarget.targetEntity);
+                        PathfindingGridSetup.Instance.pathfindingGrid.GetXY(translation.Value, out int startX, out int startY);
+                        PathfindingGridSetup.Instance.pathfindingGrid.GetXY(targetTranslation.Value, out int endX, out int endY);
+                        World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(entity, new DestinationComponent { startPosition = new int2(startX, startY), endPosition = new int2(endX, endY) });
+                        _move.isMoving = true;
+                        Debug.Log("destination given");
+                    }
                 }
             });
             targetDelay = 0.5f;

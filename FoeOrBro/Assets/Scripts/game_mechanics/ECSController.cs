@@ -78,6 +78,7 @@ public class ECSController : MonoBehaviour
 
     public int CreateEntity(string name, float2 _location = new float2())
     {
+        float entityHealth = 50;
         float fcellSize = 0.32f;
         float2 ValueF = new float2(0f, 0f);
         if (ValueF.Equals(_location))
@@ -105,21 +106,29 @@ public class ECSController : MonoBehaviour
             entityManager.AddComponentData(instance, new RaceComponent() { race = 0 });
             entityManager.AddComponentData(instance, new Kobolt() { });
             entityManager.AddComponentData(instance, new SectorEntity { typeEnum = SectorEntity.TypeEnum.Unit });
+            entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 30, health = 30 });
+            entityManager.AddComponentData(instance, new AttackComponent() { isAttacking = false, nrOfAttacks = 1, timer = 1, range = 2, weapon = 0 });
+            entityManager.AddComponentData(instance, new WeaponComponent() { weapon = 0, toHit = 0, damage = 5 });
+            entityHealth = 30;
         }
         else
         {
             entityManager.AddComponentData(instance, new RaceComponent() { race = 1 });
             entityManager.AddComponentData(instance, new Dragon() { });
             entityManager.AddComponentData(instance, new SectorEntity { typeEnum = SectorEntity.TypeEnum.Target });
+            entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 100, health = 100 });
+            entityManager.AddComponentData(instance, new AttackComponent() { isAttacking = false, nrOfAttacks = 4, timer = 1, range = 2, weapon = 0 });
+            entityManager.AddComponentData(instance, new WeaponComponent() { weapon = 0, toHit = 2, damage = 20 });
+            entityHealth = 100;
         }
 
         entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(ValueF.x, ValueF.y, -0.1f)) });
         entityManager.AddComponentData(instance, new IDComponent() { id = GameController.Instance.GetID() });
-        entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 100, health = 100 });
         entityManager.AddComponentData(instance, new MovementComponent() { isMoving = false, speed = 1.2f });
         entityManager.AddComponentData(instance, new PathFollow() { });
         entityManager.AddComponentData(instance, new Selected() { isSelected = false });
         entityManager.AddComponentData(instance, new FactionComponent() { });
+        entityManager.AddComponentData(instance, new DeathComponent() { isDead = false, corpseTimer = 10.0f });
         entityManager.AddComponentData(instance, new TargetableComponent() { });
         entityManager.AddComponentData(instance, new TargetComponent() { });
         entityManager.AddBuffer<PathPosition>(instance);
@@ -129,7 +138,7 @@ public class ECSController : MonoBehaviour
         someBuffer.Add(someBufferElement);
         someBufferElement.position = new int2(ValueI.x, ValueI.y);
         someBuffer.Add(someBufferElement);
-        GameController.Instance.AddUnit(name, new Vector3(ValueF.x, ValueF.y, -0.1f));
+        GameController.Instance.AddUnit(name, new Vector3(ValueF.x, ValueF.y, -0.1f), entityHealth);
         return 0;
     }
 
@@ -158,6 +167,9 @@ public class ECSController : MonoBehaviour
         entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 100, health = 100 });
         entityManager.AddComponentData(instance, new MovementComponent() { isMoving = false, speed = 1.5f });
         entityManager.AddComponentData(instance, new PathFollow() { });
+        entityManager.AddComponentData(instance, new Player() { });
+        entityManager.AddComponentData(instance, new AttackComponent() { isAttacking = false, nrOfAttacks = 2, timer = 1, range = 2, weapon = 0 });
+        entityManager.AddComponentData(instance, new WeaponComponent() { weapon = 0, toHit = 0, damage = 10 });
         entityManager.AddComponentData(instance, new Selected() { isSelected = false });
         entityManager.AddBuffer<PathPosition>(instance);
         PathPosition someBufferElement = new PathPosition();
@@ -166,7 +178,7 @@ public class ECSController : MonoBehaviour
         someBuffer.Add(someBufferElement);
         someBufferElement.position = new int2(ValueI.x, ValueI.y);
         someBuffer.Add(someBufferElement);
-        GameController.Instance.AddUnit("player", new Vector3(ValueF.x, ValueF.y, -0.1f));
+        GameController.Instance.AddUnit("player", new Vector3(ValueF.x, ValueF.y, -0.1f), 100);
     }
 
     public void SpawnKobolt(int _count)
@@ -193,7 +205,7 @@ public class ECSController : MonoBehaviour
             entityManager.AddComponentData(instance, new MovementComponent { isMoving = false, speed = 1.2f });
             entityManager.AddComponentData(instance, new PathFollow());
             entityManager.AddComponentData(instance, new IDComponent { id = GameController.Instance.GetID() });
-            GameController.Instance.AddUnit("kobolt", new Vector3(xValueF, yValueF, -0.1f));
+            GameController.Instance.AddUnit("kobolt", new Vector3(xValueF, yValueF, -0.1f), 30);
             //GameController.Instance.AddUnitName("Kobolt " + unitID);
         }
     }

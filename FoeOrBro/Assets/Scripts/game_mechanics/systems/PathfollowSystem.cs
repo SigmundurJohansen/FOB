@@ -85,6 +85,7 @@ public class PathFollowGetNewPathSystem : JobComponentSystem
                 ValidateGridPosition(ref startX, ref startY, mapWidth, mapHeight);
                 int endX = random.NextInt(0, mapWidth);
                 int endY = random.NextInt(0, mapHeight);
+                Debug.Log("give destination pathfollow system");
                 entityCommandBuffer.AddComponent(entityInQueryIndex, entity, new DestinationComponent
                 {
                     startPosition = new int2(startX, startY),

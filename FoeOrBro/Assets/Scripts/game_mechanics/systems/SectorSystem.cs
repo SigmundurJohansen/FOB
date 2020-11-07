@@ -69,7 +69,6 @@ public class SectorSystem : ComponentSystem {
                 SectorEntity = SectorEntity
             });
         }
-
     }
 
     protected override void OnCreate() {
