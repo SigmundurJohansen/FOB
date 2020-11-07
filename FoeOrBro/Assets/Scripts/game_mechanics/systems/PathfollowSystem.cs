@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 
 [UpdateAfter(typeof(PathfindingSystem))]
+
 public class PathFollowSystem : JobComponentSystem
 {
 
@@ -34,7 +35,7 @@ public class PathFollowSystem : JobComponentSystem
                 translation.Value += moveDir * _move.speed * deltaTime;
                 float3 myXy = translation.Value;
                 //Debug.Log(_id.id);
-                GameController.Instance.SetPosition(_id.id, myXy.x, myXy.y);
+                //GameController.Instance.SetPosition(_id.id, myXy.x, myXy.y);
                 if (math.distance(translation.Value, targetPosition) < .1f)
                 {
                     // Next waypoint

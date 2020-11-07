@@ -97,7 +97,7 @@ public class GameController : MonoBehaviour
         {
             if (gameUnitList[i].GetID() == _id)
             {
-                gameUnitList[i].SetPosition(new Vector3(_x, _y, -0.1f));
+                gameUnitList[i].position = new Vector3(_x, _y, -0.1f);
             }
         }
     }
@@ -252,7 +252,7 @@ public class GameUnit
     string name;
     public float health = 100;
     float maxHealth = 100;
-    Vector3 position;
+    public Vector3 position;
     public GameObject menu;
     public GameUnit(int _id, string _name, Vector3 _pos, float _health)
     {

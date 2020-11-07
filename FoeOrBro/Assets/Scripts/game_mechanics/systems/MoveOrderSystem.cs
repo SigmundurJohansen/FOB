@@ -23,9 +23,9 @@ public class MoveOrderSystem : ComponentSystem
 
     protected override void OnUpdate()
     {
-        SetTargetingState();
         if (SceneManager.GetActiveScene().name == "GameScene")
         {
+            SetTargetingState();
             if (EventSystem.current.IsPointerOverGameObject())
             {
             }

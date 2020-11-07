@@ -138,7 +138,7 @@ public class ECSController : MonoBehaviour
         someBuffer.Add(someBufferElement);
         someBufferElement.position = new int2(ValueI.x, ValueI.y);
         someBuffer.Add(someBufferElement);
-        GameController.Instance.AddUnit(name, new Vector3(ValueF.x, ValueF.y, -0.1f), entityHealth);
+        //GameController.Instance.AddUnit(name, new Vector3(ValueF.x, ValueF.y, -0.1f), entityHealth);
         return 0;
     }
 
