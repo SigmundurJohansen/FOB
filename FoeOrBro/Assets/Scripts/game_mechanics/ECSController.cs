@@ -97,8 +97,12 @@ public class ECSController : MonoBehaviour
         Entity myPrefab;
         if (name == "kobolt")
             myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(koboltPrefab, settings);
-        else
+        else if (name == "dragon")
             myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(dragonPrefab, settings);
+        else
+        {
+            myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(dragonPrefab, settings);
+        }
 
         var instance = entityManager.Instantiate(myPrefab);
         if (name == "kobolt")
@@ -121,7 +125,6 @@ public class ECSController : MonoBehaviour
             entityManager.AddComponentData(instance, new WeaponComponent() { weapon = 0, toHit = 2, damage = 20 });
             entityHealth = 100;
         }
-
         entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(ValueF.x, ValueF.y, -0.1f)) });
         entityManager.AddComponentData(instance, new IDComponent() { id = GameController.Instance.GetID() });
         entityManager.AddComponentData(instance, new MovementComponent() { isMoving = false, speed = 1.2f });
@@ -142,22 +145,13 @@ public class ECSController : MonoBehaviour
         return 0;
     }
 
-    public void DestroyUnit()
-    {
-
-    }
-
-
     public void SpawnPlayerPrefab()
     {
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);
         var myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(playerPrefab, settings);
         var instance = entityManager.Instantiate(myPrefab);
-
-        //float2 ValueF = SetRandomLocation();
         float2 ValueF = new float2(20f, 27f);
         int2 ValueI = ConvertFloat2(ValueF);
-
         float fcellSize = 0.32f;
         ValueF.x = ValueF.x * fcellSize;
         ValueF.y = ValueF.y * fcellSize;
@@ -220,7 +214,10 @@ public class ECSController : MonoBehaviour
 
         var instance = entityManager.Instantiate(prefab);
         var position = transform.TransformPoint(new float3((_x + 0.5f) * cellSize, (_y + 0.5f) * cellSize, 0.5f));
-        entityManager.SetComponentData(instance, new Translation { Value = position });
+        entityManager.SetComponentData(instance, new Translation
+        {
+            Value = position
+        });
     }
 
     public void SpawnGridMesh()
@@ -334,3 +331,18 @@ public struct HasTarget : IComponentData
     public Entity targetEntity;
 }
 
+/*
+[ExecuteAlways]
+[AlwaysUpdateSystem]
+[UpdateInGroup(typeof(PresentationSystemGroup))]
+class SimpleMeshRendererSystem : ComponentSystem
+{
+    override protected void OnUpdate()
+    {
+        Entities.ForEach((RenderMeshComponent renderer, ref LocalToWorld localToWorld) =>
+        {
+            Graphics.DrawMesh(renderer.mesh, localToWorld.Value, renderer.material, 0);
+        });
+    }
+}
+*/

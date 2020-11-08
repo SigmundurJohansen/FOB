@@ -6985,6 +6985,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1366550413}
   m_CullTransparentMesh: 0
+--- !u!1 &1367281900
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1367281902}
+  - component: {fileID: 1367281901}
+  m_Layer: 0
+  m_Name: MapLoader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1367281901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1367281900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 787bebe92220ad748b186e66e730d304, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entitiesToSpawn: 10
+  spriteMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  spriteMaterials:
+  - {fileID: 2100000, guid: 5d761b2f729b74541a62def73c5a57c7, type: 2}
+  - {fileID: 2100000, guid: 769edc49683d27a4c888560f724d393a, type: 2}
+--- !u!4 &1367281902
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1367281900}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 438.6347, y: 364.29483, z: -92.26554}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1382069037
 GameObject:
   m_ObjectHideFlags: 0
@@ -7865,9 +7913,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6f7d6fbbc740c9479f707c44bfb3bb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handCursor: {fileID: 2800000, guid: db49735aa7da6cf4c81f1d7d41311b8d, type: 3}
-  normalCursor: {fileID: 2800000, guid: e9e0b936a0af796408f26bdaea1fa14e, type: 3}
-  targetCursor: {fileID: 0}
+  handCursor: {fileID: 2800000, guid: e9e0b936a0af796408f26bdaea1fa14e, type: 3}
+  normalCursor: {fileID: 2800000, guid: db49735aa7da6cf4c81f1d7d41311b8d, type: 3}
+  targetCursor: {fileID: 2800000, guid: 9a6a6618bbb16724aab89b7dba7908fc, type: 3}
   attackCursor: {fileID: 2800000, guid: 9a6a6618bbb16724aab89b7dba7908fc, type: 3}
   myCamera: {fileID: 1698830188}
 --- !u!1 &1603291826
@@ -8488,7 +8536,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 10000
+  far clip plane: 1000
   field of view: 26.991467
   orthographic: 1
   orthographic size: 5
@@ -8539,7 +8587,7 @@ MonoBehaviour:
   panLimit: {x: 3, y: 3}
   scrollSpeed: 2
   minZ: 1
-  maxZ: 7
+  maxZ: 10
   player: {fileID: 0}
   whoAmI: {fileID: 1698830188}
 --- !u!1 &1715258808
