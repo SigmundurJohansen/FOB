@@ -7016,9 +7016,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entitiesToSpawn: 10
   spriteMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
-  spriteMaterials:
-  - {fileID: 2100000, guid: 5d761b2f729b74541a62def73c5a57c7, type: 2}
-  - {fileID: 2100000, guid: 769edc49683d27a4c888560f724d393a, type: 2}
+  sprites: []
+  spriteMaterial: {fileID: 0}
 --- !u!4 &1367281902
 Transform:
   m_ObjectHideFlags: 0
@@ -9308,6 +9307,8 @@ MonoBehaviour:
   listViewPrefab: {fileID: 798617784801394423, guid: 10bf2181d1e57294bb925678de04d705,
     type: 3}
   listViewParent: {fileID: 0}
+  terrainPrefab: {fileID: 7623911958253642337, guid: bfe5587285400234fa81c1e580d8c54b,
+    type: 3}
   quad: {fileID: 0}
 --- !u!212 &1815219169
 SpriteRenderer:

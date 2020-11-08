@@ -15,8 +15,8 @@ public class DamageSystem : ComponentSystem
                 _health.health = GameController.Instance.GetUnitHealth(_id.id);
                 Debug.Log("entity has taken damage, id "+_id.id);
             }
-            */
             
+            */
         });
        
     }

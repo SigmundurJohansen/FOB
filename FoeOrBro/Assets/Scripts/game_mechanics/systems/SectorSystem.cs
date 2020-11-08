@@ -95,7 +95,7 @@ public class SectorSystem : ComponentSystem {
         JobHandle jobHandle = JobForEachExtensions.Schedule(setSectorDataHashMapJob, entityQuery);
         jobHandle.Complete();
 
-        //DebugDrawSector(CameraController.Instance.WorldPosition());
+        DebugDrawSector(CameraController.Instance.WorldPosition());
         //Debug.Log(GetEntityCountInHashMap(SectorMultiHashMap, GetPositionHashMapKey(CameraController.Instance.WorldPosition())));
     }
 

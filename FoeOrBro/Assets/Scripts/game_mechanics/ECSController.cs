@@ -27,6 +27,7 @@ public class ECSController : MonoBehaviour
     public GameObject listViewPrefab;
     public GameObject listViewParent;
     public BlobAssetStore blobAssetStore;
+    public GameObject terrainPrefab;
     [SF] private Mesh quad;
     //[SF] public Mesh spriteMesh;
     //[SF] public Material spriteMaterial;
@@ -47,6 +48,9 @@ public class ECSController : MonoBehaviour
         CreateEntity("Dragon", new float2(16f, 32f));
         CreateEntity("kobolt", new float2(10f, 33f));
     }
+
+
+
 
     public void CreateEntities(int count)
     {
