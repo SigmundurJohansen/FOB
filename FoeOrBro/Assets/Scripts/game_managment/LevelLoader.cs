@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 
 [System.Serializable]
 public class ColorToPrefab
@@ -34,6 +37,7 @@ public class LevelLoader : MonoBehaviour
 
     //public BiomeType BiomeType;
     //public Texture2D levelMap;
+    public BlobAssetStore blobAssetStore;
     public GameObject prefabDesert;
     public GameObject prefabSavanna;
     public GameObject prefabTropicalRainforest;
@@ -73,6 +77,7 @@ public class LevelLoader : MonoBehaviour
     void Awake()
     {
         _instance = this;
+        blobAssetStore = new BlobAssetStore();
     }
 
     void EmptyMap()
@@ -95,37 +100,63 @@ public class LevelLoader : MonoBehaviour
 
     public void CreateMap()
     {
+        // LOAD MAP
         cMap = SaveSystem.LoadMap();
+        // Create Grid
         PathfindingGridSetup.Instance.CreateGrid(cMap.mapWidth, cMap.mapHeight);
-        miniMapRenderer.materials[0].mainTexture = TextureGenerator.GetBiomeMapTexture(100, 100, cMap.mapTiles, 0.05f, 0.18f, 0.4f);
-        //GameObject prefab = GetPrefabFromType(cMap.mapTiles[x, y].BiomeType);
+        float cellSize = PathfindingGridSetup.Instance.pathfindingGrid.GetCellSize();
+        // Mini Map
+        miniMapRenderer.materials[0].mainTexture = TextureGenerator.GetBiomeMapTexture(cMap.mapWidth, cMap.mapHeight, cMap.mapTiles, 0.05f, 0.18f, 0.4f);
+        // Convert prefabs into entities
+        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);
+        NativeArray<Entity> entities = new NativeArray<Entity>(13, Allocator.Temp);
+        entities[0]= GameObjectConversionUtility.ConvertGameObjectHierarchy(prefabDesert, settings);
+        entities[1]= GameObjectConversionUtility.ConvertGameObjectHierarchy(prefabSavanna, settings);
+        entities[2]= GameObjectConversionUtility.ConvertGameObjectHierarchy(prefabTropicalRainforest, settings);
+        entities[3]= GameObjectConversionUtility.ConvertGameObjectHierarchy(prefabGrassland, settings);
+        entities[4]= GameObjectConversionUtility.ConvertGameObjectHierarchy(prefabWoodland, settings);
+        entities[5]= GameObjectConversionUtility.ConvertGameObjectHierarchy(prefabSeasonalForest, settings);
+        entities[6]= GameObjectConversionUtility.ConvertGameObjectHierarchy(prefabTemperateRainforest, settings);
+        entities[7]= GameObjectConversionUtility.ConvertGameObjectHierarchy(prefabBorealForest, settings);
+        entities[8]= GameObjectConversionUtility.ConvertGameObjectHierarchy(prefabTundra, settings);
+        entities[9]= GameObjectConversionUtility.ConvertGameObjectHierarchy(prefabIce, settings);
+        entities[10]= GameObjectConversionUtility.ConvertGameObjectHierarchy(prefabWater, settings);
+        entities[11]= GameObjectConversionUtility.ConvertGameObjectHierarchy(prefabDeepWater, settings);
+
+        var manager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
         for (int y = 0; y < cMap.mapHeight; y++)
         {
             for (int x = 0; x < cMap.mapWidth; x++)
             {
-                GameObject prefab = GetPrefabFromType(cMap.mapTiles[x, y].BiomeType);
+                var prefab = entities[GetPrefabFromType(cMap.mapTiles[x, y].BiomeType)];
                 HeightType height = cMap.mapTiles[x, y].HeightType;
-                
+                Entity instance;
+                bool collidable = cMap.mapTiles[x, y].Collidable;
                 if (height == HeightType.DeepWater)
                 {
-                    ECSController.Instance.SpawnPrefabs(prefabDeepWater, (float)x, (float)y, false);
+                    instance = manager.Instantiate(entities[11]);
                     PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(x, y).SetIsWalkable(false);
                 }
-                if (height == HeightType.ShallowWater)
+                else if (height == HeightType.ShallowWater)
                 {
-                    ECSController.Instance.SpawnPrefabs(prefabWater, (float)x, (float)y, false);
+                    instance = manager.Instantiate(entities[10]);
                     PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(x, y).SetIsWalkable(false);
-                }              
-
-                bool collidable = cMap.mapTiles[x, y].Collidable;
-                if (height != HeightType.DeepWater && height != HeightType.ShallowWater)
+                }
+                else //(height != HeightType.DeepWater && height != HeightType.ShallowWater)
                 {
-                    ECSController.Instance.SpawnPrefabs(prefab, (float)x, (float)y, collidable);
+                    instance = manager.Instantiate(prefab);
                     PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(x, y).SetIsWalkable(collidable);
                 }
 
+                var position = transform.TransformPoint(new float3(x , y  , 1f));
+                manager.SetComponentData(instance, new Translation
+                {
+                    Value = position
+                });
             }
         }
+
     }
 
     public Color GetTileColor(int _width, int _height, Tile[,] _tiles, float _coldest, float _colder, float _cold)
@@ -172,31 +203,31 @@ public class LevelLoader : MonoBehaviour
         return GrassColor;
     }
 
-    public GameObject GetPrefabFromType(BiomeType _type)
+    public int GetPrefabFromType(BiomeType _type)
     {
         switch (_type)
         {
             case BiomeType.Desert:
-                return prefabDesert;
+                return 0;
             case BiomeType.Savanna:
-                return prefabSavanna;
+                return 1;
             case BiomeType.TropicalRainforest:
-                return prefabTropicalRainforest;
+                return 2;
             case BiomeType.Grassland:
-                return prefabGrassland;
+                return 3;
             case BiomeType.Woodland:
-                return prefabWoodland;
+                return 4;
             case BiomeType.SeasonalForest:
-                return prefabSeasonalForest;
+                return 5;
             case BiomeType.TemperateRainforest:
-                return prefabTemperateRainforest;
+                return 6;
             case BiomeType.BorealForest:
-                return prefabBorealForest;
+                return 7;
             case BiomeType.Tundra:
-                return prefabTundra;
+                return 8;
             case BiomeType.Ice:
-                return prefabIce;
+                return 9;
         }
-        return prefabGrassland;
+        return 3;
     }
 }

@@ -14,15 +14,15 @@ public class CameraController : MonoBehaviour
     public float scrollSpeed = 20f;
     public float minZ = -1f;
     public float maxZ = -10f;
-    public GameObject player; 
+    public GameObject player;
     public Camera whoAmI;
     private Vector3 size;
     //float mDelta = 10f; // Pixels. The width border at the edge in which the movement work
     //float mSpeed = 3.0f; // Scale. Speed of the movement
 
-    void Start () 
+    void Start ()
     {
-        m_Instance = this; 
+        m_Instance = this;
     }
     void Update()
     {
@@ -33,7 +33,7 @@ public class CameraController : MonoBehaviour
         Camera.main.orthographicSize  -= scroll * scrollSpeed * 100f * Time.deltaTime;
         Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, minZ,  maxZ);
 
-        panSpeedRelative = (panSpeed*2) / Camera.main.orthographicSize;
+        panSpeedRelative = 12f + panSpeed - panSpeed / Camera.main.orthographicSize;
         transform.position = pos;
     }
 
@@ -87,7 +87,7 @@ public class CameraController : MonoBehaviour
     public void SetCameraPositionW(Vector3 _pos){
         whoAmI.WorldToScreenPoint( new Vector3(_pos.x,_pos.y, -1f));
     }
-    public Vector3 WorldPosition(){        
+    public Vector3 WorldPosition(){
         Vector3 mousePos = whoAmI.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
         mousePos.z = transform.position.z;
         return mousePos;
