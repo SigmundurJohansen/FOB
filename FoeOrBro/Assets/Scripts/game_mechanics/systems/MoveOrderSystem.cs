@@ -61,7 +61,9 @@ public class MoveOrderSystem : ComponentSystem
                                     ValidateGridPosition(ref startX, ref startY);
                                     _move.isMoving = true;
                                     _move.chaseTarget = false;
-                                    Debug.Log("dechasing");
+                                    //Debug.Log("dechasing");
+                                    PostUpdateCommands.RemoveComponent(entity, typeof(HasTarget));
+                                    //Debug.Log("remove Entity hastarget");
                                     EntityManager.AddComponentData(entity, new DestinationComponent { startPosition = new int2(startX, startY), endPosition = new int2(endX, endY) });
                                 }
                             });

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8692250928619924031}
   - component: {fileID: 8692250928619924025}
   - component: {fileID: 8692250928619924024}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -113,7 +113,7 @@ GameObject:
   - component: {fileID: 8692250929079395774}
   - component: {fileID: 8692250929079395768}
   - component: {fileID: 8692250929079395775}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Border
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -187,7 +187,7 @@ GameObject:
   - component: {fileID: 8692250929589059340}
   - component: {fileID: 8692250929589059342}
   - component: {fileID: 8692250929589059341}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Health
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,7 +262,7 @@ GameObject:
   - component: {fileID: 8692250929893969988}
   - component: {fileID: 8692250929893969995}
   - component: {fileID: 8692250929893969994}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -364,9 +364,9 @@ GameObject:
   - component: {fileID: 8692250930530500149}
   - component: {fileID: 8692250930530500148}
   - component: {fileID: 8692250930530500155}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Dragon 1
-  m_TagString: Untagged
+  m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

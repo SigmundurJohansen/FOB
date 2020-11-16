@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 258719364200528630}
   - component: {fileID: 5245586137957891384}
   - component: {fileID: 3397285200844330637}
-  m_Layer: 12
+  m_Layer: 11
   m_Name: Kobolt
-  m_TagString: Untagged
+  m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

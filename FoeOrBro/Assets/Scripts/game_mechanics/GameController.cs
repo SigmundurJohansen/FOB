@@ -52,12 +52,12 @@ public class GameController : MonoBehaviour
             Vector3 position = WorldPosition(unit.GetPosition());
             float size = CameraController.Instance.GetSize();
             size = Mathf.Clamp(6 - 1.4f * size, 1, 6);
-            unit.menu.GetComponent<RectTransform>().localScale = new Vector3(size, size, size);
+            //unit.menu.GetComponent<RectTransform>().localScale = new Vector3(size, size, size);
 
-            unit.menu.GetComponent<Slider>().value = unit.health;
+            //unit.menu.GetComponent<Slider>().value = unit.health;
 
             position = position - new Vector3(Screen.width / 2, Screen.height / 2 - size * 15, 0);
-            unit.menu.GetComponent<RectTransform>().anchoredPosition = position;
+            //unit.menu.GetComponent<RectTransform>().anchoredPosition = position;
         }
         if (Input.GetKeyDown(KeyCode.F2))
         {
@@ -111,6 +111,7 @@ public class GameController : MonoBehaviour
         GameUnit newUnit = new GameUnit(ID, _name, _position, _health);
         gameUnitList.Add(newUnit);
 
+        /*
         var krec = healthBarParent.GetComponent<RectTransform>();
         GameObject healthBar = Instantiate(healthBarPrefab) as GameObject;
         healthBar.transform.SetParent(krec, true);//.transform.parent
@@ -121,6 +122,7 @@ public class GameController : MonoBehaviour
         healthBar.GetComponent<RectTransform>().anchoredPosition = position;
         healthBar.SetActive(true);
         newUnit.menu = healthBar;
+        */
         AddID();
         OnGui();
     }

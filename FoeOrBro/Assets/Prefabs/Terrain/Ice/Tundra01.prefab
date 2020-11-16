@@ -11,12 +11,12 @@ GameObject:
   - component: {fileID: 5675492916848545281}
   - component: {fileID: 5209729076169479142}
   - component: {fileID: 4951815540825710511}
-  m_Layer: 14
-  m_Name: Tundra
-  m_TagString: Ground
+  m_Layer: 12
+  m_Name: Tundra01
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &5675492916848545281
 Transform:
@@ -68,8 +68,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1650949199
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4d83208515dc42b43b30b3de80a7f983, type: 3}
   m_Color: {r: 0.7607844, g: 0.7607844, b: 0.7607844, a: 1}

@@ -14,13 +14,14 @@ public class DeathSystem : ComponentSystem
             {
                 _death.isDead = true;
                 Debug.Log("dead true " + _id.id);
-                GameController.Instance.RemoveUnit(_id.id);
+                //GameController.Instance.RemoveUnit(_id.id);
             }
             if (_death.isDead == true)
             {
                 _death.corpseTimer -= UnityEngine.Time.deltaTime;
                 if (_death.corpseTimer < 0)
                 {
+                    Debug.Log("destroy entity");
                     PostUpdateCommands.DestroyEntity(entity);
                 }
             }

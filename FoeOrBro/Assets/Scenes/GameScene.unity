@@ -6985,53 +6985,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1366550413}
   m_CullTransparentMesh: 0
---- !u!1 &1367281900
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1367281902}
-  - component: {fileID: 1367281901}
-  m_Layer: 0
-  m_Name: MapLoader
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1367281901
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1367281900}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 787bebe92220ad748b186e66e730d304, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  entitiesToSpawn: 10
-  spriteMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
-  sprites: []
-  spriteMaterial: {fileID: 0}
---- !u!4 &1367281902
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1367281900}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 438.6347, y: 364.29483, z: -92.26554}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 9
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1382069037
 GameObject:
   m_ObjectHideFlags: 0
@@ -8580,7 +8533,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c371c096b554c764d885327ba02918ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panSpeed: 20
+  panSpeed: 8
+  panBase: 2
   panSpeedRelative: 7
   panBorderThickness: 10
   panLimit: {x: 3, y: 3}
@@ -9309,7 +9263,7 @@ MonoBehaviour:
   listViewParent: {fileID: 0}
   terrainPrefab: {fileID: 7623911958253642337, guid: bfe5587285400234fa81c1e580d8c54b,
     type: 3}
-  quad: {fileID: 0}
+  quad: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!212 &1815219169
 SpriteRenderer:
   m_ObjectHideFlags: 0

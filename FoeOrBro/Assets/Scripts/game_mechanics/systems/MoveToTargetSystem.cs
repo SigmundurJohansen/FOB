@@ -15,7 +15,7 @@ public class UnitMoveToTargetSystem : ComponentSystem
         EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         Entities.ForEach((Entity unitEntity, ref HasTarget _hasTarget, ref Translation translation, ref IDComponent _id, ref MovementComponent _move) =>
         {
-            if (entityManager.Exists(_hasTarget.targetEntity) && _move.chaseTarget == true)
+            if (entityManager.Exists(_hasTarget.targetEntity))
             {
                 Translation targetTranslation = entityManager.GetComponentData<Translation>(_hasTarget.targetEntity);
                 IDComponent targetID = entityManager.GetComponentData<IDComponent>(_hasTarget.targetEntity);
@@ -28,19 +28,20 @@ public class UnitMoveToTargetSystem : ComponentSystem
                     //PostUpdateCommands.DestroyEntity(hasTarget.targetEntity);
                     //PostUpdateCommands.RemoveComponent(unitEntity, typeof(HasTarget));
                 }
-                else
+                else if( _move.chaseTarget == true)
                 {
                     _move.isMoving = true;
                     
-                    //float3 targetDir = math.normalize(targetTranslation.Value - translation.Value);
-                    //float moveSpeed = 1f;
-                    //translation.Value += targetDir * moveSpeed * deltaTime;
+                    float3 targetDir = math.normalize(targetTranslation.Value - translation.Value);
+                    float moveSpeed = 1f;
+                    translation.Value += targetDir * moveSpeed * deltaTime;
                 }
             }
             else
             {
                 // Target Entity already destroyed
                 PostUpdateCommands.RemoveComponent(unitEntity, typeof(HasTarget));
+                Debug.Log("remove Entity hastarget");
             }
         });
     }

@@ -125,8 +125,9 @@ public class ECSController : MonoBehaviour
             entityManager.AddComponentData(instance, new Dragon() { });
             entityManager.AddComponentData(instance, new SectorEntity { typeEnum = SectorEntity.TypeEnum.Target });
             entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 100, health = 100 });
-            entityManager.AddComponentData(instance, new AttackComponent() { isAttacking = false, nrOfAttacks = 4, timer = 1, range = 2, weapon = 0 });
+            entityManager.AddComponentData(instance, new AttackComponent() { isAttacking = false, nrOfAttacks = 4, timer = 1, range = 1, weapon = 0 });
             entityManager.AddComponentData(instance, new WeaponComponent() { weapon = 0, toHit = 2, damage = 20 });
+            entityManager.AddComponentData(instance, new SeekComponent() { });
             entityHealth = 100;
         }
         entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(ValueF.x, ValueF.y, -0.1f)) });
@@ -138,6 +139,8 @@ public class ECSController : MonoBehaviour
         entityManager.AddComponentData(instance, new DeathComponent() { isDead = false, corpseTimer = 10.0f });
         entityManager.AddComponentData(instance, new TargetableComponent() { });
         entityManager.AddComponentData(instance, new TargetComponent() { });
+        entityManager.AddComponentData(instance, new RoamingComponent() { });
+        entityManager.AddComponentData(instance, new StateComponent() { });
         entityManager.AddBuffer<PathPosition>(instance);
         PathPosition someBufferElement = new PathPosition();
         DynamicBuffer<PathPosition> someBuffer = entityManager.GetBuffer<PathPosition>(instance);
@@ -145,7 +148,7 @@ public class ECSController : MonoBehaviour
         someBuffer.Add(someBufferElement);
         someBufferElement.position = new int2(ValueI.x, ValueI.y);
         someBuffer.Add(someBufferElement);
-        //GameController.Instance.AddUnit(name, new Vector3(ValueF.x, ValueF.y, -0.1f), entityHealth);
+        GameController.Instance.AddUnit(name, new Vector3(ValueF.x, ValueF.y, -0.1f), entityHealth);
         return 0;
     }
 
@@ -169,6 +172,7 @@ public class ECSController : MonoBehaviour
         entityManager.AddComponentData(instance, new AttackComponent() { isAttacking = false, nrOfAttacks = 2, timer = 1, range = 2, weapon = 0 });
         entityManager.AddComponentData(instance, new WeaponComponent() { weapon = 0, toHit = 0, damage = 10 });
         entityManager.AddComponentData(instance, new Selected() { isSelected = false });
+        entityManager.AddComponentData(instance, new StateComponent() { });
         entityManager.AddBuffer<PathPosition>(instance);
         PathPosition someBufferElement = new PathPosition();
         DynamicBuffer<PathPosition> someBuffer = entityManager.GetBuffer<PathPosition>(instance);
@@ -317,23 +321,7 @@ public class ECSController : MonoBehaviour
     }
 
 }
-public struct Human : IComponentData { }
-public struct Player : IComponentData { }
-public struct Kobolt : IComponentData { }
-public struct Dragon : IComponentData { }
-public enum Race
-{
-    kobolt = 0,
-    dragon = 1,
-    human = 2,
-    player
-};
 
-
-public struct HasTarget : IComponentData
-{
-    public Entity targetEntity;
-}
 
 /*
 [ExecuteAlways]

@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 [UpdateAfter(typeof(SectorSystem))]
 public class SeekSystem : JobComponentSystem
 {
+    public static bool isDebug = false;
     private struct EntityWithPosition
     {
         public Entity entity;
@@ -19,7 +20,7 @@ public class SeekSystem : JobComponentSystem
         public bool isDead;
     }
 
-    [RequireComponentTag(typeof(Dragon))]
+    [RequireComponentTag(typeof(SeekComponent))]
     [BurstCompile]
     // Fill single array with Target Entity and Position
     private struct FillArrayEntityWithPositionJob : IJobForEachWithEntity<Translation, MovementComponent, AttackComponent, DeathComponent>
@@ -39,7 +40,7 @@ public class SeekSystem : JobComponentSystem
         }
     }
 
-    [RequireComponentTag(typeof(Dragon))]
+    [RequireComponentTag(typeof(SeekComponent))]
     [ExcludeComponent(typeof(HasTarget))]
     [BurstCompile]
     // Find Closest Target
@@ -63,7 +64,8 @@ public class SeekSystem : JobComponentSystem
                 if (closestTargetEntity == Entity.Null)
                 {
                     // No target
-                    Debug.Log("no target");
+                    if (isDebug)
+                        Debug.Log("no target");
                     closestTargetEntity = targetEntityWithPosition.entity;
                     closestTargetDistance = math.distancesq(unitPosition, targetEntityWithPosition.position);
                 }
@@ -72,7 +74,8 @@ public class SeekSystem : JobComponentSystem
                     if (math.distancesq(unitPosition, targetEntityWithPosition.position) < closestTargetDistance && targetEntityWithPosition.isDead == false)
                     {
                         // This target is closer
-                        Debug.Log("target is closer");
+                        if (isDebug)
+                            Debug.Log("target is closer");
                         closestTargetEntity = targetEntityWithPosition.entity;
                         closestTargetDistance = math.distancesq(unitPosition, targetEntityWithPosition.position);
                     }
@@ -84,39 +87,40 @@ public class SeekSystem : JobComponentSystem
 
     }
 
-    [RequireComponentTag(typeof(Dragon))]
+    [RequireComponentTag(typeof(SeekComponent))]
     [ExcludeComponent(typeof(HasTarget))]
     // Add HasTarget Component to Entities that have a Closest Target
-    private struct AddComponentJob : IJobForEachWithEntity<Translation, MovementComponent, AttackComponent>
+    private struct AddComponentJob : IJobForEachWithEntity<Translation, MovementComponent, AttackComponent, StateComponent>
     {
-
         [DeallocateOnJobCompletion] [ReadOnly] public NativeArray<Entity> closestTargetEntityArray;
         public EntityCommandBuffer.Concurrent entityCommandBuffer;
 
-        public void Execute(Entity entity, int index, ref Translation translation, ref MovementComponent _move, ref AttackComponent _attack)
+        public void Execute(Entity entity, int index, ref Translation translation, ref MovementComponent _move, ref AttackComponent _attack, ref StateComponent _state)
         {
             if (closestTargetEntityArray.Length != 0)
                 if (closestTargetEntityArray[index] != Entity.Null)
                 {
+                    // this needs changing (should not be using World.DefaultGameObjectInjectionWorld.EntityManager in jobs, only main thread)
                     DeathComponent dead = World.DefaultGameObjectInjectionWorld.EntityManager.GetComponentData<DeathComponent>(closestTargetEntityArray[index]);
                     if (dead.isDead == false)
                     {
-                        Debug.Log("give hastarget");
+                        Debug.Log("give hasTarget");
                         entityCommandBuffer.AddComponent(index, entity, new HasTarget { targetEntity = closestTargetEntityArray[index] });
+                        _state.state = 1;
                         _move.chaseTarget = true;
                         _attack.isAttacking = true;
                     }
+                    
                 }
         }
     }
 
 
-    [RequireComponentTag(typeof(Dragon))]
+    [RequireComponentTag(typeof(SeekComponent))]
     [ExcludeComponent(typeof(HasTarget))]
     [BurstCompile]
     private struct FindTargetSectorSystemJob : IJobForEachWithEntity<Translation, SectorEntity>
     {
-
         [ReadOnly] public NativeMultiHashMap<int, SectorData> SectorMultiHashMap;
         public NativeArray<Entity> closestTargetEntityArray;
 
@@ -183,7 +187,7 @@ public class SeekSystem : JobComponentSystem
     {
         EntityQuery targetQuery = GetEntityQuery(typeof(Kobolt), ComponentType.ReadOnly<Translation>());
 
-        EntityQuery unitQuery = GetEntityQuery(typeof(Dragon), ComponentType.Exclude<HasTarget>());
+        EntityQuery unitQuery = GetEntityQuery(typeof(SeekComponent), ComponentType.Exclude<HasTarget>());
         NativeArray<Entity> closestTargetEntityArray = new NativeArray<Entity>(unitQuery.CalculateEntityCount(), Allocator.TempJob);
 
         FindTargetSectorSystemJob findTargetSectorSystemJob = new FindTargetSectorSystemJob

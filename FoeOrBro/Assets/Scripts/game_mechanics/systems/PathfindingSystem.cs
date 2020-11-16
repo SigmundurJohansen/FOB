@@ -11,16 +11,26 @@ using UnityEngine;
 [UpdateAfter(typeof(PathfindingGridSetup))]
 public class PathfindingSystem : ComponentSystem
 {
+    int gridWidth;
+    int gridHeight;
+    int2 gridSize;
+    bool isAwake = false;
+
     private const int MOVE_STRAIGHT_COST = 10;
     private const int MOVE_DIAGONAL_COST = 14;
+
+
 
     protected override void OnUpdate()
     {
         if (SceneManager.GetActiveScene().name == "GameScene")
         {
-            int gridWidth = PathfindingGridSetup.Instance.pathfindingGrid.GetWidth();
-            int gridHeight = PathfindingGridSetup.Instance.pathfindingGrid.GetHeight();
-            int2 gridSize = new int2(gridWidth, gridHeight);
+            if (!isAwake)
+            {
+                gridWidth = PathfindingGridSetup.Instance.pathfindingGrid.GetWidth();
+                gridHeight = PathfindingGridSetup.Instance.pathfindingGrid.GetHeight();
+                gridSize = new int2(gridWidth, gridHeight);
+            }
 
             List<FindPathJob> findPathJobList = new List<FindPathJob>();
             NativeList<JobHandle> jobHandleList = new NativeList<JobHandle>(Allocator.Temp);
@@ -42,7 +52,7 @@ public class PathfindingSystem : ComponentSystem
                 };
                 findPathJobList.Add(findPathJob);
                 jobHandleList.Add(findPathJob.Schedule());
-                Debug.Log("pathfinding system onupdate)");
+                //Debug.Log("pathfinding system onupdate)");
                 PostUpdateCommands.RemoveComponent<DestinationComponent>(entity);
             });
 
@@ -69,12 +79,12 @@ public class PathfindingSystem : ComponentSystem
     {
         Grid<GridNode> grid = PathfindingGridSetup.Instance.pathfindingGrid;
 
-        int2 gridSize = new int2(grid.GetWidth(), grid.GetHeight());
+        //int2 gridSize = new int2(grid.GetWidth(), grid.GetHeight());
         NativeArray<PathNode> pathNodeArray = new NativeArray<PathNode>(gridSize.x * gridSize.y, Allocator.TempJob);
 
-        for (int x = 0; x < grid.GetWidth(); x++)
+        for (int x = 0; x < gridWidth; x++)
         {
-            for (int y = 0; y < grid.GetHeight(); y++)
+            for (int y = 0; y < gridHeight; y++)
             {
                 PathNode pathNode = new PathNode();
                 pathNode.x = x;
@@ -120,7 +130,6 @@ public class PathfindingSystem : ComponentSystem
                 CalculatePath(pathNodeArray, endNode, pathPositionBuffer);
                 pathFollowComponentDataFromEntity[entity] = new PathFollow { pathIndex = pathPositionBuffer.Length - 1 };
             }
-
         }
     }
 
