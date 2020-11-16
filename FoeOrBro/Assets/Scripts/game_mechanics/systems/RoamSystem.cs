@@ -21,15 +21,23 @@ public class RoamSystem : ComponentSystem
             if (checkRoamingTimer < 0)
             {
                 var randomDir = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized * UnityEngine.Random.Range(10f, 10f);
-
+                randomDir = randomDir + new Vector3(_trans.Value.x, _trans.Value.y, _trans.Value.z);
 
                 PathfindingGridSetup.Instance.pathfindingGrid.GetXY(_trans.Value, out int startX, out int startY);
                 PathfindingGridSetup.Instance.pathfindingGrid.GetXY(randomDir, out int endX, out int endY);
 
+                while (endX < 0 || endY < 0 || endX > PathfindingGridSetup.Instance.pathfindingGrid.GetWidth() || endY > PathfindingGridSetup.Instance.pathfindingGrid.GetHeight())
+                {
+                    Debug.Log("destination outside map");
+                    randomDir = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized * UnityEngine.Random.Range(10f, 10f);
+                    randomDir = randomDir + new Vector3(_trans.Value.x, _trans.Value.y, _trans.Value.z);
+                    PathfindingGridSetup.Instance.pathfindingGrid.GetXY(randomDir, out endX, out endY);
+                }
                 while (PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(endX, endY).IsWalkable() == false)
                 {
-                    Debug.Log("destination not valid");
+                    Debug.Log("destination not walkable");
                     randomDir = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized * UnityEngine.Random.Range(10f, 10f);
+                    randomDir = randomDir + new Vector3(_trans.Value.x, _trans.Value.y, _trans.Value.z);
                     PathfindingGridSetup.Instance.pathfindingGrid.GetXY(randomDir, out endX, out endY);
                 }
                 Debug.Log("destination valid");
@@ -38,7 +46,6 @@ public class RoamSystem : ComponentSystem
                 //Debug.Log("Roaming : " + endX + " " + endY);
                 checkRoamingTimer = 5;
             }
-
         });
     }
 }

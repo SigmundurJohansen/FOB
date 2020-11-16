@@ -136,7 +136,7 @@ public class ECSController : MonoBehaviour
         entityManager.AddComponentData(instance, new PathFollow() { });
         entityManager.AddComponentData(instance, new Selected() { isSelected = false });
         entityManager.AddComponentData(instance, new FactionComponent() { });
-        entityManager.AddComponentData(instance, new DeathComponent() { isDead = false, corpseTimer = 10.0f });
+        entityManager.AddComponentData(instance, new DeathComponent() { isDead = false, corpseTimer = 5.0f });
         entityManager.AddComponentData(instance, new TargetableComponent() { });
         entityManager.AddComponentData(instance, new TargetComponent() { });
         entityManager.AddComponentData(instance, new RoamingComponent() { });

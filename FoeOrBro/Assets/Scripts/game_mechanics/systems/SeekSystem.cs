@@ -100,17 +100,16 @@ public class SeekSystem : JobComponentSystem
             if (closestTargetEntityArray.Length != 0)
                 if (closestTargetEntityArray[index] != Entity.Null)
                 {
-                    // this needs changing (should not be using World.DefaultGameObjectInjectionWorld.EntityManager in jobs, only main thread)
+                    // this needs changing (should not be using World.DefaultGameObjectInjectionWorld.EntityManager in jobs, only in main thread)
                     DeathComponent dead = World.DefaultGameObjectInjectionWorld.EntityManager.GetComponentData<DeathComponent>(closestTargetEntityArray[index]);
                     if (dead.isDead == false)
                     {
-                        Debug.Log("give hasTarget");
+                        Debug.Log("give hasTarget and go into combat");
                         entityCommandBuffer.AddComponent(index, entity, new HasTarget { targetEntity = closestTargetEntityArray[index] });
                         _state.state = 1;
                         _move.chaseTarget = true;
                         _attack.isAttacking = true;
-                    }
-                    
+                    }                    
                 }
         }
     }
