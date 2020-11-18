@@ -104,7 +104,8 @@ public class Grid<TGridObject> {
         if (_x >= 0 && _y >= 0 && _x < width && _y < height) {
             return gridArray[_x, _y];
         } else {
-            Debug.Log("GetGridObject(int,int)" + _x +"," +_y +"returning default");
+            Debug.Log("Grid x is: "+ PathfindingGridSetup.Instance.pathfindingGrid.GetWidth()+ "Grid Y is: " + PathfindingGridSetup.Instance.pathfindingGrid.GetHeight());
+            Debug.Log("GetGridObject(int,int) " + _x +" , " +_y +" returning default");
             return default(TGridObject);
         }
     }

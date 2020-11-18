@@ -17,7 +17,7 @@ public class GameController : MonoBehaviour
 {
     private static GameController m_Instance;
     public static GameController Instance { get { return m_Instance; } }
-
+    public static float GameTimeScale { get; set; }
     public bool attackState = false;
     public Camera myCamera;
 
@@ -40,6 +40,7 @@ public class GameController : MonoBehaviour
     void Awake()
     {
         m_Instance = this;
+        GameTimeScale = 1;
         //m_Instance.ViewUpdated += OnGui;
     }
 
@@ -236,6 +237,41 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void SpeedUp()
+    {
+        if(GameTimeScale > 4)
+            GameTimeScale = 4;
+        else if (GameTimeScale < 1)
+            GameTimeScale = 1;
+        else
+            GameTimeScale += 1;
+        Debug.Log("GameTimeScale: " + GameTimeScale);
+        Time.timeScale = 1 * GameTimeScale;
+        Time.fixedDeltaTime = this.fixedDeltaTime * Time.timeScale;
+    }
+    public void SlowDown()
+    {
+        if (GameTimeScale >= 2)
+            GameTimeScale -= 1;
+        else if (GameTimeScale < 2 && GameTimeScale > 1)
+            GameTimeScale = 1;
+        else if (GameTimeScale <= 1 && GameTimeScale > 0.1f)
+            GameTimeScale *= 0.8f;
+        Debug.Log("GameTimeScale: " + GameTimeScale);
+        Time.timeScale = 1 * GameTimeScale;
+        Time.fixedDeltaTime = this.fixedDeltaTime * Time.timeScale;
+    }
+    public void PlayPause()
+    {
+        if (Time.timeScale == 1.0f)
+            Time.timeScale = 0.0f;
+        else
+            Time.timeScale = 1.0f;
+        // Adjust fixed delta time according to timescale
+        // The fixed delta time will now be 0.02 frames per real-time second
+        Time.fixedDeltaTime = this.fixedDeltaTime * Time.timeScale;
+    }
+
     public Vector3 ScreenPosition(Vector3 _pos)
     {
         Vector3 screenPos = myCamera.ScreenToWorldPoint(new Vector3(_pos.x, _pos.y, 0));
@@ -261,8 +297,8 @@ public class GameUnit
         id = _id;
         name = _name;
         position = _pos;
-        health  =_health;
-        maxHealth =_health;
+        health = _health;
+        maxHealth = _health;
     }
     public int GetID() { return id; }
     public void SetName(string _name) { name = _name; }

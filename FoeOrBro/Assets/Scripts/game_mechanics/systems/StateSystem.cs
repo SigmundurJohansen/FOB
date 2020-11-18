@@ -17,21 +17,21 @@ public class StateSystem : ComponentSystem
             {
                 if(_state.state == 0)
                 {
-                    Debug.Log(_id.id + " is idle");                
+                    //Debug.Log(_id.id + " is idle");                
                     _state.state = 3;
                     PostUpdateCommands.AddComponent(entity, new RoamingComponent { });
                 }
                 if(_state.state == 1)
                 {
-                    Debug.Log(_id.id + " is in combat");
+                    //Debug.Log(_id.id + " is in combat");
                 }
                 if(_state.state == 2)
                 {
-                    Debug.Log(_id.id + " is doing task");
+                    //Debug.Log(_id.id + " is doing task");
                 }
                 if(_state.state == 3)
                 {
-                    Debug.Log(_id.id + " is roaming");
+                    //Debug.Log(_id.id + " is roaming");
                 }
             });
             checkStateTimer = 1;
