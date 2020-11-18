@@ -117,6 +117,7 @@ public class ECSController : MonoBehaviour
             entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 30, health = 30 });
             entityManager.AddComponentData(instance, new AttackComponent() { isAttacking = false, nrOfAttacks = 1, timer = 1, range = 2, weapon = 0 });
             entityManager.AddComponentData(instance, new WeaponComponent() { weapon = 0, toHit = 0, damage = 5 });
+            entityManager.AddComponentData(instance, new MoraleComponent() { baseMorale = 5 });
             entityHealth = 30;
         }
         else
