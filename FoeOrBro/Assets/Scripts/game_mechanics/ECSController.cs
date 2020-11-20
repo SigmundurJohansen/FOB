@@ -142,6 +142,7 @@ public class ECSController : MonoBehaviour
         entityManager.AddComponentData(instance, new TargetComponent() { });
         entityManager.AddComponentData(instance, new RoamingComponent() { });
         entityManager.AddComponentData(instance, new StateComponent() { });
+        entityManager.AddComponentData(instance, new OrderComponent() { hasOrders = false });
         entityManager.AddBuffer<PathPosition>(instance);
         PathPosition someBufferElement = new PathPosition();
         DynamicBuffer<PathPosition> someBuffer = entityManager.GetBuffer<PathPosition>(instance);

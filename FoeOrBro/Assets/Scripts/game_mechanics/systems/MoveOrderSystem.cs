@@ -63,8 +63,10 @@ public class MoveOrderSystem : ComponentSystem
                                     _move.chaseTarget = false;
                                     //Debug.Log("dechasing");
                                     PostUpdateCommands.RemoveComponent(entity, typeof(HasTarget));
-                                    //Debug.Log("remove Entity hastarget");
+                                    //Debug.Log("remove Entity hastarget"); ref OrdersComponent _orders,
+                                    //_orders.hasOrders = true;
                                     EntityManager.AddComponentData(entity, new DestinationComponent { startPosition = new int2(startX, startY), endPosition = new int2(endX, endY) });
+                                    EntityManager.AddComponentData(entity, new OrderComponent { hasOrders = true, orderType = 1 });
                                 }
                             });
                         }
