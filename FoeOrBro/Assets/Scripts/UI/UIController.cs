@@ -6,7 +6,9 @@ using SF = UnityEngine.SerializeField;
 public class UIController : MonoBehaviour
 {
     [SF] public GameObject entityListView;
+    [SF] public GameObject buildingListView;
     private bool entityIsActive = false;
+    private bool buildingIsActive = false;
     [SF] public GameObject map;
     private bool mapIsActive = true;
     public GameObject menuPanel;
@@ -35,6 +37,20 @@ public class UIController : MonoBehaviour
                 entityListView.SetActive(true);
                 entityIsActive = true;
                 entityListView.GetComponent<RectTransform>().SetAsLastSibling();
+            }
+        }
+        if(Input.GetKeyDown("b"))
+        {
+            //rectTransform.Set
+            if(buildingIsActive)
+            {
+                buildingListView.SetActive(false);
+                buildingIsActive = false;
+            }else
+            {
+                buildingListView.SetActive(true);
+                buildingIsActive = true;
+                buildingListView.GetComponent<RectTransform>().SetAsLastSibling();
             }
         }
         if(Input.GetKeyDown("m"))

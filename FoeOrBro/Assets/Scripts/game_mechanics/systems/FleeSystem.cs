@@ -32,19 +32,18 @@ public class FleeSystem : JobComponentSystem
         {
             if (closestAttackerEntityArray.Length != 0)
                 if (closestAttackerEntityArray[_index].entity != Entity.Null)
-                {
                     if (closestAttackerEntityArray[_index].entity != _entity)
                     {
-                        if (isDebug)
-                            Debug.Log("Give escape path");
 
                         float3 oppositeDirection = math.normalize((_translation.Value - closestAttackerEntityArray[_index].position));
                         float oppositeForce = 5;
                         float3 destination = _translation.Value + oppositeDirection * oppositeForce;
                         if (isDebug)
+                        {
+                            Debug.Log("Give escape path");
                             Debug.Log("opposite = " + oppositeDirection);
-                        if (isDebug)
                             Debug.Log("destination = " + destination);
+                        }
                         PathfindingGridSetup.Instance.pathfindingGrid.GetXY(destination, out int endX, out int endY); //  + new Vector3(1,1,0)* cellSize
                         ValidateGridPosition(ref endX, ref endY);
 
@@ -62,10 +61,8 @@ public class FleeSystem : JobComponentSystem
                         entityCommandBuffer.AddComponent(_index, _entity, new FleeTag { });
                     }
                     else
-                    {
                         Debug.Log("same entity! ");
-                    }
-                }
+
         }
         private void ValidateGridPosition(ref int x, ref int y)
         {

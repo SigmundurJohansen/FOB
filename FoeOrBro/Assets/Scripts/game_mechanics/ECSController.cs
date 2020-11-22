@@ -170,6 +170,7 @@ public class ECSController : MonoBehaviour
         entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 100, health = 100 });
         entityManager.AddComponentData(instance, new MovementComponent() { isMoving = false, speed = 1.5f });
         entityManager.AddComponentData(instance, new PathFollow() { });
+        entityManager.AddComponentData(instance, new DeathComponent() { isDead = false, corpseTimer = 50.0f });
         entityManager.AddComponentData(instance, new Player() { });
         entityManager.AddComponentData(instance, new AttackComponent() { isAttacking = false, nrOfAttacks = 2, timer = 1, range = 2, weapon = 0 });
         entityManager.AddComponentData(instance, new WeaponComponent() { weapon = 0, toHit = 0, damage = 10 });
