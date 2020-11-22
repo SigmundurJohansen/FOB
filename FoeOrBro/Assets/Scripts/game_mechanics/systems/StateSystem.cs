@@ -46,7 +46,7 @@ public class StateSystem : ComponentSystem
                             if (_morale.healthModifier < 1)
                             {
                                 _moraleState.state = 4;
-                                Debug.Log(_moraleId.id + " is panicking!!");
+                                //Debug.Log(_moraleId.id + " is panicking!!");
                             }
                             if (_moraleHealth.health / _moraleHealth.maxHealth <= 0.8)
                                 _morale.healthModifier = -1;

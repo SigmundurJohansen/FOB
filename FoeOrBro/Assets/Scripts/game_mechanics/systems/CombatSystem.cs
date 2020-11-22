@@ -10,10 +10,12 @@ public class CombatSystem : ComponentSystem
     {
         Entities.ForEach((Entity entity, ref IDComponent _outerID, ref Translation _translation, ref HasTarget _hasTarget, ref AttackComponent _attack, ref WeaponComponent _weapon, ref StateComponent _state) =>
         {
-            if (_hasTarget.targetEntity != Entity.Null)
+            ComponentDataFromEntity<Translation> allTranslations = GetComponentDataFromEntity<Translation>(true);
+            ComponentDataFromEntity<DeathComponent> allDead = GetComponentDataFromEntity<DeathComponent>(true);
+            DeathComponent dead = allDead[_hasTarget.targetEntity];
+            if (_hasTarget.targetEntity != Entity.Null || !dead.isDead)
             {
-                Translation targetTranslation = World.DefaultGameObjectInjectionWorld.EntityManager.GetComponentData<Translation>(_hasTarget.targetEntity);
-                DeathComponent dead = World.DefaultGameObjectInjectionWorld.EntityManager.GetComponentData<DeathComponent>(_hasTarget.targetEntity);
+                Translation targetTranslation = allTranslations[_hasTarget.targetEntity];
 
                 if (World.DefaultGameObjectInjectionWorld.EntityManager.Exists(_hasTarget.targetEntity) && _attack.range >= math.distance(_translation.Value, targetTranslation.Value) && _attack.isAttacking == true)
                 {
@@ -37,7 +39,7 @@ public class CombatSystem : ComponentSystem
                                     Debug.Log(outerID + " hits " + _innerID.id + " with " + dmg + " damage");
                                 _health.health -= dmg;
                                 if (isDebug)
-                                    Debug.Log(_innerID.id + " has " + _health.health + "health left");
+                                    Debug.Log(_innerID.id + " has " + _health.health + " health left");
                                 if (_health.health <= 0)
                                 {
                                     _death.isDead = true;
@@ -46,6 +48,7 @@ public class CombatSystem : ComponentSystem
                                     if (isDebug)
                                         Debug.Log(_innerID.id + " has died in combat");
                                 }
+                                PostUpdateCommands.AddComponent(innerEntity, new DoNotTarget { });
                             }
                         });
                         if (newState == 0)
@@ -65,7 +68,7 @@ public class CombatSystem : ComponentSystem
             else
             {
                 _state.state = 0;
-                Debug.Log("no target going idle");
+                Debug.Log(_outerID + " has no target going idle");
             }
         });
     }

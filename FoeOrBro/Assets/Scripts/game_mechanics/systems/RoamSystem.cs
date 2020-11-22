@@ -9,7 +9,7 @@ public class RoamSystem : ComponentSystem
     protected override void OnUpdate()
     {
         checkRoamingTimer -= UnityEngine.Time.deltaTime;
-        Entities.WithNone<DestinationComponent>().ForEach((Entity entity, ref DeathComponent _death, ref MovementComponent _move, ref Translation _trans, ref IDComponent _id, ref RoamingComponent _roam, ref StateComponent _state) =>
+        Entities.WithNone<DestinationComponent>().WithNone<FleeTag>().ForEach((Entity entity, ref DeathComponent _death, ref MovementComponent _move, ref Translation _trans, ref IDComponent _id, ref RoamingComponent _roam, ref StateComponent _state) =>
         {
             if (_state.state == 1)
             {

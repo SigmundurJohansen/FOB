@@ -31,7 +31,7 @@ public class DestinationSystem : ComponentSystem
                         World.DefaultGameObjectInjectionWorld.EntityManager.AddComponentData(
                             entity, new DestinationComponent { startPosition = new int2(startX, startY), endPosition = new int2(endX, endY) });
                         _move.isMoving = true;
-                        Debug.Log("destination given");
+                        //Debug.Log("destination given");
                     }
                 }
             });
