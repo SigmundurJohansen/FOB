@@ -56,10 +56,10 @@ public class FleeSystem : JobComponentSystem
                         {
                             entityCommandBuffer.AddComponent(_index, _entity, new DestinationComponent { startPosition = new int2(startX, startY), endPosition = new int2(endX, endY) });
                             entityCommandBuffer.AddComponent(_index, _entity, new OrderComponent { hasOrders = true, orderType = 1 });
-                            entityCommandBuffer.AddComponent(_index, _entity, new FleeTag { });
                         }
                         else
                             Debug.Log("Trapped");
+                        entityCommandBuffer.AddComponent(_index, _entity, new FleeTag { });
                     }
                     else
                     {
@@ -144,8 +144,8 @@ public class FleeSystem : JobComponentSystem
     {
         EntityQuery attackerQuery = GetEntityQuery(typeof(Dragon), ComponentType.ReadOnly<Translation>());
 
-        EntityQuery unitQuery = GetEntityQuery(typeof(Kobolt));
-        NativeArray<EntityWithTarget> closestAttackerEntityArray = new NativeArray<EntityWithTarget>(unitQuery.CalculateEntityCount(), Allocator.TempJob);
+        //EntityQuery unitQuery = GetEntityQuery(typeof(Kobolt));
+        NativeArray<EntityWithTarget> closestAttackerEntityArray = new NativeArray<EntityWithTarget>(attackerQuery.CalculateEntityCount(), Allocator.TempJob);
 
         FindAttackerSectorSystemJob findAttackerSectorSystemJob = new FindAttackerSectorSystemJob
         {
@@ -191,7 +191,7 @@ public class RemoveFleeJob : JobComponentSystem
             if (_pathFollow.pathIndex == -1)
             {
                 Debug.Log("Removing fleetag");
-                entityCommandBuffer.RemoveComponent(entityInQueryIndex, _entity, (typeof(FleeTag)));
+                entityCommandBuffer.RemoveComponent<FleeTag>(entityInQueryIndex, _entity);
             }
         }).Schedule(inputDeps);
         endSimulationEntityCommandBufferSystem.AddJobHandleForProducer(jobHandle);
