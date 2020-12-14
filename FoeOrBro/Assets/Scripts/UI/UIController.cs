@@ -16,6 +16,7 @@ public class UIController : MonoBehaviour
     void Awake()
     {
         entityListView.SetActive(false);
+        buildingListView.SetActive(false);
         map.SetActive(true);
     }
     void Update()
@@ -83,6 +84,20 @@ public class UIController : MonoBehaviour
         }
     }
 
+    public void BuildingMenu()
+    {
+        if(buildingIsActive)
+        {
+            buildingListView.SetActive(false);
+            buildingIsActive = false;
+        }else
+        {
+            buildingListView.SetActive(true);
+            buildingIsActive = true;
+            buildingListView.GetComponent<RectTransform>().SetAsLastSibling();
+        }
+    }
+
     public void MiniMap()
     {
         if(mapIsActive)
@@ -104,5 +119,10 @@ public class UIController : MonoBehaviour
         else
             menuBool = true;
         menuPanel.SetActive(menuBool);
+    }
+
+    public void BuildBuilding()
+    {
+        Debug.Log("buildingigngign!!!");
     }
 }

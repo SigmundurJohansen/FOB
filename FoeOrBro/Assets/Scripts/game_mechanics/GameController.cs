@@ -24,6 +24,10 @@ public class GameController : MonoBehaviour
     public GameObject listViewPrefab;
     public GameObject listViewParent;
 
+    
+    public GameObject listBuildingPrefab;
+    public GameObject listBuildingParent;
+
     public GameObject healthBarPrefab;
     public GameObject healthBarParent;
 
@@ -235,6 +239,10 @@ public class GameController : MonoBehaviour
             newObject.transform.SetParent(listViewParent.transform, true);
             unitListView.Add(newObject);
         }
+    }
+    public void PopulateBuildingList()
+    {
+        
     }
 
     public void SpeedUp()
