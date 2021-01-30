@@ -17,12 +17,17 @@ public class GameController : MonoBehaviour
 {
     private static GameController m_Instance;
     public static GameController Instance { get { return m_Instance; } }
-
+    public static float GameTimeScale { get; set; }
     public bool attackState = false;
+    public int selectionState;
     public Camera myCamera;
 
     public GameObject listViewPrefab;
     public GameObject listViewParent;
+
+    
+    public GameObject listBuildingPrefab;
+    public GameObject listBuildingParent;
 
     public GameObject healthBarPrefab;
     public GameObject healthBarParent;
@@ -40,6 +45,8 @@ public class GameController : MonoBehaviour
     void Awake()
     {
         m_Instance = this;
+        selectionState = 0;
+        GameTimeScale = 1;
         //m_Instance.ViewUpdated += OnGui;
     }
 
@@ -52,12 +59,12 @@ public class GameController : MonoBehaviour
             Vector3 position = WorldPosition(unit.GetPosition());
             float size = CameraController.Instance.GetSize();
             size = Mathf.Clamp(6 - 1.4f * size, 1, 6);
-            unit.menu.GetComponent<RectTransform>().localScale = new Vector3(size, size, size);
+            //unit.menu.GetComponent<RectTransform>().localScale = new Vector3(size, size, size);
 
-            unit.menu.GetComponent<Slider>().value = unit.health;
+            //unit.menu.GetComponent<Slider>().value = unit.health;
 
             position = position - new Vector3(Screen.width / 2, Screen.height / 2 - size * 15, 0);
-            unit.menu.GetComponent<RectTransform>().anchoredPosition = position;
+            //unit.menu.GetComponent<RectTransform>().anchoredPosition = position;
         }
         if (Input.GetKeyDown(KeyCode.F2))
         {
@@ -77,6 +84,14 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void SetSelectionState(int _state)
+    {
+        selectionState = _state;
+    }
+    public int GetSelectionSate()
+    {
+        return selectionState;
+    }
     public void SetAttackState(bool _state)
     {
         attackState = _state;
@@ -111,6 +126,7 @@ public class GameController : MonoBehaviour
         GameUnit newUnit = new GameUnit(ID, _name, _position, _health);
         gameUnitList.Add(newUnit);
 
+        /*
         var krec = healthBarParent.GetComponent<RectTransform>();
         GameObject healthBar = Instantiate(healthBarPrefab) as GameObject;
         healthBar.transform.SetParent(krec, true);//.transform.parent
@@ -121,6 +137,7 @@ public class GameController : MonoBehaviour
         healthBar.GetComponent<RectTransform>().anchoredPosition = position;
         healthBar.SetActive(true);
         newUnit.menu = healthBar;
+        */
         AddID();
         OnGui();
     }
@@ -233,6 +250,45 @@ public class GameController : MonoBehaviour
             unitListView.Add(newObject);
         }
     }
+    public void PopulateBuildingList()
+    {
+        
+    }
+
+    public void SpeedUp()
+    {
+        if(GameTimeScale > 4)
+            GameTimeScale = 4;
+        else if (GameTimeScale < 1)
+            GameTimeScale = 1;
+        else
+            GameTimeScale += 1;
+        Debug.Log("GameTimeScale: " + GameTimeScale);
+        Time.timeScale = 1 * GameTimeScale;
+        Time.fixedDeltaTime = this.fixedDeltaTime * Time.timeScale;
+    }
+    public void SlowDown()
+    {
+        if (GameTimeScale >= 2)
+            GameTimeScale -= 1;
+        else if (GameTimeScale < 2 && GameTimeScale > 1)
+            GameTimeScale = 1;
+        else if (GameTimeScale <= 1 && GameTimeScale > 0.1f)
+            GameTimeScale *= 0.8f;
+        Debug.Log("GameTimeScale: " + GameTimeScale);
+        Time.timeScale = 1 * GameTimeScale;
+        Time.fixedDeltaTime = this.fixedDeltaTime * Time.timeScale;
+    }
+    public void PlayPause()
+    {
+        if (Time.timeScale == 1.0f)
+            Time.timeScale = 0.0f;
+        else
+            Time.timeScale = 1.0f;
+        // Adjust fixed delta time according to timescale
+        // The fixed delta time will now be 0.02 frames per real-time second
+        Time.fixedDeltaTime = this.fixedDeltaTime * Time.timeScale;
+    }
 
     public Vector3 ScreenPosition(Vector3 _pos)
     {
@@ -259,8 +315,8 @@ public class GameUnit
         id = _id;
         name = _name;
         position = _pos;
-        health  =_health;
-        maxHealth =_health;
+        health = _health;
+        maxHealth = _health;
     }
     public int GetID() { return id; }
     public void SetName(string _name) { name = _name; }

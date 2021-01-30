@@ -105,6 +105,7 @@ public class LevelLoader : MonoBehaviour
         // Create Grid
         PathfindingGridSetup.Instance.CreateGrid(cMap.mapWidth, cMap.mapHeight);
         float cellSize = PathfindingGridSetup.Instance.pathfindingGrid.GetCellSize();
+        Debug.Log("cellsize: " + cellSize);
         // Mini Map
         miniMapRenderer.materials[0].mainTexture = TextureGenerator.GetBiomeMapTexture(cMap.mapWidth, cMap.mapHeight, cMap.mapTiles, 0.05f, 0.18f, 0.4f);
         // Convert prefabs into entities
@@ -149,7 +150,7 @@ public class LevelLoader : MonoBehaviour
                     PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(x, y).SetIsWalkable(collidable);
                 }
 
-                var position = transform.TransformPoint(new float3(x , y  , 1f));
+                var position = transform.TransformPoint(new float3(x+0.5f , y+0.5f  , 1f));
                 manager.SetComponentData(instance, new Translation
                 {
                     Value = position
@@ -196,7 +197,7 @@ public class LevelLoader : MonoBehaviour
                 if (_tiles[x, y].HeightType >= HeightType.Shore && _tiles[x, y].HeightType != HeightType.River)
                 {
                     if (_tiles[x, y].BiomeBitmask != 15)
-                        pixels[x + y * _width] = Color.Lerp(pixels[x + y * _width], Color.black, 0.35f);
+                        pixels[x + y * _width] = Color.Lerp(pixels[x + y * _width], Color.black, 0.32f);
                 }
             }
         }

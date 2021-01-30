@@ -80,20 +80,6 @@ public class Grid<TGridObject> {
         _x = Mathf.FloorToInt(x / cellSize);
         _y = Mathf.FloorToInt(y / cellSize);//  / cellSize
     }
-    /*
-    public void SetGridObject(int x, int y, TGridObject value) {
-        Debug.Log("SetGridObject");
-        if (x >= 0 && y >= 0 && x < width && y < height) {
-            gridArray[x, y] = value;
-            if (OnGridObjectChanged != null) OnGridObjectChanged(this, new OnGridObjectChangedEventArgs { x = x, y = y });
-        }
-    }
-    public void SetGridObject(Vector3 worldPosition, TGridObject value) {
-        int x, y;
-        GetXY(worldPosition, out x, out y);
-        SetGridObject(x, y, value);
-    } 
-    */
 
     public void TriggerGridObjectChanged(int _x, int _y) {
         if (OnGridObjectChanged != null) OnGridObjectChanged(this, new OnGridObjectChangedEventArgs { x = _x, y = _y });
@@ -104,7 +90,8 @@ public class Grid<TGridObject> {
         if (_x >= 0 && _y >= 0 && _x < width && _y < height) {
             return gridArray[_x, _y];
         } else {
-            Debug.Log("GetGridObject(int,int)" + _x +"," +_y +"returning default");
+            Debug.Log("Grid x is: "+ PathfindingGridSetup.Instance.pathfindingGrid.GetWidth()+ "Grid Y is: " + PathfindingGridSetup.Instance.pathfindingGrid.GetHeight());
+            Debug.Log("GetGridObject(int,int) " + _x +" , " +_y +" returning default");
             return default(TGridObject);
         }
     }
@@ -128,5 +115,12 @@ public class Grid<TGridObject> {
         textMesh.enableWordWrapping = false; 
         textMesh.SetText(_x +"," + _y);
         return textMesh;
+    }
+    public void CreateGridTexture( Vector3 _localPosition){
+        int x, y = 0;
+
+        GetXY(_localPosition,out x, out y );
+        
+
     }
 }

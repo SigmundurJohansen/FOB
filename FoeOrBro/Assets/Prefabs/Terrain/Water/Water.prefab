@@ -11,12 +11,12 @@ GameObject:
   - component: {fileID: 631920376991785377}
   - component: {fileID: 2786200893781004434}
   - component: {fileID: 9071017338260470590}
-  m_Layer: 4
+  m_Layer: 12
   m_Name: Water
-  m_TagString: Ground
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &631920376991785377
 Transform:
@@ -68,8 +68,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1067289625
-  m_SortingLayer: 1
+  m_SortingLayerID: 1650949199
+  m_SortingLayer: -2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: e0b04c248d8469c499517465f8ec2d00, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

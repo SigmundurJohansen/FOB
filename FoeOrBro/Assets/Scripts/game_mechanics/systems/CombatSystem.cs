@@ -1,24 +1,21 @@
 using UnityEngine;
-using Unity.Burst;
-using Unity.Collections;
-using System.Collections.Generic;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
-using Unity.Rendering;
-using UnityEngine.SceneManagement;
 
 public class CombatSystem : ComponentSystem
 {
+    public static bool isDebug = false;
     protected override void OnUpdate()
     {
-        Entities.ForEach((Entity entity, ref Translation _translation, ref HasTarget _hasTarget, ref AttackComponent _attack, ref WeaponComponent _weapon) =>
+        Entities.ForEach((Entity entity, ref IDComponent _outerID, ref Translation _translation, ref HasTarget _hasTarget, ref AttackComponent _attack, ref WeaponComponent _weapon, ref StateComponent _state) =>
         {
-            if (_hasTarget.targetEntity != Entity.Null)
+            ComponentDataFromEntity<Translation> allTranslations = GetComponentDataFromEntity<Translation>(true);
+            ComponentDataFromEntity<DeathComponent> allDead = GetComponentDataFromEntity<DeathComponent>(true);
+            DeathComponent dead = allDead[_hasTarget.targetEntity];
+            if (_hasTarget.targetEntity != Entity.Null || !dead.isDead)
             {
-                Translation targetTranslation = World.DefaultGameObjectInjectionWorld.EntityManager.GetComponentData<Translation>(_hasTarget.targetEntity);
-                DeathComponent dead = World.DefaultGameObjectInjectionWorld.EntityManager.GetComponentData<DeathComponent>(_hasTarget.targetEntity);
+                Translation targetTranslation = allTranslations[_hasTarget.targetEntity];
 
                 if (World.DefaultGameObjectInjectionWorld.EntityManager.Exists(_hasTarget.targetEntity) && _attack.range >= math.distance(_translation.Value, targetTranslation.Value) && _attack.isAttacking == true)
                 {
@@ -26,17 +23,52 @@ public class CombatSystem : ComponentSystem
                     if (_attack.timer < 0)
                     {
                         IDComponent attackerID = World.DefaultGameObjectInjectionWorld.EntityManager.GetComponentData<IDComponent>(entity);
-                        Debug.Log("Attack!");
+                        if (isDebug)
+                            Debug.Log("Attack!");
                         IDComponent targetID = World.DefaultGameObjectInjectionWorld.EntityManager.GetComponentData<IDComponent>(_hasTarget.targetEntity);
-                        GameController.Instance.DamageUnit(attackerID.id, targetID.id, _weapon.damage, GameController.damageType.Physical);
+                        //GameController.Instance.DamageUnit(attackerID.id, targetID.id, _weapon.damage, GameController.damageType.Physical);
                         _attack.timer = 10 / _attack.nrOfAttacks;
+                        float dmg = _weapon.damage;
+                        int outerID = _outerID.id;
+                        int newState = 1;
+                        Entities.ForEach((Entity innerEntity, ref IDComponent _innerID, ref HealthComponent _health, ref DeathComponent _death) =>
+                        {
+                            if (targetID.id == _innerID.id)
+                            {
+                                if (isDebug)
+                                    Debug.Log(outerID + " hits " + _innerID.id + " with " + dmg + " damage");
+                                _health.health -= dmg;
+                                if (isDebug)
+                                    Debug.Log(_innerID.id + " has " + _health.health + " health left");
+                                if (_health.health <= 0)
+                                {
+                                    _death.isDead = true;
+                                    dead.isDead = true;
+                                    newState = 0;
+                                    if (isDebug)
+                                        Debug.Log(_innerID.id + " has died in combat");
+                                }
+                                PostUpdateCommands.AddComponent(innerEntity, new DoNotTarget { });
+                            }
+                        });
+                        if (newState == 0)
+                            _state.state = 0;
+
                         if (dead.isDead)
                         {
-                            Debug.Log("combat removing hastarget");
+                            if (isDebug)
+                                Debug.Log("combat removing hastarget");
+                            Debug.Log("combat going idle");
+                            PostUpdateCommands.AddComponent(entity, new IdleComponent { });
                             PostUpdateCommands.RemoveComponent(entity, typeof(HasTarget));
                         }
                     }
                 }
+            }
+            else
+            {
+                _state.state = 0;
+                Debug.Log(_outerID + " has no target going idle");
             }
         });
     }

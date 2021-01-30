@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
 public class UIController : MonoBehaviour
 {
     [SF] public GameObject entityListView;
+    [SF] public GameObject buildingListView;
     private bool entityIsActive = false;
+    private bool buildingIsActive = false;
     [SF] public GameObject map;
     private bool mapIsActive = true;
     public GameObject menuPanel;
@@ -14,6 +17,7 @@ public class UIController : MonoBehaviour
     void Awake()
     {
         entityListView.SetActive(false);
+        buildingListView.SetActive(false);
         map.SetActive(true);
     }
     void Update()
@@ -35,6 +39,20 @@ public class UIController : MonoBehaviour
                 entityListView.SetActive(true);
                 entityIsActive = true;
                 entityListView.GetComponent<RectTransform>().SetAsLastSibling();
+            }
+        }
+        if(Input.GetKeyDown("b"))
+        {
+            //rectTransform.Set
+            if(buildingIsActive)
+            {
+                buildingListView.SetActive(false);
+                buildingIsActive = false;
+            }else
+            {
+                buildingListView.SetActive(true);
+                buildingIsActive = true;
+                buildingListView.GetComponent<RectTransform>().SetAsLastSibling();
             }
         }
         if(Input.GetKeyDown("m"))
@@ -67,6 +85,20 @@ public class UIController : MonoBehaviour
         }
     }
 
+    public void BuildingMenu()
+    {
+        if(buildingIsActive)
+        {
+            buildingListView.SetActive(false);
+            buildingIsActive = false;
+        }else
+        {
+            buildingListView.SetActive(true);
+            buildingIsActive = true;
+            buildingListView.GetComponent<RectTransform>().SetAsLastSibling();
+        }
+    }
+
     public void MiniMap()
     {
         if(mapIsActive)
@@ -88,5 +120,40 @@ public class UIController : MonoBehaviour
         else
             menuBool = true;
         menuPanel.SetActive(menuBool);
+    }
+
+    public void BuildBuildingHouse()
+    {
+        Debug.Log("house!!!");
+        Debug.Log("set state to 0");
+        GameController.Instance.SetSelectionState(0);
+    }
+    public void BuildBuildingFarm()
+    {
+        Debug.Log("farm!!!");
+        Debug.Log("Set state to 1");
+        GameController.Instance.SetSelectionState(1);
+    }
+    public void BuildBuildingAltar()
+    {
+        Debug.Log("altar!!!");
+    }
+    public void BuildBuildingSmithy()
+    {
+        Debug.Log("smithy!!!");
+        ECSController.instance.CreateEntityBuilding("smithy", true);
+        GameController.Instance.SetSelectionState(1);
+    }
+    public void BuildBuildingLumberMill()
+    {
+        Debug.Log("lumbermill!!!");
+    }
+    public void BuildBuildingSilo()
+    {
+        Debug.Log("silo!!!");
+    }
+    public void BuildBuildingWarehouse()
+    {
+        Debug.Log("warehouse!!!");
     }
 }

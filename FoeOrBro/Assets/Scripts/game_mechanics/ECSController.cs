@@ -23,6 +23,7 @@ public class ECSController : MonoBehaviour
     public Sprite mainSprite;
     public GameObject koboltPrefab;
     public GameObject dragonPrefab;
+    public GameObject smithyPrefab;
     public GameObject playerPrefab;
     public GameObject listViewPrefab;
     public GameObject listViewParent;
@@ -45,8 +46,8 @@ public class ECSController : MonoBehaviour
         blobAssetStore = new BlobAssetStore();
         LevelLoader.Instance.CreateMap();
         SpawnPlayerPrefab();
-        CreateEntity("Dragon", new float2(16f, 32f));
-        CreateEntity("kobolt", new float2(10f, 33f));
+        CreateEntity("dragon", false, new float2(16f, 32f));
+        CreateEntity("kobolt", false, new float2(10f, 33f));
     }
 
 
@@ -80,7 +81,40 @@ public class ECSController : MonoBehaviour
         }
     }
 
-    public int CreateEntity(string name, float2 _location = new float2())
+    public int CreateEntityBuilding(string name, bool _place)
+    {
+        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);
+        Entity myPrefab;
+        if ( name == "smithy")
+        {
+            myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(smithyPrefab, settings);
+        }
+        else
+        {
+            myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(smithyPrefab, settings);
+        }
+
+        var instance = entityManager.Instantiate(myPrefab);
+        entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(0, 0, -0.1f)) });
+        entityManager.AddComponentData(instance, new IDComponent() { id = GameController.Instance.GetID() });
+        entityManager.AddComponentData(instance, new Selected() { isSelected = false });
+        entityManager.AddComponentData(instance, new FactionComponent() { });
+        entityManager.AddComponentData(instance, new DeathComponent() { isDead = false, corpseTimer = 50.0f });
+        entityManager.AddComponentData(instance, new TargetableComponent() { });
+        entityManager.AddComponentData(instance, new TargetComponent() { });
+        //entityManager.AddComponentData(instance, new MovementComponent() { isMoving = false, speed = 1.2f });
+        //entityManager.AddComponentData(instance, new RoamingComponent() { });
+        if (_place)
+            entityManager.AddComponentData(instance, new PlaceComponent() { isPlaced = false });
+        else
+            entityManager.AddComponentData(instance, new PlaceComponent() { isPlaced = true });
+
+        GameController.Instance.AddUnit(name, new Vector3(0, 0, -0.1f), 100);
+        Debug.Log("place smithy");
+        return 0;
+    }
+
+    public int CreateEntity(string name, bool _place, float2 _location = new float2())
     {
         float entityHealth = 50;
         float fcellSize = 0.32f;
@@ -91,11 +125,12 @@ public class ECSController : MonoBehaviour
             ValueF = _location;
         int2 ValueI = ConvertFloat2(ValueF);
         bool isWalkabler = PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(ValueI.x, ValueI.y).IsWalkable();
-        if (!isWalkabler)
-        {
-            Debug.Log("not walkable");
-            return -1;
-        }
+        if (_place)
+            if (!isWalkabler)
+            {
+                Debug.Log("not walkable");
+                return -1;
+            }
         ValueF = ValueF * fcellSize;
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);
         Entity myPrefab;
@@ -105,7 +140,7 @@ public class ECSController : MonoBehaviour
             myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(dragonPrefab, settings);
         else
         {
-            myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(dragonPrefab, settings);
+            myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(smithyPrefab, settings);
         }
 
         var instance = entityManager.Instantiate(myPrefab);
@@ -117,6 +152,7 @@ public class ECSController : MonoBehaviour
             entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 30, health = 30 });
             entityManager.AddComponentData(instance, new AttackComponent() { isAttacking = false, nrOfAttacks = 1, timer = 1, range = 2, weapon = 0 });
             entityManager.AddComponentData(instance, new WeaponComponent() { weapon = 0, toHit = 0, damage = 5 });
+            entityManager.AddComponentData(instance, new MoraleComponent() { baseMorale = 5 });
             entityHealth = 30;
         }
         else
@@ -125,8 +161,9 @@ public class ECSController : MonoBehaviour
             entityManager.AddComponentData(instance, new Dragon() { });
             entityManager.AddComponentData(instance, new SectorEntity { typeEnum = SectorEntity.TypeEnum.Target });
             entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 100, health = 100 });
-            entityManager.AddComponentData(instance, new AttackComponent() { isAttacking = false, nrOfAttacks = 4, timer = 1, range = 2, weapon = 0 });
+            entityManager.AddComponentData(instance, new AttackComponent() { isAttacking = false, nrOfAttacks = 4, timer = 1, range = 1, weapon = 0 });
             entityManager.AddComponentData(instance, new WeaponComponent() { weapon = 0, toHit = 2, damage = 20 });
+            entityManager.AddComponentData(instance, new SeekComponent() { });
             entityHealth = 100;
         }
         entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(ValueF.x, ValueF.y, -0.1f)) });
@@ -135,9 +172,12 @@ public class ECSController : MonoBehaviour
         entityManager.AddComponentData(instance, new PathFollow() { });
         entityManager.AddComponentData(instance, new Selected() { isSelected = false });
         entityManager.AddComponentData(instance, new FactionComponent() { });
-        entityManager.AddComponentData(instance, new DeathComponent() { isDead = false, corpseTimer = 10.0f });
+        entityManager.AddComponentData(instance, new DeathComponent() { isDead = false, corpseTimer = 50.0f });
         entityManager.AddComponentData(instance, new TargetableComponent() { });
         entityManager.AddComponentData(instance, new TargetComponent() { });
+        entityManager.AddComponentData(instance, new RoamingComponent() { });
+        entityManager.AddComponentData(instance, new StateComponent() { });
+        entityManager.AddComponentData(instance, new OrderComponent() { hasOrders = false });
         entityManager.AddBuffer<PathPosition>(instance);
         PathPosition someBufferElement = new PathPosition();
         DynamicBuffer<PathPosition> someBuffer = entityManager.GetBuffer<PathPosition>(instance);
@@ -145,7 +185,7 @@ public class ECSController : MonoBehaviour
         someBuffer.Add(someBufferElement);
         someBufferElement.position = new int2(ValueI.x, ValueI.y);
         someBuffer.Add(someBufferElement);
-        //GameController.Instance.AddUnit(name, new Vector3(ValueF.x, ValueF.y, -0.1f), entityHealth);
+        GameController.Instance.AddUnit(name, new Vector3(ValueF.x, ValueF.y, -0.1f), entityHealth);
         return 0;
     }
 
@@ -165,10 +205,12 @@ public class ECSController : MonoBehaviour
         entityManager.AddComponentData(instance, new HealthComponent() { maxHealth = 100, health = 100 });
         entityManager.AddComponentData(instance, new MovementComponent() { isMoving = false, speed = 1.5f });
         entityManager.AddComponentData(instance, new PathFollow() { });
+        entityManager.AddComponentData(instance, new DeathComponent() { isDead = false, corpseTimer = 50.0f });
         entityManager.AddComponentData(instance, new Player() { });
         entityManager.AddComponentData(instance, new AttackComponent() { isAttacking = false, nrOfAttacks = 2, timer = 1, range = 2, weapon = 0 });
         entityManager.AddComponentData(instance, new WeaponComponent() { weapon = 0, toHit = 0, damage = 10 });
         entityManager.AddComponentData(instance, new Selected() { isSelected = false });
+        entityManager.AddComponentData(instance, new StateComponent() { });
         entityManager.AddBuffer<PathPosition>(instance);
         PathPosition someBufferElement = new PathPosition();
         DynamicBuffer<PathPosition> someBuffer = entityManager.GetBuffer<PathPosition>(instance);
@@ -317,23 +359,7 @@ public class ECSController : MonoBehaviour
     }
 
 }
-public struct Human : IComponentData { }
-public struct Player : IComponentData { }
-public struct Kobolt : IComponentData { }
-public struct Dragon : IComponentData { }
-public enum Race
-{
-    kobolt = 0,
-    dragon = 1,
-    human = 2,
-    player
-};
 
-
-public struct HasTarget : IComponentData
-{
-    public Entity targetEntity;
-}
 
 /*
 [ExecuteAlways]

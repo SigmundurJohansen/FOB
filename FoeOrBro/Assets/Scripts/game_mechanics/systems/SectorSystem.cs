@@ -22,6 +22,7 @@ public struct SectorData {
     public Entity entity;
     public float3 position;
     public SectorEntity SectorEntity;
+    public bool isDead;
 }
 
 public class SectorSystem : ComponentSystem {
@@ -57,16 +58,17 @@ public class SectorSystem : ComponentSystem {
     }
 
     [BurstCompile]
-    private struct SetSectorDataHashMapJob : IJobForEachWithEntity<Translation, SectorEntity> {
+    private struct SetSectorDataHashMapJob : IJobForEachWithEntity<Translation, SectorEntity, DeathComponent> {
 
         public NativeMultiHashMap<int, SectorData>.ParallelWriter SectorMultiHashMap;
 
-        public void Execute(Entity entity, int index, ref Translation translation, ref SectorEntity SectorEntity) {
+        public void Execute(Entity entity, int index, ref Translation translation, ref SectorEntity SectorEntity, ref DeathComponent _death) {
             int hashMapKey = GetPositionHashMapKey(translation.Value);
             SectorMultiHashMap.Add(hashMapKey, new SectorData {
                 entity = entity,
                 position = translation.Value,
-                SectorEntity = SectorEntity
+                SectorEntity = SectorEntity,
+                isDead = _death.isDead
             });
         }
     }
@@ -82,7 +84,7 @@ public class SectorSystem : ComponentSystem {
     }
 
     protected override void OnUpdate() {
-        EntityQuery entityQuery = GetEntityQuery(typeof(Translation), typeof(SectorEntity));
+        EntityQuery entityQuery = GetEntityQuery(typeof(Translation), typeof(SectorEntity), typeof(DeathComponent));
 
         SectorMultiHashMap.Clear();
         if (entityQuery.CalculateEntityCount() > SectorMultiHashMap.Capacity) {

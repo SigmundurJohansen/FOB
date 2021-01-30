@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6060735235440952680}
   - component: {fileID: 8185777767598411139}
   - component: {fileID: 2944457300817124875}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -155,7 +155,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3583982947929059726}
   - component: {fileID: 3197203915161134098}
-  m_Layer: 2
+  m_Layer: 11
   m_Name: MainHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -237,7 +237,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8714207579980755708}
   - component: {fileID: 3581664753745632226}
-  m_Layer: 2
+  m_Layer: 11
   m_Name: Legs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -319,7 +319,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2715167598122761694}
   - component: {fileID: 7146975740183314353}
-  m_Layer: 2
+  m_Layer: 11
   m_Name: Hat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -401,7 +401,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1472107420105197595}
   - component: {fileID: 226609458432516821}
-  m_Layer: 2
+  m_Layer: 11
   m_Name: Chest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -483,7 +483,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7218050349370626912}
   - component: {fileID: 2617834330622435446}
-  m_Layer: 2
+  m_Layer: 11
   m_Name: Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -565,7 +565,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7017512741791847013}
   - component: {fileID: 3748368044644330186}
-  m_Layer: 2
+  m_Layer: 11
   m_Name: Feet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -647,7 +647,7 @@ GameObject:
   m_Component:
   - component: {fileID: 833569104430325296}
   - component: {fileID: 8213352790821110778}
-  m_Layer: 2
+  m_Layer: 11
   m_Name: Gloves
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -729,7 +729,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2311771056244123048}
   - component: {fileID: 1535827671672769433}
-  m_Layer: 2
+  m_Layer: 11
   m_Name: OffHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}

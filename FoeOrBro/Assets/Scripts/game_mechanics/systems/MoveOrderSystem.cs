@@ -5,12 +5,14 @@ using Unity.Transforms;
 using Unity.Mathematics;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public enum ClickState
 {
     Selecting,
     Moving,
-    Targeting
+    Targeting,
+    Area
 }
 
 public class MoveOrderSystem : ComponentSystem
@@ -21,6 +23,9 @@ public class MoveOrderSystem : ComponentSystem
 
     private ClickState CurrentState = ClickState.Selecting;
 
+    public Vector3 GetWorldPosition(int _x, int _y) {
+        return new Vector3(_x, _y) * 0.32f;  //   new Vector3(x, y) * cellSize + originPosition
+    }
     protected override void OnUpdate()
     {
         if (SceneManager.GetActiveScene().name == "GameScene")
@@ -44,6 +49,10 @@ public class MoveOrderSystem : ComponentSystem
                         Deselect();
                     }
 
+                    if (CurrentState == ClickState.Area)
+                    {
+
+                    }
 
                     if (CurrentState == ClickState.Moving)
                     {
@@ -61,8 +70,12 @@ public class MoveOrderSystem : ComponentSystem
                                     ValidateGridPosition(ref startX, ref startY);
                                     _move.isMoving = true;
                                     _move.chaseTarget = false;
-                                    Debug.Log("dechasing");
+                                    //Debug.Log("dechasing");
+                                    PostUpdateCommands.RemoveComponent(entity, typeof(HasTarget));
+                                    //Debug.Log("remove Entity hastarget"); ref OrdersComponent _orders,
+                                    //_orders.hasOrders = true;
                                     EntityManager.AddComponentData(entity, new DestinationComponent { startPosition = new int2(startX, startY), endPosition = new int2(endX, endY) });
+                                    EntityManager.AddComponentData(entity, new OrderComponent { hasOrders = true, orderType = 1 });
                                 }
                             });
                         }

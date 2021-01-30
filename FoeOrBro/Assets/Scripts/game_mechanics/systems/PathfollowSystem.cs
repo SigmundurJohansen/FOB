@@ -23,10 +23,10 @@ public class PathFollowSystem : JobComponentSystem
     {
         float deltaTime = Time.DeltaTime;
 
-        return Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> pathPositionBuffer, ref Translation translation, ref Rotation rot, ref PathFollow pathFollow, ref MovementComponent _move, ref IDComponent _id) =>
+        return Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> pathPositionBuffer,ref DeathComponent _dead, ref Translation translation, ref Rotation rot, ref PathFollow pathFollow, ref MovementComponent _move, ref IDComponent _id) =>
         {
             rot.Value = new quaternion(0, 0, 0, 1);
-            if (pathFollow.pathIndex >= 0 && _move.isMoving)
+            if (pathFollow.pathIndex >= 0 && _move.isMoving && _dead.isDead == false)
             {
                 // Has path to follow
                 PathPosition pathPosition = pathPositionBuffer[pathFollow.pathIndex];
