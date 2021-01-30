@@ -34,10 +34,6 @@ public class UnitMoveToTargetSystem : ComponentSystem
                     if (moveTimer < 0)
                     {
                         _move.isMoving = true;
-
-                        //float3 targetDir = math.normalize(targetTranslation.Value - translation.Value);
-                        //float moveSpeed = 1f;
-                        //translation.Value += targetDir * moveSpeed * deltaTime;
                         PathfindingGridSetup.Instance.pathfindingGrid.GetXY(targetTranslation.Value, out int endX, out int endY); //  + new Vector3(1,1,0)* cellSize
                         ValidateGridPosition(ref endX, ref endY);
                         if (PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(endX, endY).IsWalkable())

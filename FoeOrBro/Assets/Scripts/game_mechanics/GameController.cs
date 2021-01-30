@@ -19,6 +19,7 @@ public class GameController : MonoBehaviour
     public static GameController Instance { get { return m_Instance; } }
     public static float GameTimeScale { get; set; }
     public bool attackState = false;
+    public int selectionState;
     public Camera myCamera;
 
     public GameObject listViewPrefab;
@@ -44,6 +45,7 @@ public class GameController : MonoBehaviour
     void Awake()
     {
         m_Instance = this;
+        selectionState = 0;
         GameTimeScale = 1;
         //m_Instance.ViewUpdated += OnGui;
     }
@@ -82,6 +84,14 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void SetSelectionState(int _state)
+    {
+        selectionState = _state;
+    }
+    public int GetSelectionSate()
+    {
+        return selectionState;
+    }
     public void SetAttackState(bool _state)
     {
         attackState = _state;

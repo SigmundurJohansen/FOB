@@ -25,23 +25,27 @@ public class RoamSystem : ComponentSystem
                 PathfindingGridSetup.Instance.pathfindingGrid.GetXY(_trans.Value, out int startX, out int startY);
                 PathfindingGridSetup.Instance.pathfindingGrid.GetXY(randomDir, out int endX, out int endY);
                 // warning!! very ugly! dont look!!
-                while (endX <= 0 || endY <= 0 || endX >= PathfindingGridSetup.Instance.pathfindingGrid.GetWidth() || endY >= PathfindingGridSetup.Instance.pathfindingGrid.GetHeight())
+                int tries = 0;
+                while (tries < 10 || endX <= 0 || endY <= 0 || endX >= PathfindingGridSetup.Instance.pathfindingGrid.GetWidth() || endY >= PathfindingGridSetup.Instance.pathfindingGrid.GetHeight())
                 {
                     randomDir = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized * UnityEngine.Random.Range(10f, 10f);
                     randomDir = randomDir + new Vector3(_trans.Value.x, _trans.Value.y, _trans.Value.z);
                     PathfindingGridSetup.Instance.pathfindingGrid.GetXY(randomDir, out endX, out endY);
+                    tries++;
                 }
-                while (PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(endX, endY).IsWalkable() == false)
+                while (tries < 50 || PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(endX, endY).IsWalkable() == false)
                 {
                     randomDir = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized * UnityEngine.Random.Range(10f, 10f);
                     randomDir = randomDir + new Vector3(_trans.Value.x, _trans.Value.y, _trans.Value.z);
                     PathfindingGridSetup.Instance.pathfindingGrid.GetXY(randomDir, out endX, out endY);
-                    while (endX <= 0 || endY <= 0 || endX >= PathfindingGridSetup.Instance.pathfindingGrid.GetWidth() || endY >= PathfindingGridSetup.Instance.pathfindingGrid.GetHeight())
+                    while (tries < 20 || endX <= 0 || endY <= 0 || endX >= PathfindingGridSetup.Instance.pathfindingGrid.GetWidth() || endY >= PathfindingGridSetup.Instance.pathfindingGrid.GetHeight())
                     {
                         randomDir = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized * UnityEngine.Random.Range(10f, 10f);
                         randomDir = randomDir + new Vector3(_trans.Value.x, _trans.Value.y, _trans.Value.z);
                         PathfindingGridSetup.Instance.pathfindingGrid.GetXY(randomDir, out endX, out endY);
+                        tries++;
                     }
+                    tries++;
                 }
                 if (!_death.isDead)
                 {

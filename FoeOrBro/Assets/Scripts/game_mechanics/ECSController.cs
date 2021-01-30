@@ -23,6 +23,7 @@ public class ECSController : MonoBehaviour
     public Sprite mainSprite;
     public GameObject koboltPrefab;
     public GameObject dragonPrefab;
+    public GameObject smithyPrefab;
     public GameObject playerPrefab;
     public GameObject listViewPrefab;
     public GameObject listViewParent;
@@ -45,8 +46,8 @@ public class ECSController : MonoBehaviour
         blobAssetStore = new BlobAssetStore();
         LevelLoader.Instance.CreateMap();
         SpawnPlayerPrefab();
-        CreateEntity("Dragon", new float2(16f, 32f));
-        CreateEntity("kobolt", new float2(10f, 33f));
+        CreateEntity("dragon", false, new float2(16f, 32f));
+        CreateEntity("kobolt", false, new float2(10f, 33f));
     }
 
 
@@ -80,7 +81,40 @@ public class ECSController : MonoBehaviour
         }
     }
 
-    public int CreateEntity(string name, float2 _location = new float2())
+    public int CreateEntityBuilding(string name, bool _place)
+    {
+        var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);
+        Entity myPrefab;
+        if ( name == "smithy")
+        {
+            myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(smithyPrefab, settings);
+        }
+        else
+        {
+            myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(smithyPrefab, settings);
+        }
+
+        var instance = entityManager.Instantiate(myPrefab);
+        entityManager.SetComponentData(instance, new Translation() { Value = new float3(new float3(0, 0, -0.1f)) });
+        entityManager.AddComponentData(instance, new IDComponent() { id = GameController.Instance.GetID() });
+        entityManager.AddComponentData(instance, new Selected() { isSelected = false });
+        entityManager.AddComponentData(instance, new FactionComponent() { });
+        entityManager.AddComponentData(instance, new DeathComponent() { isDead = false, corpseTimer = 50.0f });
+        entityManager.AddComponentData(instance, new TargetableComponent() { });
+        entityManager.AddComponentData(instance, new TargetComponent() { });
+        //entityManager.AddComponentData(instance, new MovementComponent() { isMoving = false, speed = 1.2f });
+        //entityManager.AddComponentData(instance, new RoamingComponent() { });
+        if (_place)
+            entityManager.AddComponentData(instance, new PlaceComponent() { isPlaced = false });
+        else
+            entityManager.AddComponentData(instance, new PlaceComponent() { isPlaced = true });
+
+        GameController.Instance.AddUnit(name, new Vector3(0, 0, -0.1f), 100);
+        Debug.Log("place smithy");
+        return 0;
+    }
+
+    public int CreateEntity(string name, bool _place, float2 _location = new float2())
     {
         float entityHealth = 50;
         float fcellSize = 0.32f;
@@ -91,11 +125,12 @@ public class ECSController : MonoBehaviour
             ValueF = _location;
         int2 ValueI = ConvertFloat2(ValueF);
         bool isWalkabler = PathfindingGridSetup.Instance.pathfindingGrid.GetGridObject(ValueI.x, ValueI.y).IsWalkable();
-        if (!isWalkabler)
-        {
-            Debug.Log("not walkable");
-            return -1;
-        }
+        if (_place)
+            if (!isWalkabler)
+            {
+                Debug.Log("not walkable");
+                return -1;
+            }
         ValueF = ValueF * fcellSize;
         var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);
         Entity myPrefab;
@@ -105,7 +140,7 @@ public class ECSController : MonoBehaviour
             myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(dragonPrefab, settings);
         else
         {
-            myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(dragonPrefab, settings);
+            myPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(smithyPrefab, settings);
         }
 
         var instance = entityManager.Instantiate(myPrefab);

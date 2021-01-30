@@ -105,7 +105,7 @@ public class LevelLoader : MonoBehaviour
         // Create Grid
         PathfindingGridSetup.Instance.CreateGrid(cMap.mapWidth, cMap.mapHeight);
         float cellSize = PathfindingGridSetup.Instance.pathfindingGrid.GetCellSize();
-        Debug.Log("cellsize" + cellSize);
+        Debug.Log("cellsize: " + cellSize);
         // Mini Map
         miniMapRenderer.materials[0].mainTexture = TextureGenerator.GetBiomeMapTexture(cMap.mapWidth, cMap.mapHeight, cMap.mapTiles, 0.05f, 0.18f, 0.4f);
         // Convert prefabs into entities

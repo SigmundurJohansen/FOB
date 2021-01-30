@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
@@ -121,8 +122,38 @@ public class UIController : MonoBehaviour
         menuPanel.SetActive(menuBool);
     }
 
-    public void BuildBuilding()
+    public void BuildBuildingHouse()
     {
-        Debug.Log("buildingigngign!!!");
+        Debug.Log("house!!!");
+        Debug.Log("set state to 0");
+        GameController.Instance.SetSelectionState(0);
+    }
+    public void BuildBuildingFarm()
+    {
+        Debug.Log("farm!!!");
+        Debug.Log("Set state to 1");
+        GameController.Instance.SetSelectionState(1);
+    }
+    public void BuildBuildingAltar()
+    {
+        Debug.Log("altar!!!");
+    }
+    public void BuildBuildingSmithy()
+    {
+        Debug.Log("smithy!!!");
+        ECSController.instance.CreateEntityBuilding("smithy", true);
+        GameController.Instance.SetSelectionState(1);
+    }
+    public void BuildBuildingLumberMill()
+    {
+        Debug.Log("lumbermill!!!");
+    }
+    public void BuildBuildingSilo()
+    {
+        Debug.Log("silo!!!");
+    }
+    public void BuildBuildingWarehouse()
+    {
+        Debug.Log("warehouse!!!");
     }
 }

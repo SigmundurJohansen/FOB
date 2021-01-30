@@ -19,7 +19,7 @@ public class TestScript : MonoBehaviour
 
     public void SpawnUnit()
     {
-        ECSController.Instance.CreateEntity("Dragon");
-        ECSController.Instance.CreateEntity("kobolt");
+        ECSController.Instance.CreateEntity("dragon", false);
+        ECSController.Instance.CreateEntity("kobolt", false);
     }
 }
